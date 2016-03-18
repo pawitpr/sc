@@ -2,3 +2,34 @@
 `sc` is a free curses-based spreadsheet program that uses key bindings similar to vi and less.
 This is a mirror of the latest source code which can be found at
 [http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz](http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz).
+#### Getting the source
+The source can be cloned with
+```sh
+git clone https://github.com/n-t-roff/sc.git
+```
+and updated with
+```sh
+git pull
+```
+#### Compiling and Installation
+Defaults for compiling and installation are set in the
+[`Makefile`](https://github.com/n-t-roff/sc/blob/master/Makefile).
+The Source is compiled with
+```sh
+make
+```
+The result is installed with
+```sh
+make install
+```
+to the base directory `/usr/local`.
+This path can be changed in the
+[`Makefile`](https://github.com/n-t-roff/sc/blob/master/Makefile).
+All generated files are removed with
+```sh
+make distclean
+```
+The package can be uninstalled with
+```sh
+make uninstall
+```
