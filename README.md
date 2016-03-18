@@ -14,10 +14,12 @@ git pull
 #### Compiling and Installation
 Defaults for compiling and installation are set in the
 [`Makefile`](https://github.com/n-t-roff/sc/blob/master/Makefile).
-The Source is compiled with
+The source is compiled with
 ```sh
 make
 ```
+(the `curses` or `ncurses` header files need to be installed,
+else `make` failes).
 The result is installed with
 ```sh
 make install
