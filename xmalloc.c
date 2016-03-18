@@ -3,18 +3,11 @@
  * $Revision: 7.16 $
  */
 
+#include <stdlib.h>
 #include <curses.h>
 #include "sc.h"
 
-extern char	*malloc();
-extern char	*realloc();
-extern void	free();
 void		fatal();
-
-#ifdef SYSV3
-extern void	free();
-extern void	exit();
-#endif
 
 #define	MAGIC	(double)1234567890.12344
 

@@ -20,7 +20,7 @@ NAME=SC
 # packaging this with an O/S, for example, you'll probably want to change
 # this to /usr.  Otherwise, /usr/local is probably more appropriate, unless
 # you're replacing the vendor-supplied version.
-prefix=/usr
+prefix=/usr/local
 
 # This is where the install step puts it.
 EXDIR=${prefix}/bin
@@ -499,32 +499,29 @@ install: $(EXDIR)/$(name) $(EXDIR)/$(name)qref $(EXDIR)/p$(name) \
 	 $(MANDIR)/p$(name).$(MANEXT)
 
 $(EXDIR)/$(name): $(name)
-	cp $(name) $(EXDIR)
+	install $(name) $(EXDIR)
 	strip $(EXDIR)/$(name)
 
 $(EXDIR)/$(name)qref: $(name)qref
-	cp $(name)qref $(EXDIR)
+	install $(name)qref $(EXDIR)
 	strip $(EXDIR)/$(name)qref
 
 $(EXDIR)/p$(name): p$(name)
-	cp p$(name) $(EXDIR)
+	install p$(name) $(EXDIR)
 	strip $(EXDIR)/p$(name)
 
 $(LIBDIR)/tutorial: tutorial.sc $(LIBDIR)
 	-mkdir -p $(LIBDIR)/plugins
-	cp tutorial.sc $(LIBDIR)/tutorial.$(name)
-	chmod $(MANMODE) $(LIBDIR)/tutorial.$(name)
+	install -m $(MANMODE) tutorial.sc $(LIBDIR)/tutorial.$(name)
 
 $(LIBDIR):
 	mkdir $(LIBDIR)
 
 $(MANDIR)/$(name).$(MANEXT): $(name).1
-	cp $(name).1 $(MANDIR)/$(name).$(MANEXT)
-	chmod $(MANMODE) $(MANDIR)/$(name).$(MANEXT)
+	install -m $(MANMODE) $(name).1 $(MANDIR)/$(name).$(MANEXT)
 
 $(MANDIR)/p$(name).$(MANEXT): p$(name).1
-	cp p$(name).1 $(MANDIR)/p$(name).$(MANEXT)
-	chmod $(MANMODE) $(MANDIR)/p$(name).$(MANEXT)
+	install -m $(MANMODE) p$(name).1 $(MANDIR)/p$(name).$(MANEXT)
 
 uninstall:
 	rm -f $(EXDIR)/$(name)

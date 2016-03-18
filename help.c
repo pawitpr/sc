@@ -5,6 +5,7 @@
  * $Revision: 7.16 $
  */
 
+#include <stdlib.h>
 #ifdef QREF
 #include <stdio.h>
 char	*header = " Quick Reference";
