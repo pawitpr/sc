@@ -17,6 +17,8 @@
 #include <curses.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <unistd.h>
 #include "sc.h"
 
 #if defined(REGCOMP)
@@ -39,10 +41,6 @@ void gototop();
 void gotobottom();
 
 #define istext(a) (isalnum(a) || ((a) == '_'))
-
-#define bool	int
-#define true	1
-#define false	0
 
 static void append_line();
 static void back_hist();
