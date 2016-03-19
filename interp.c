@@ -24,22 +24,11 @@
 #include <setjmp.h>
 #include <ctype.h>
 #include <errno.h>
-
-#ifdef BSD42
-#include <strings.h>
-#include <sys/time.h>
-#ifndef strchr
-#define strchr index
-#endif
-#else
 #include <time.h>
-#ifndef SYSIII
 #include <string.h>
-#endif
-#endif
-
 #include <stdlib.h>
 #include <curses.h>
+#include <stdbool.h>
 #include "sc.h"
 
 #ifndef MSDOS

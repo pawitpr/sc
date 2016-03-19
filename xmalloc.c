@@ -5,9 +5,10 @@
 
 #include <stdlib.h>
 #include <curses.h>
+#include <stdbool.h>
 #include "sc.h"
 
-void		fatal();
+static void fatal(char *);
 
 #define	MAGIC	(double)1234567890.12344
 
@@ -50,20 +51,15 @@ scxfree(char *p)
 	free(p);
 }
 
-#ifdef PSC
-void
+static void
 fatal(char *str)
 {
-    (void) fprintf(stderr,"%s\n", str);
-    exit(1);
-}
-#else
-void
-fatal(char *str)
-{
+#ifndef PSC
     deraw(1);
-    (void) fprintf(stderr,"%s\n", str);
+#endif /* PSC */
+    fprintf(stderr, "%s\n", str);
+#ifndef PSC
     diesave();
+#endif /* PSC */
     exit(1);
 }
-#endif /* PSC */

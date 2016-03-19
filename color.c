@@ -9,16 +9,11 @@
  */
 
 #include <sys/types.h>
-#ifdef BSD42
-#include <strings.h>
-#else
-#ifndef SYSIII
 #include <string.h>
-#endif
-#endif
-
 #include <curses.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <unistd.h>
 #include "sc.h"
 
 /* a linked list of free [struct ent]'s, uses .next as the pointer */

@@ -43,7 +43,7 @@
 #ifdef PSC
 # define error(msg)	fprintf(stderr, msg);
 #else
-# define error isatty(fileno(stdout)) && !move(1,0) && !clrtoeol() && printw
+# define error if (isatty(fileno(stdout)) && !move(1,0) && !clrtoeol()) printw
 #endif
 #define	FBUFLEN	1024	/* buffer size for a single field */
 #define	PATHLEN	1024	/* maximum path length */
@@ -396,12 +396,12 @@ extern	int are_ranges();
 extern	int atocol(char *string, int len);
 extern	int creadfile(char *save, int  eraseflg);
 extern	int cwritefile(char *fname, int r0, int c0, int rn, int cn);
-extern	int engformat(int fmt, int width, int lprecision, double val,
+extern	bool engformat(int fmt, int width, int lprecision, double val,
 	char *buf, int buflen);
 extern	int etype(register struct enode *e);
 extern	int find_range(char *name, int len, struct ent *lmatch,
 	struct ent *rmatch, struct range **rng);
-extern	int format(char *fmt, int lprecision, double val, char *buf,
+extern	bool format(char *fmt, int lprecision, double val, char *buf,
 	int buflen);
 extern	int get_rcqual(int ch);
 extern	int growtbl(int rowcol, int toprow, int topcol);
@@ -611,6 +611,7 @@ extern	int craction;
 extern	int  pagesize;	/* If nonzero, use instead of 1/2 screen height */
 extern	int rowlimit;
 extern	int collimit;
+void gotonote(void);
 
 #if BSD42 || SYSIII
 

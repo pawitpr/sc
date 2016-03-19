@@ -17,6 +17,7 @@
 %{
 #include <curses.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "sc.h"
 
 #ifdef USELOCALE

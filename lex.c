@@ -13,13 +13,7 @@
 
 
 #include <sys/types.h>
-#ifdef BSD42
-#include <strings.h>
-#else
-#ifndef SYSIII
 #include <string.h>
-#endif
-#endif
 
 #if defined(BSD42) || defined(BSD43)
 #include <sys/ioctl.h>
@@ -34,6 +28,8 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <unistd.h>
 #include "sc.h"
 
 #ifdef NONOTIMEOUT

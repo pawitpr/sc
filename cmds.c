@@ -12,22 +12,13 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
-#if defined(BSD42) || defined(BSD43)
-#include <strings.h>
-#else
-#ifndef SYSIII
 #include <string.h>
-#endif
-#endif
-
 #include <curses.h>
 #include <time.h>
 #include <utime.h>
-#if defined(BSD42) || defined(BSD43) || defined(VMS)
 #include <sys/file.h>
-#else
 #include <fcntl.h>
-#endif
+#include <stdbool.h>
 #include "sc.h"
 #include <signal.h>
 #include <errno.h>
@@ -2607,18 +2598,18 @@ closefile(FILE *f, int pid, int rfd)
 	} else {
 	    close(rfd);
 	    if (usecurses) {
-#ifdef VMS
+# ifdef VMS
 		VMS_read_raw = 1;
-#else /* VMS */
-#if SYSV2 || SYSV3
+# else /* VMS */
+#  if SYSV2 || SYSV3
 		fixterm();
-#else /* SYSV2 || SYSV3 */
+#  else /* SYSV2 || SYSV3 */
 		cbreak();
 		nonl();
 		noecho ();
-#endif /* SYSV2 || SYSV3 */
+#  endif /* SYSV2 || SYSV3 */
 		kbd_again();
-#endif /* VMS */
+# endif /* VMS */
 		if (color && has_colors())
 		    bkgdset(COLOR_PAIR(1) | ' ');
 	    }
@@ -3310,7 +3301,7 @@ dotick(int tick)
 }
 
 void
-gotonote()
+gotonote(void)
 {
     register struct ent *p;
 

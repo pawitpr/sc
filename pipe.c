@@ -9,21 +9,11 @@
 
 #include <curses.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include "sc.h"
 
-#ifdef BSD42
-#include <strings.h>
-#include <sys/time.h>
-#ifndef strchr
-#define strchr index
-#endif
-#else
 #include <time.h>
-#ifndef SYSIII
 #include <string.h>
-#endif
-#endif
-
 
 void
 getnum(int r0, int c0, int rn, int cn, int fd)

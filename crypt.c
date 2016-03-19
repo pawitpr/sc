@@ -8,14 +8,11 @@
 #if !defined(VMS) && !defined(MSDOS) && defined(CRYPT_PATH)
 
 #include <curses.h>
-
-#if defined(BSD42) || defined(BSD43)
 #include <sys/types.h>
 #include <sys/file.h>
-#else
 #include <fcntl.h>
-#endif
-
+#include <stdbool.h>
+#include <unistd.h>
 #include "sc.h"
 
 char        *getpass();

@@ -93,11 +93,9 @@
 #include <string.h>
 #include <sys/types.h>
 #include <time.h>
+#include <stdbool.h>
 #include "sc.h"
 
-#define bool	int
-#define true	1
-#define false	0
 #define EOS	'\0'
 #define MAXBUF	256
 

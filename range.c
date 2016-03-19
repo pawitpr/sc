@@ -8,16 +8,11 @@
  */
 
 #include <sys/types.h>
-#ifdef BSD42
-#include <strings.h>
-#else
-#ifndef SYSIII
 #include <string.h>
-#endif
-#endif
-
 #include <stdio.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <unistd.h>
 #include "sc.h"
 
 static	struct range *rng_base;

@@ -331,12 +331,12 @@ LN=ln
 
 #########################################
 # Use this for Linux
-CC=gcc
+#CC=gcc
 # Only use -Wall for testing, since it produces warnings that are of no
 # real effect on the reliability of the program, but may concern some
 # people who don't understand them.
-#CFLAGS=-DSYSV3 -O2 -Wall -pipe
-CFLAGS=-DSYSV3 -O2 -pipe
+CFLAGS=-DSYSV3 -O2 -Wall -pipe
+#CFLAGS=-DSYSV3 -O2 -pipe
 LIB=-lm -lncurses
 
 # All of the source files

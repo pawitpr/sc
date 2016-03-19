@@ -5,14 +5,8 @@
  */
 
 #include <sys/types.h>
-#ifdef BSD42
-#include <strings.h>
-#else
-#ifndef SYSIII
+#include <sys/wait.h>
 #include <string.h>
-#endif
-#endif
-
 #include <signal.h>
 #include <curses.h>
 #include <ctype.h>
@@ -665,7 +659,7 @@ dotab()
     static struct range *nextmatch;
     int len;
 
-    if (linelim > 0 && isalnum(line[linelim-1]) || line[linelim-1] == '_' ||
+    if ((linelim > 0 && isalnum(line[linelim-1])) || line[linelim-1] == '_' ||
 	    (completethis && line[linelim-1] == ' ')) {
 	if (!completethis) {
 	    for (completethis = line + linelim - 1; isalnum(*completethis) ||
@@ -713,7 +707,6 @@ void
 showdr()
 {
     int			minsr, minsc, maxsr, maxsc;
-    char		*p;
     char		r[12];
     struct frange	*fr = find_frange(currow, curcol);
 
@@ -1469,10 +1462,11 @@ for_hist()
 	(void) strcpy(line, history[histp].histline);
 	last_col();
     }
-    if (histp)
+    if (histp) {
 	error("History line %d", endhist - lasthist + histp);
-    else
+    } else {
 	error("");
+    }
 }
 
 static void
@@ -1498,10 +1492,11 @@ back_hist()
     	(void) strcpy(line, history[histp].histline);
 	last_col();
     }
-    if (histp)
+    if (histp) {
 	error("History line %d", endhist - lasthist + histp);
-    else
+    } else {
 	error("");
+    }
 }
 
 static void
@@ -1643,10 +1638,11 @@ search_again(bool reverse)
 	if (histp == prev_match)
 	    break;
     } while (!found_it);
-    if (found_it)
+    if (found_it) {
 	error("History line %d", endhist - lasthist + histp);
-    else
+    } else {
 	error("No matches found");
+    }
     edit_mode();
     linelim = strlen(line) - 1;
 }
@@ -1775,7 +1771,6 @@ to_char(int arg, int n)
 static void
 match_paren()
 {
-    register int i;
     int nest = 1;
     int tmp = linelim;
 
@@ -2032,7 +2027,9 @@ query(char *s, char *data)
     	*line = '\0';
 	linelim = 0;
     }
-    if (s != NULL) error(s);
+    if (s != NULL) {
+    	error(s);
+    }
 
     while (linelim >= 0) {
 	update(0);

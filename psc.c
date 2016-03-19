@@ -23,6 +23,7 @@ char *rev = "$Revision: 7.16 $";
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include "sc.h"
 
 #define END	0

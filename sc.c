@@ -16,24 +16,15 @@
 #include <signal.h>
 #include <curses.h>
 #include <ctype.h>
-
-#ifdef BSD42
-#include <strings.h>
-#else
-#ifndef SYSIII
 #include <string.h>
-#endif
-#endif
-#if defined(BSD42) || defined(BSD43) || defined(VMS)
 #include <sys/file.h>
-#else
 #include <fcntl.h>
-#endif
 #ifndef MSDOS
 #include <unistd.h>
 #endif
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include "sc.h"
 
 #ifndef SAVENAME
