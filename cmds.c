@@ -371,7 +371,7 @@ deleterow(register int arg)
 	    delbuf[DELBUFSIZE - 9] = delbuf[dbidx];
 	    delbuffmt[DELBUFSIZE - 9] = delbuffmt[dbidx];
 	    for (p = delbuf[dbidx]; p; p = p->next)
-		p->flags &= ~may_sync;
+		p->flags &= ~MAY_SYNC;
 	    if (currow + arg > fr->ir_right->row &&
 		    fr->ir_right->row >= currow)
 		fr->ir_right = lookat(currow - 1, fr->ir_right->col);
@@ -466,7 +466,7 @@ deleterow(register int arg)
 	    delbuf[DELBUFSIZE - 9] = delbuf[dbidx];
 	    delbuffmt[DELBUFSIZE - 9] = delbuffmt[dbidx];
 	    for (p = delbuf[dbidx]; p; p = p->next)
-		p->flags &= ~may_sync;
+		p->flags &= ~MAY_SYNC;
 	}
     }
 }
@@ -619,7 +619,7 @@ erase_area(int sr, int sc, int er, int ec, int ignorelock)
     for (r = sr; r <= er; r++) {
 	for (c = sc; c <= ec; c++) {
 	    pp = ATBL(tbl, r, c);
-	    if (*pp && (!((*pp)->flags&is_locked) || ignorelock)) {
+	    if (*pp && (!((*pp)->flags&IS_LOCKED) || ignorelock)) {
 		free_ent(*pp, 0);
 		*pp = NULL;
 	    }
@@ -708,7 +708,7 @@ move_area(int dr, int dc, int sr, int sc, int er, int ec)
 	*pp = p;
 	p->row += deltar;
 	p->col += deltac;
-	p->flags &= ~is_deleted;
+	p->flags &= ~IS_DELETED;
     }
     delbuf[dbidx] = NULL;
     delbuffmt[dbidx--] = NULL;
@@ -741,14 +741,14 @@ valueize_area(int sr, int sc, int er, int ec)
     for (r = sr; r <= er; r++) {
 	for (c = sc; c <= ec; c++) {
 	    p = *ATBL(tbl, r, c);
-	    if (p && p->flags&is_locked) {
+	    if (p && p->flags&IS_LOCKED) {
 		error(" Cell %s%d is locked", coltoa(c), r);
 		continue;
 	    }
 	    if (p && p->expr) {
 		efree(p->expr);
 		p->expr = (struct enode *)0;
-		p->flags &= ~is_strexpr;
+		p->flags &= ~IS_STREXPR;
 	    }
 	}
     }
@@ -793,7 +793,7 @@ pullcells(int to_insert)
 	    mincol = p->col;
 	if (p->col > mxcol)
 	    mxcol = p->col;
-	p->flags |= may_sync;
+	p->flags |= MAY_SYNC;
     }
 
     numrows = mxrow - minrow + 1;
@@ -892,7 +892,7 @@ pullcells(int to_insert)
 	} else
 	    for (p = delbuf[dbidx++]; p; p = p->next) {
 		pp = ATBL(tbl, p->row + deltar, p->col + deltac);
-		if (*pp && !((*pp)->flags & is_locked)) {
+		if (*pp && !((*pp)->flags & IS_LOCKED)) {
 		    free_ent(*pp, 1);
 		    *pp = NULL;
 		}
@@ -902,7 +902,7 @@ pullcells(int to_insert)
 	    *pp = p;
 	    p->row += deltar;
 	    p->col += deltac;
-	    p->flags &= ~is_deleted;
+	    p->flags &= ~IS_DELETED;
 	}
 	delbuf[dbidx - 1] = delbuf[dbidx];
 	delbuf[dbidx--] = NULL;
@@ -1255,7 +1255,7 @@ closecol(int arg)
     delbuf[DELBUFSIZE - 9] = delbuf[dbidx];
     delbuffmt[DELBUFSIZE - 9] = delbuffmt[dbidx];
     for (p = delbuf[dbidx]; p; p = p->next)
-	p->flags &= ~may_sync;
+	p->flags &= ~MAY_SYNC;
 
     /* clear then copy the block left */
     cs = maxcols - arg - 1;
@@ -1622,8 +1622,8 @@ ljustify(sr, sc, er, ec)
 	for (j = sc; j <= ec; j++) {
 	    p = *ATBL(tbl, i, j);
 	    if (p && p->label) {
-		p->flags &= ~is_label;
-		p->flags |= is_leftflush | is_changed;
+		p->flags &= ~IS_LABEL;
+		p->flags |= IS_LEFTFLUSH | IS_CHANGED;
 		changed++;
 		modflg++;
 	    }
@@ -1651,8 +1651,8 @@ rjustify(sr, sc, er, ec)
 	for (j = sc; j <= ec; j++) {
 	    p = *ATBL(tbl, i, j);
 	    if (p && p->label) {
-		p->flags &= ~(is_label | is_leftflush);
-		p->flags |= is_changed;
+		p->flags &= ~(IS_LABEL | IS_LEFTFLUSH);
+		p->flags |= IS_CHANGED;
 		changed++;
 		modflg++;
 	    }
@@ -1680,8 +1680,8 @@ center(sr, sc, er, ec)
 	for (j = sc; j <= ec; j++) {
 	    p = *ATBL(tbl, i, j);
 	    if (p && p->label) {
-		p->flags &= ~is_leftflush;
-		p->flags |= is_label | is_changed;
+		p->flags &= ~IS_LEFTFLUSH;
+		p->flags |= IS_LABEL | IS_CHANGED;
 		changed++;
 		modflg++;
 	    }
@@ -1868,7 +1868,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		}		  
 		while (plinelim<c) pline[plinelim++] = ' ';
 		plinelim = c;
-		if ((*pp)->flags&is_valid) {
+		if ((*pp)->flags&IS_VALID) {
 		    while(plinelim + fwidth[col] > 
 			  (fbufs_allocated * FBUFLEN)) {
 		      if((pline = ((char *)scxrealloc
@@ -1931,7 +1931,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		    if (*s == '\\' && *(s+1) != '\0')
 			slen = fwidth[col];
 		    while (slen > fieldlen && nextcol <= cn &&
-			    !((nc = lookat(row,nextcol))->flags & is_valid) &&
+			    !((nc = lookat(row,nextcol))->flags & IS_VALID) &&
 			    !(nc->label)) {
 			
 	                if (!col_hidden[nextcol])
@@ -1953,9 +1953,9 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		    }		  
 
 		    /* Now justify and print */
-		    start = (*pp)->flags & is_leftflush ? pline + c
+		    start = (*pp)->flags & IS_LEFTFLUSH ? pline + c
 					: pline + c + fieldlen - slen;
-		    if( (*pp)->flags & is_label )
+		    if( (*pp)->flags & IS_LABEL )
 			start = pline + (c + ((fwidth[col]>slen)?(fwidth[col]-slen)/2:0));
 		    last = pline + c + fieldlen;
 		    fp = plinelim < c ? pline + plinelim : pline + c;
@@ -1973,7 +1973,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		    while (slen--)
 			*fp++ = *s++;
 
-		    if (!((*pp)->flags & is_valid) || fieldlen != fwidth[col])
+		    if (!((*pp)->flags & IS_VALID) || fieldlen != fwidth[col])
 			while(fp < last)
 			    *fp++ = ' ';
 		    if (plinelim < fp - pline)
@@ -2145,7 +2145,7 @@ tblprintfile(char *fname, int r0, int c0, int rn, int cn)
 	    } 
 	    if (*pp) {
 		char *s;
-		if ((*pp)->flags&is_valid) {
+		if ((*pp)->flags&IS_VALID) {
 		    if ((*pp)->cellerror) {
 			(void) fprintf (f, "%*s",
 					fwidth[col],
@@ -2407,11 +2407,11 @@ syncref(register struct enode *e)
     } else {
 	switch (e->op) {
 	    case 'v':
-		if (e->e.v.vp->flags & is_cleared) {
+		if (e->e.v.vp->flags & IS_CLEARED) {
 		    e->op = ERR_;
 		    e->e.o.left = NULL;
 		    e->e.o.right = NULL;
-		} else if (e->e.v.vp->flags & may_sync)
+		} else if (e->e.v.vp->flags & MAY_SYNC)
 		    e->e.v.vp = lookat(e->e.v.vp->row, e->e.v.vp->col);
 		break;
 	    case 'k':
@@ -2646,29 +2646,29 @@ copyent(register struct ent *n, register struct ent *p, int dr, int dc,
 	return;
     }
     if (special != 'f') {
-	if (special != 'm' || p->flags & is_valid) {
+	if (special != 'm' || p->flags & IS_VALID) {
 	    n->v = p->v;
-	    n->flags |= p->flags & is_valid;
+	    n->flags |= p->flags & IS_VALID;
 	}
 	if (special != 'm' || p->expr) {
 	    n->expr = copye(p->expr, dr, dc, r1, c1, r2, c2, special == 't');
-	    if (p->flags & is_strexpr)
-		n->flags |= is_strexpr;
+	    if (p->flags & IS_STREXPR)
+		n->flags |= IS_STREXPR;
 	    else
-		n->flags &= ~is_strexpr;
+		n->flags &= ~IS_STREXPR;
 	}
 	if (p->label) {
 	    if (n->label)
 		scxfree(n->label);
 	    n->label = scxmalloc((unsigned) (strlen(p->label) + 1));
 	    (void) strcpy(n->label, p->label);
-	    n->flags &= ~is_leftflush;
-	    n->flags |= ((p->flags & is_label) | (p->flags & is_leftflush));
+	    n->flags &= ~IS_LEFTFLUSH;
+	    n->flags |= ((p->flags & IS_LABEL) | (p->flags & IS_LEFTFLUSH));
 	} else if (special != 'm') {
 	    n->label = NULL;
-	    n->flags &= ~(is_label | is_leftflush);
+	    n->flags &= ~(IS_LABEL | IS_LEFTFLUSH);
 	}
-	n->flags |= p->flags & is_locked;
+	n->flags |= p->flags & IS_LOCKED;
     }
     if (p->format) {
 	if (n->format)
@@ -2677,7 +2677,7 @@ copyent(register struct ent *n, register struct ent *p, int dr, int dc,
 	(void) strcpy(n->format, p->format);
     } else if (special != 'm' && special != 'f')
 	n->format = NULL;
-    n->flags |= is_changed;
+    n->flags |= IS_CHANGED;
 }
 
 #ifndef MSDOS
@@ -2774,7 +2774,7 @@ write_fd(register FILE *f, int r0, int c0, int rn, int cn)
 	pp = ATBL(tbl, r, c0);
 	for (c = c0; c <= cn; c++, pp++)
 	    if (*pp) {
-		if ((*pp)->flags&is_locked)
+		if ((*pp)->flags&IS_LOCKED)
 		    (void) fprintf(f, "lock %s%d\n", coltoa((*pp)->col),
 						     (*pp)->row);
 		if ((*pp)->nrow >= 0) {
@@ -2817,11 +2817,11 @@ write_cells(register FILE *f, int r0, int c0, int rn, int cn, int dr, int dc)
 	pp = ATBL(tbl, r, dc);
 	for (c = dc; c <= cn; c++, pp++)
 	    if (*pp) {
-		if ((*pp)->label || (*pp)->flags & is_strexpr) {
+		if ((*pp)->label || (*pp)->flags & IS_STREXPR) {
 		    edits(r, c);
 		    (void) fprintf(f, "%s\n", line);
 		}
-		if ((*pp)->flags & is_valid) {
+		if ((*pp)->flags & IS_VALID) {
 		    editv(r, c);
 		    dpointptr = strchr(line, dpoint);
 		    if (dpointptr != NULL)
@@ -3367,7 +3367,7 @@ showstring(char *string,	/* to display */
 	    nextcol < fr->or_right->col - frightcols + 1)
 	nextcol = fr->or_right->col - frightcols + 1;
     while ((slen > fieldlen) && (nextcol <= mxcol) &&
-	    !((nc = lookat(row, nextcol))->flags & is_valid) && !(nc->label) &&
+	    !((nc = lookat(row, nextcol))->flags & IS_VALID) && !(nc->label) &&
 	    (cslop || find_crange(row, nextcol) == cr)) {
 
 	if (!col_hidden[nextcol])
@@ -3384,8 +3384,8 @@ showstring(char *string,	/* to display */
 	slen = fieldlen;
 
     /* Now justify and print */
-    start = (dirflush&is_leftflush) ? field : field + fieldlen - slen;
-    if (dirflush & is_label)
+    start = (dirflush&IS_LEFTFLUSH) ? field : field + fieldlen - slen;
+    if (dirflush & IS_LABEL)
 	start = field + ((slen<fwidth[col])?(fieldlen-slen)/2:0);
     last = field+fieldlen;
     fp = field;
@@ -3453,7 +3453,7 @@ etype(register struct enode *e)
 	    register struct ent *p;
 	    p = e->e.v.vp;
 	    if (p->expr) 
-		return (p->flags & is_strexpr ? STR : NUM);
+		return (p->flags & IS_STREXPR ? STR : NUM);
 	    else if (p->label)
 		return (STR);
 	    else

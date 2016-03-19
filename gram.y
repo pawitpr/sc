@@ -290,13 +290,13 @@ command:	S_LET var_or_range '=' e
 	|	S_LET var_or_range '='
 				{ $2.left.vp->v = (double) 0.0;
 				  if ($2.left.vp->expr &&
-					!($2.left.vp->flags & is_strexpr)) {
+					!($2.left.vp->flags & IS_STREXPR)) {
 				    efree($2.left.vp->expr);
 				    $2.left.vp->expr = NULL;
 				  }
 				  $2.left.vp->cellerror = CELLOK;
-				  $2.left.vp->flags &= ~is_valid;
-				  $2.left.vp->flags |= is_changed;
+				  $2.left.vp->flags &= ~IS_VALID;
+				  $2.left.vp->flags |= IS_CHANGED;
 				  changed++;
 				  FullUpdate++;
 				  modflg++; }
@@ -338,7 +338,7 @@ command:	S_LET var_or_range '=' e
 				    $2.vp->nlastrow=currow;
 				    $2.vp->nlastcol=curcol;
 				  }
-				  $2.vp->flags |= is_changed;
+				  $2.vp->flags |= IS_CHANGED;
 				  FullUpdate++;
 				  modflg++;
 				}
@@ -347,7 +347,7 @@ command:	S_LET var_or_range '=' e
 				  $2.vp->ncol = $3.left.vp->col;
 				  $2.vp->nlastrow = $3.right.vp->row;
 				  $2.vp->nlastcol = $3.right.vp->col;
-				  $2.vp->flags |= is_changed;
+				  $2.vp->flags |= IS_CHANGED;
 				  FullUpdate++;
 				  modflg++;
 				}
@@ -355,7 +355,7 @@ command:	S_LET var_or_range '=' e
 	|	S_DELNOTE	{ struct ent *p;
 				  p = lookat(currow, curcol);
 				  p->nrow = p->ncol = -1;
-				  p->flags |= is_changed;
+				  p->flags |= IS_CHANGED;
 				  modflg++;
 				}
 	|	S_FORMAT COL ':' COL NUMBER NUMBER NUMBER

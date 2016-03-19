@@ -21,7 +21,7 @@ Chuck Martin
 	 in the Makefile.  Also combined all regex variables into a single
 	 variable in the Makefile.
 	-Rewrote the code that copies a marked cell.  This fixes several
-	 problems: the is_cleared and may_sync flags are now correctly set
+	 problems: the IS_CLEARED and MAY_SYNC flags are now correctly set
 	 (thanks to Michael Karcher for bringing that bug to my attention),
 	 sc will no longer copy into a locked cell, and copying a blank cell
 	 into a nonblank cell now clears the nonblank cell (it previously
@@ -246,7 +246,7 @@ Chuck Martin
 	-The erase_area() function now has a new argument to ignore locked
 	 cells which is used when sorting so that locked cells can still
 	 be sorted.  Also added an unlock argument to free_ent() and caused
-	 the is_locked flag to be copied in the copyent() function so that
+	 the IS_LOCKED flag to be copied in the copyent() function so that
 	 sorting won't unlock cells.
 	-The @sum, @prod, @avg, @count, @stddev, @max, and @min functions
 	 may now take an optional second argument which is an expression
@@ -395,8 +395,8 @@ Chuck Martin
 	 cell in the first row and first column of a range without
 	 regard for the actual dimensions of the range).
 	-All flags are turned off in the clearent() function except
-	 is_changed and is_cleared, which are turned on.  Also, the
-	 is_cleared flag is turned off in the fill() function after the
+	 IS_CHANGED and IS_CLEARED, which are turned on.  Also, the
+	 IS_CLEARED flag is turned off in the fill() function after the
 	 cell is cleared and then assigned a new value.  This prevents
 	 errors from appearing in expressions which reference cells in
 	 the filled range whenever the sync_refs() function is called,
@@ -670,7 +670,7 @@ Chuck Martin
 	-An improper test was causing the syncref() function to corrupt
 	 expressions which referenced empty cells every time anything was
 	 deleted or moved.  This has been fixed (the struct ent now has
-	 an additional "is_cleared" flag).
+	 an additional "IS_CLEARED" flag).
 	-When adding a note with "na", automatically start out in navigate
 	 mode.
 
@@ -1551,7 +1551,7 @@ Jeff Buhrt
 
 CHANGES BETWEEN 6.18 and 6.17
 James Dugal	
-	- NULL pointer fix for is_locked
+	- NULL pointer fix for IS_LOCKED
 Kevin Pye
 	- add a new mode suitable for entry of large amounts of data.
 		moves to next cell on return, maxrow/col when to start

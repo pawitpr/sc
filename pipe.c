@@ -40,7 +40,7 @@ getnum(int r0, int c0, int rn, int cn, int fd)
 		if (p->cellerror)
 		    sprintf(line, "%s", (*pp)->cellerror == CELLERROR ?
 			    "ERROR" : "INVALID");
-		else if (p->flags & is_valid)
+		else if (p->flags & IS_VALID)
 		    sprintf(line, "%.15g", p->v);
 	    if (c < cn)
 		strcat(line, "\t");
@@ -71,7 +71,7 @@ fgetnum(int r0, int c0, int rn, int cn, int fd)
 		if (p->cellerror)
 		    sprintf(line, "%s", p->cellerror == CELLERROR ?
 			    "ERROR" : "INVALID");
-		else if (p->flags & is_valid) {
+		else if (p->flags & IS_VALID) {
 		    if (p->format) {
 			if (*(p->format) == ctl('d')) {
 			    time_t i = (time_t) (p->v);

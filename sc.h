@@ -107,18 +107,18 @@ struct range_s {
 
 /*
  * Some not too obvious things about the flags:
- *    is_valid means there is a valid number in v.
- *    is_locked means that the cell cannot be edited.
- *    is_label set means it points to a valid constant string.
- *    is_strexpr set means expr yields a string expression.
- *    If is_strexpr is not set, and expr points to an expression tree, the
+ *    IS_VALID means there is a valid number in v.
+ *    IS_LOCKED means that the cell cannot be edited.
+ *    IS_LABEL set means it points to a valid constant string.
+ *    IS_STREXPR set means expr yields a string expression.
+ *    If IS_STREXPR is not set, and expr points to an expression tree, the
  *        expression yields a numeric expression.
  *    So, either v or label can be set to a constant. 
  *        Either (but not both at the same time) can be set from an expression.
  */
 
 #define VALID_CELL(p, r, c) ((p = *ATBL(tbl, r, c)) && \
-			     ((p->flags & is_valid) || p->label))
+			     ((p->flags & IS_VALID) || p->label))
 
 /* info for each cell, only alloc'd when something is stored in a cell */
 struct ent {
@@ -297,15 +297,15 @@ struct go_save {
 #define WHITE (OP_BASE + 76)
 
 /* flag values */
-#define is_valid     0001
-#define is_changed   0002
-#define is_strexpr   0004
-#define is_leftflush 0010
-#define is_deleted   0020
-#define is_locked    0040
-#define is_label     0100
-#define is_cleared   0200
-#define may_sync     0400
+#define IS_VALID     0001
+#define IS_CHANGED   0002
+#define IS_STREXPR   0004
+#define IS_LEFTFLUSH 0010
+#define IS_DELETED   0020
+#define IS_LOCKED    0040
+#define IS_LABEL     0100
+#define IS_CLEARED   0200
+#define MAY_SYNC     0400
 
 /* cell error (1st generation (ERROR) or 2nd+ (INVALID)) */
 #define	CELLOK		0

@@ -165,8 +165,8 @@ lookat(int row, int col)
     if (*pp == NULL) {
         if (freeents != NULL) {
 	    *pp = freeents;
-	    (*pp)->flags &= ~is_cleared;
-	    (*pp)->flags |= may_sync;
+	    (*pp)->flags &= ~IS_CLEARED;
+	    (*pp)->flags |= MAY_SYNC;
 	    freeents = freeents->next;
 	} else
 	    *pp = (struct ent *) scxmalloc((unsigned)sizeof(struct ent));
@@ -177,7 +177,7 @@ lookat(int row, int col)
 	(*pp)->col = col;
 	(*pp)->nrow = -1;
 	(*pp)->ncol = -1;
-	(*pp)->flags = may_sync;
+	(*pp)->flags = MAY_SYNC;
 	(*pp)->expr = (struct enode *)0;
 	(*pp)->v = (double) 0.0;
 	(*pp)->format = (char *)0;
@@ -198,9 +198,9 @@ free_ent(register struct ent *p, int unlock)
 {
     p->next = delbuf[dbidx];
     delbuf[dbidx] = p;
-    p->flags |= is_deleted;
+    p->flags |= IS_DELETED;
     if (unlock)
-	p->flags &= ~is_locked;
+	p->flags &= ~IS_LOCKED;
 }
 
 /* free deleted cells */
@@ -1042,7 +1042,7 @@ main (int argc, char  **argv)
 	} else if (!numeric && ( c == '+' || c == '-' )) {
 	    /* increment/decrement ops */
 	    register struct ent *p = *ATBL(tbl, currow, curcol);
-	    if (!p || !(p->flags & is_valid)) {
+	    if (!p || !(p->flags & IS_VALID)) {
 		if (c == '+') {
 		    editv(currow, curcol);
 		    linelim = strlen(line);
@@ -1051,7 +1051,7 @@ main (int argc, char  **argv)
 		}
 		continue;
 	    }
-	    if (p->expr && !(p->flags & is_strexpr)) {
+	    if (p->expr && !(p->flags & IS_STREXPR)) {
 		error("Can't increment/decrement a formula\n");
 		continue;
 	    }
@@ -1130,7 +1130,7 @@ main (int argc, char  **argv)
 			editv(currow, curcol);
 			linelim = strlen(line);
 			insert_mode();
-			if (c == '-' || p->flags & is_valid)
+			if (c == '-' || p->flags & IS_VALID)
 			    write_line(c);
 			else
 			    write_line(ctl('v'));
@@ -1632,7 +1632,7 @@ main (int argc, char  **argv)
 			savedstcol[27] = stcol;
 
 			editv(currow, curcol);
-			if (!(p->flags & is_valid)) {
+			if (!(p->flags & IS_VALID)) {
 			    linelim = strlen(line);
 			    insert_mode();
 			} else
@@ -1964,7 +1964,7 @@ main (int argc, char  **argv)
 
 			for (c1 = curcol; arg-- && c1 < maxcols; c1++) {
 			    if ((n = *ATBL(tbl, currow, c1))) {
-				if (n->flags & is_locked)
+				if (n->flags & IS_LOCKED)
 				    continue;
 				if (!p) {
 				    (void) clearent(n);
@@ -1976,7 +1976,7 @@ main (int argc, char  **argv)
 			    }
 			    copyent(n, p, currow - savedrow[c],
 				    c1 - savedcol[c], 0, 0, maxrow, maxcol, 0);
-			    n->flags |= is_changed;
+			    n->flags |= IS_CHANGED;
 			}
 
 			FullUpdate++;
@@ -2009,7 +2009,7 @@ main (int argc, char  **argv)
 			if (c == 'd' || c == 'D') {
 			    p = lookat(currow, curcol);
 			    p->nrow = p->ncol = -1;
-			    p->flags |= is_changed;
+			    p->flags |= IS_CHANGED;
 			    error("");
 			    modflg++;
 			    FullUpdate++;
@@ -2252,7 +2252,7 @@ int
 locked_cell(int r, int c)
 {
     struct ent *p = *ATBL(tbl, r, c);
-    if (p && (p->flags & is_locked)) {
+    if (p && (p->flags & IS_LOCKED)) {
 	error("Cell %s%d is locked", coltoa(c), r) ;
 	return(1);
     }
@@ -2269,7 +2269,7 @@ any_locked_cells(int r1, int c1, int r2, int c2)
     for (r=r1; r<=r2; r++)
 	for (c=c1; c<=c2; c++) {
 	    p = *ATBL(tbl, r, c);
-	    if (p && (p->flags&is_locked))
+	    if (p && (p->flags&IS_LOCKED))
 		return(1);
 	}
     return(0);

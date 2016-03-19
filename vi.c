@@ -420,7 +420,7 @@ write_line(int c)
 				    struct ent *p = *ATBL(tbl, currow, curcol);
 				    char temp[100];
 
-				    if (p && p->flags & is_valid) {
+				    if (p && p->flags & IS_VALID) {
 					(void) sprintf(temp, "%.*f",
 						precision[curcol], p->v);
 					ins_string(temp);

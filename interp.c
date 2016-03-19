@@ -211,7 +211,7 @@ doindex(int minr, int minc, int maxr, int maxc, struct enode *val)
     }
 
     if (c <= maxc && c >=minc && r <= maxr && r >=minr &&
-	    (p = *ATBL(tbl, r, c)) && p->flags&is_valid) {
+	    (p = *ATBL(tbl, r, c)) && p->flags&IS_VALID) {
 	if (p->cellerror)
 	    cellerror = CELLINVALID;
 	return p->v;
@@ -233,7 +233,7 @@ dolookup(struct enode * val, int minr, int minc, int maxr, int maxc, int offset,
 	cellerror = CELLOK;
 	v = eval(val);
 	for (r = minr, c = minc; r <= maxr && c <= maxc; r+=incr, c+=incc) {
-	    if ((p = *ATBL(tbl, r, c)) && p->flags&is_valid) {
+	    if ((p = *ATBL(tbl, r, c)) && p->flags&IS_VALID) {
 		if (p->v <= v) {
 		    fndr = incc ? (minr + offset) : r;
 		    fndc = incr ? (minc + offset) : c;
@@ -243,7 +243,7 @@ dolookup(struct enode * val, int minr, int minc, int maxr, int maxc, int offset,
 			error(" range specified to @[hv]lookup");
 			cellerror = CELLERROR;
 		    }
-		    if (p && p->flags&is_valid) {
+		    if (p && p->flags&IS_VALID) {
 		    	if (p->cellerror)
 			    cellerror = CELLINVALID;
 			ret = p->v;
@@ -271,7 +271,7 @@ dolookup(struct enode * val, int minr, int minc, int maxr, int maxc, int offset,
 		}
 	    }
 	}
-	if (p && p->flags&is_valid)
+	if (p && p->flags&IS_VALID)
 	    ret = p->v;
 	scxfree(s);
     }
@@ -294,7 +294,7 @@ docount(int minr, int minc, int maxr, int maxc, struct enode *e)
 		coloffset = c - minc;
 	    }
 	    if (!e || eval(e))
-		if ((p = *ATBL(tbl, r, c)) && p->flags & is_valid) {
+		if ((p = *ATBL(tbl, r, c)) && p->flags & IS_VALID) {
 		    if (p->cellerror)
 			cellerr = CELLINVALID;
 		    v++;
@@ -321,7 +321,7 @@ dosum(int minr, int minc, int maxr, int maxc, struct enode *e)
 		coloffset = c - minc;
 	    }
 	    if (!e || eval(e))
-		if ((p = *ATBL(tbl, r, c)) && p->flags & is_valid) {
+		if ((p = *ATBL(tbl, r, c)) && p->flags & IS_VALID) {
 		    if (p->cellerror)
 			cellerr = CELLINVALID;
 		    v += p->v;
@@ -348,7 +348,7 @@ doprod(int minr, int minc, int maxr, int maxc, struct enode *e)
 		coloffset = c - minc;
 	    }
 	    if (!e || eval(e))
-		if ((p = *ATBL(tbl, r, c)) && p->flags & is_valid) {
+		if ((p = *ATBL(tbl, r, c)) && p->flags & IS_VALID) {
 		    if (p->cellerror)
 			cellerr = CELLINVALID;
 		    v *= p->v;
@@ -377,7 +377,7 @@ doavg(int minr, int minc, int maxr, int maxc, struct enode *e)
 		coloffset = c - minc;
 	    }
 	    if (!e || eval(e))
-		if ((p = *ATBL(tbl, r, c)) && p->flags&is_valid) {
+		if ((p = *ATBL(tbl, r, c)) && p->flags&IS_VALID) {
 		    if (p->cellerror)
 			cellerr = CELLINVALID;
 
@@ -413,7 +413,7 @@ dostddev(int minr, int minc, int maxr, int maxc, struct enode *e)
 		coloffset = c - minc;
 	    }
 	    if (!e || eval(e))
-		if ((p = *ATBL(tbl, r, c)) && p->flags&is_valid) {
+		if ((p = *ATBL(tbl, r, c)) && p->flags&IS_VALID) {
 		    if (p->cellerror)
 			cellerr = CELLINVALID;
 
@@ -449,7 +449,7 @@ domax(int minr, int minc, int maxr, int maxc, struct enode *e)
 		coloffset = c - minc;
 	    }
 	    if (!e || eval(e))
-		if ((p = *ATBL(tbl, r, c)) && p->flags&is_valid) {
+		if ((p = *ATBL(tbl, r, c)) && p->flags&IS_VALID) {
 		    if (p->cellerror)
 			cellerr = CELLINVALID;
 
@@ -486,7 +486,7 @@ domin(int minr, int minc, int maxr, int maxc, struct enode *e)
 		coloffset = c - minc;
 	    }
 	    if (!e || eval(e))
-		if ((p = *ATBL(tbl, r, c)) && p->flags&is_valid) {
+		if ((p = *ATBL(tbl, r, c)) && p->flags&IS_VALID) {
 		    if (p->cellerror)
 			cellerr = CELLINVALID;
 
@@ -667,7 +667,7 @@ donval(char *colstr, double rowdoub)
 {
     struct ent *ep;
 
-    return (((ep = getent(colstr, rowdoub)) && ((ep->flags) & is_valid)) ?
+    return (((ep = getent(colstr, rowdoub)) && ((ep->flags) & IS_VALID)) ?
 	    (ep->v) : (double)0);
 }
 
@@ -801,7 +801,7 @@ eval(register struct enode *e)
 			    checkbounds(&row, &col);
 			    vp = *ATBL(tbl, row, col);
 			}
-			if (!vp || vp->flags & is_deleted) {
+			if (!vp || vp->flags & IS_DELETED) {
 			    cellerror = CELLERROR;
 			    return (double) 0;
 			}
@@ -1450,7 +1450,7 @@ RealEvalOne(register struct ent *p, int i, int j, int *chgct)
 {
     gmyrow=i; gmycol=j;
 
-    if (p->flags & is_strexpr) {
+    if (p->flags & IS_STREXPR) {
 	char *v;
 	if (setjmp(fpe_save)) {
 	    error("Floating point exception %s", v_name(i, j));
@@ -1465,7 +1465,7 @@ RealEvalOne(register struct ent *p, int i, int j, int *chgct)
 	    return;
 	if (!p->label || !v || strcmp(v, p->label) != 0 || cellerror) {
 	    (*chgct)++;
-	    p->flags |= is_changed;
+	    p->flags |= IS_CHANGED;
 	    changed++;
 	}
 	if (p->label)
@@ -1488,7 +1488,7 @@ RealEvalOne(register struct ent *p, int i, int j, int *chgct)
 	    p->v = v;
 	    if (!cellerror)	/* don't keep eval'ing an error */
 		(*chgct)++;
-	    p->flags |= is_changed|is_valid;
+	    p->flags |= IS_CHANGED|IS_VALID;
 	    changed++;
 	}
     }
@@ -1700,7 +1700,7 @@ copydbuf(int deltar, int deltac)
 	vr = p->row + deltar;
 	vc = p->col + deltac;
 	n = lookat(vr, vc);
-	if (n->flags&is_locked) continue;
+	if (n->flags&IS_LOCKED) continue;
 	copyent(n, p, deltar, deltac, 0, 0, maxrow, maxcol, 0);
 	p = p->next;
     }
@@ -1939,7 +1939,7 @@ num_search(double n, int firstrow, int firstcol, int lastrow,
 	    }
 	}
 	p = *ATBL(tbl, r, c);
-	if (!col_hidden[c] && p && (p->flags & is_valid) &&
+	if (!col_hidden[c] && p && (p->flags & IS_VALID) &&
 		(errsearch || (p->v == n)) && (!errsearch ||
 		(p->cellerror == errsearch)))	/* CELLERROR vs CELLINVALID */
 	    break;
@@ -2042,7 +2042,7 @@ str_search(char *s, int firstrow, int firstcol, int lastrow, int lastcol,
 		if (p->cellerror)
 		    sprintf(line, "%s", p->cellerror == CELLERROR ?
 			    "ERROR" : "INVALID");
-		else if (p->flags & is_valid) {
+		else if (p->flags & IS_VALID) {
 		    if (p->format) {
 			if (*(p->format) == ctl('d')) {
 			    time_t i = (time_t) (p->v);
@@ -2153,12 +2153,12 @@ fill(struct ent *v1, struct ent *v2, double start, double inc)
     for (r = minr; r<=maxr; r++)
 	for (c = minc; c<=maxc; c++) {
 	    n = lookat(r, c);
-	    if (n->flags&is_locked) continue;
+	    if (n->flags&IS_LOCKED) continue;
 	    (void) clearent(n);
 	    n->v = start;
 	    start += inc;
-	    n->flags |= (is_changed|is_valid);
-	    n->flags &= ~(is_cleared);
+	    n->flags |= (IS_CHANGED|IS_VALID);
+	    n->flags &= ~(IS_CLEARED);
 	}
     }
     else if (calc_order == BYCOLS) {
@@ -2168,8 +2168,8 @@ fill(struct ent *v1, struct ent *v2, double start, double inc)
 	    (void) clearent(n);
 	    n->v = start;
 	    start += inc;
-	    n->flags |= (is_changed|is_valid);
-	    n->flags &= ~(is_cleared);
+	    n->flags |= (IS_CHANGED|IS_VALID);
+	    n->flags &= ~(IS_CLEARED);
 	}
     }
     else error(" Internal error calc_order");
@@ -2199,7 +2199,7 @@ lock_cells(struct ent *v1, struct ent *v2)
     for (r = minr; r<=maxr; r++)
 	for (c = minc; c<=maxc; c++) {
 	    n = lookat(r, c);
-	    n->flags |= is_locked;
+	    n->flags |= IS_LOCKED;
 	}
 }
 
@@ -2226,7 +2226,7 @@ unlock_cells(struct ent *v1, struct ent *v2)
     for (r = minr; r<=maxr; r++)
 	for (c = minc; c<=maxc; c++) {
 	    n = lookat(r, c);
-	    n->flags &= ~is_locked;
+	    n->flags &= ~IS_LOCKED;
 	}
 }
 
@@ -2255,7 +2255,7 @@ let(struct ent *v, struct enode *e)
 	    val = eval(e);
 	}
 	if (v->cellerror != cellerror) {
-	    v->flags |= is_changed;
+	    v->flags |= IS_CHANGED;
 	    changed++;
 	    modflg++;
 	    FullUpdate++;
@@ -2276,7 +2276,7 @@ let(struct ent *v, struct enode *e)
 
 	v->v = val;
 
-	if (!(v->flags & is_strexpr)) {
+	if (!(v->flags & IS_STREXPR)) {
             efree(v->expr);
 	    v->expr = (struct enode *)0;
 	}
@@ -2284,11 +2284,11 @@ let(struct ent *v, struct enode *e)
     } else {
 	efree(v->expr);
 	v->expr = e;
-	v->flags &= ~is_strexpr;
+	v->flags &= ~IS_STREXPR;
     }
 
     changed++; modflg++;
-    v->flags |= (is_changed|is_valid);
+    v->flags |= (IS_CHANGED|IS_VALID);
     
     if (!loading) {
 	int i;
@@ -2327,7 +2327,7 @@ slet(struct ent *v, struct enode *se, int flushdir)
 	p = seval(se);
     }
     if (v->cellerror != cellerror) {
-    	v->flags |= is_changed;
+    	v->flags |= IS_CHANGED;
 	changed++;	modflg++;
 	FullUpdate++;
 	v->cellerror = cellerror;
@@ -2357,21 +2357,21 @@ slet(struct ent *v, struct enode *se, int flushdir)
 	if (p)
 	    scxfree(p);
 	efree(se);
-	if (v->flags & is_strexpr) {
+	if (v->flags & IS_STREXPR) {
             efree(v->expr);
 	    v->expr = (struct enode *)0;
-	    v->flags &= ~is_strexpr;
+	    v->flags &= ~IS_STREXPR;
 	}
 	return;
     }
     efree(v->expr);
     v->expr = se;
-    v->flags |= (is_changed|is_strexpr);
-    if (flushdir < 0) v->flags |= is_leftflush;
+    v->flags |= (IS_CHANGED|IS_STREXPR);
+    if (flushdir < 0) v->flags |= IS_LEFTFLUSH;
 
     if (flushdir == 0)
-	v->flags |= is_label;
-    else v->flags &= ~is_label;
+	v->flags |= IS_LABEL;
+    else v->flags &= ~IS_LABEL;
 
     FullUpdate++;
     changed++;
@@ -2409,7 +2409,7 @@ format_cell(struct ent *v1, struct ent *v2, char *s)
 	    n->format = 0;
 	    if (s && *s != '\0')
 		n->format = strcpy(scxmalloc((unsigned)(strlen(s)+1)), s);
-	    n->flags |= is_changed;
+	    n->flags |= IS_CHANGED;
 	}
 }
 
@@ -2460,7 +2460,7 @@ clearent(struct ent *v)
     if (v->format)
 	scxfree(v->format);
     v->format = NULL;
-    v->flags = (is_changed|is_cleared);
+    v->flags = (IS_CHANGED|IS_CLEARED);
     changed++;
     modflg++;
 }
@@ -2518,11 +2518,11 @@ void
 label(register struct ent *v, register char *s, int flushdir)
 {
     if (v) {
-	if (flushdir==0 && v->flags&is_valid) {
+	if (flushdir==0 && v->flags&IS_VALID) {
 	    register struct ent *tv;
-	    if (v->col>0 && ((tv=lookat(v->row,v->col-1))->flags&is_valid)==0)
+	    if (v->col>0 && ((tv=lookat(v->row,v->col-1))->flags&IS_VALID)==0)
 		v = tv, flushdir = 1;
-	    else if (((tv=lookat(v->row,v->col+1))->flags&is_valid)==0)
+	    else if (((tv=lookat(v->row,v->col+1))->flags&IS_VALID)==0)
 		v = tv, flushdir = -1;
 	    else flushdir = -1;
 	}
@@ -2532,10 +2532,10 @@ label(register struct ent *v, register char *s, int flushdir)
 	    (void) strcpy (v->label, s);
 	} else
 	    v->label = (char *)0;
-	if (flushdir<0) v->flags |= is_leftflush;
-	else v->flags &= ~is_leftflush;
-	if (flushdir==0) v->flags |= is_label;
-	else v->flags &= ~is_label;
+	if (flushdir<0) v->flags |= IS_LEFTFLUSH;
+	else v->flags &= ~IS_LEFTFLUSH;
+	if (flushdir==0) v->flags |= IS_LABEL;
+	else v->flags &= ~IS_LABEL;
 	FullUpdate++;
 	modflg++;
     }
@@ -2546,7 +2546,7 @@ decodev(struct ent_ptr v)
 {
 	struct range *r;
 
-	if (!v.vp || v.vp->flags & is_deleted)
+	if (!v.vp || v.vp->flags & IS_DELETED)
 	    (void) sprintf(line + linelim, "@ERR");
 	else if (!find_range((char *)0, 0, v.vp, v.vp, &r) && !r->r_is_range)
 	    (void) sprintf(line+linelim, "%s", r->r_name);
@@ -2872,8 +2872,8 @@ editv(int row, int col)
     p = lookat(row, col);
     (void) sprintf(line, "let %s = ", v_name(row, col));
     linelim = strlen(line);
-    if (p->flags & is_valid) {
-	if (p->flags & is_strexpr || p->expr == NULL) {
+    if (p->flags & IS_VALID) {
+	if (p->flags & IS_STREXPR || p->expr == NULL) {
 	    (void) sprintf(line+linelim, "%.15g", p->v);
 	    linelim = strlen(line);
 	} else
@@ -2897,14 +2897,14 @@ edits(int row, int col)
     register struct ent *p;
 
     p = lookat(row, col);
-    if (p->flags & is_label)
+    if (p->flags & IS_LABEL)
 	(void) sprintf(line, "label %s = ", v_name(row, col));
     else
 	(void) sprintf(line, "%sstring %s = ",
-		((p->flags & is_leftflush) ? "left" : "right"),
+		((p->flags & IS_LEFTFLUSH) ? "left" : "right"),
 		v_name(row, col));
     linelim = strlen(line);
-    if (p->flags & is_strexpr && p->expr) {
+    if (p->flags & IS_STREXPR && p->expr) {
 	editexp(row, col);
     } else if (p->label) {
         (void) sprintf(line+linelim, "\"%s\"", p->label);

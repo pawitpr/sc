@@ -168,7 +168,7 @@ RIGHTBUG=
 # increase the number of terminals (mostly AT&T), SCO's does though.
 # YACC=yacc
 # NOTE: Do not use with bison 1.16! Get a new version....
-YACC=bison -y
+#YACC=bison -y
 
 # MS-DOS needs y_tab instead of the normal y.tab
 #YTAB=y_tab

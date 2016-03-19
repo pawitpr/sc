@@ -506,7 +506,7 @@ update(int anychanged)		/* did any cell really change in value? */
 		else
 		    color_set(1, NULL);
 		if (*pp) {
-		    if (colorneg && (*pp)->flags & is_valid && (*pp)->v < 0) {
+		    if (colorneg && (*pp)->flags & IS_VALID && (*pp)->v < 0) {
 			if (cr)
 			    color_set(((cr->r_color) % CPAIRS) + 1, NULL);
 			else
@@ -723,8 +723,8 @@ update(int anychanged)		/* did any cell really change in value? */
 	    if ((showrange && (!showneed) && (!showexpr)
 			&& (row >= minsr) && (row <= maxsr)
 			&& (col >= minsc) && (col <= maxsc))
-		    || (showneed && (*pp) && ((*pp)->flags & is_valid) &&
-			(((*pp)->flags & is_strexpr) || !((*pp)->expr)))
+		    || (showneed && (*pp) && ((*pp)->flags & IS_VALID) &&
+			(((*pp)->flags & IS_STREXPR) || !((*pp)->expr)))
 		    || (showexpr && (*pp) && ((*pp)->expr))
 		    || (shownote && (*pp) && ((*pp)->nrow >= 0))) {
 
@@ -747,13 +747,13 @@ update(int anychanged)		/* did any cell really change in value? */
 	    if ((cr = find_crange(row, col)) && color && has_colors())
 		color_set(cr->r_color, NULL);
 
-	    if ((*pp) && (((*pp)->flags & is_changed || FullUpdate) ||
+	    if ((*pp) && (((*pp)->flags & IS_CHANGED || FullUpdate) ||
 		    do_stand)) {
 		if (do_stand) {
-		    (*pp)->flags |= is_changed; 
+		    (*pp)->flags |= IS_CHANGED; 
 		} else {
 		    (void) move(r, c);
-		    (*pp)->flags &= ~is_changed;
+		    (*pp)->flags &= ~IS_CHANGED;
 		}
 
 		/*
@@ -778,7 +778,7 @@ update(int anychanged)		/* did any cell really change in value? */
 		     * Show cell's numeric value:
                      */
 
-		    if ((*pp)->flags & is_valid) {
+		    if ((*pp)->flags & IS_VALID) {
 			char field[FBUFLEN];
 			char *cfmt;
 			int note;
@@ -856,16 +856,16 @@ update(int anychanged)		/* did any cell really change in value? */
 
 		    if ((*pp)->label) {
 			showstring((*pp)->label,
-				    (*pp)->flags & (is_leftflush|is_label),
-				    (*pp)->flags & is_valid,
+				    (*pp)->flags & (IS_LEFTFLUSH|IS_LABEL),
+				    (*pp)->flags & IS_VALID,
 				    row, col, &nextcol, mxcol, &fieldlen,
 				    r, c, fr, frightcols, flcols, frcols);
 		    } else	/* repaint a blank cell: */
 		    if ((((do_stand || !FullUpdate) &&
-			    ((*pp)->flags & is_changed)) ||
+			    ((*pp)->flags & IS_CHANGED)) ||
 			    (color && has_colors() &&
 			    cr && cr->r_color != 1)) &&
-			    !((*pp)->flags & is_valid) && !(*pp)->label) {
+			    !((*pp)->flags & IS_VALID) && !(*pp)->label) {
 			(void) printw("%*s", fwidth[col], " ");
 		    }
 		} /* else */
@@ -896,7 +896,7 @@ update(int anychanged)		/* did any cell really change in value? */
 	    else
 		color_set(1, NULL);
 	    if (*pp) {
-		if (colorneg && (*pp)->flags & is_valid && (*pp)->v < 0) {
+		if (colorneg && (*pp)->flags & IS_VALID && (*pp)->v < 0) {
 		    if (cr)
 			color_set(((cr->r_color) % CPAIRS) + 1, NULL);
 		    else
@@ -969,21 +969,21 @@ update(int anychanged)		/* did any cell really change in value? */
 		 * Display string part of cell:
 		 */
 
-		if ((p1->expr) && (p1->flags & is_strexpr)) {
- 		    if (p1->flags & is_label)
+		if ((p1->expr) && (p1->flags & IS_STREXPR)) {
+ 		    if (p1->flags & IS_LABEL)
 			(void) addstr("|{");
 		    else
-			(void) addstr((p1->flags & is_leftflush) ? "<{" : ">{");
+			(void) addstr((p1->flags & IS_LEFTFLUSH) ? "<{" : ">{");
 		    (void) addstr(line);
 		    (void) addstr("} ");	/* and this '}' is for vi % */
 		    printed = 1;
 
 		} else if (p1->label) {
 		    /* has constant label only */
-		    if (p1->flags & is_label)
+		    if (p1->flags & IS_LABEL)
 			(void) addstr("|\"");
 		    else
-			(void) addstr((p1->flags & is_leftflush) ? "<\"" : ">\"");
+			(void) addstr((p1->flags & IS_LEFTFLUSH) ? "<\"" : ">\"");
 		    (void) addstr(p1->label);
 		    (void) addstr("\" ");
 		    printed = 1;
@@ -993,9 +993,9 @@ update(int anychanged)		/* did any cell really change in value? */
 		 * Display value part of cell:
 		 */
 
-		if (p1->flags & is_valid) {
+		if (p1->flags & IS_VALID) {
 		    /* has value or num expr */
-		    if ((!(p1->expr)) || (p1->flags & is_strexpr))
+		    if ((!(p1->expr)) || (p1->flags & IS_STREXPR))
 			(void) sprintf(line, "%.15g", p1->v);
 
 		    (void) addch('[');
@@ -1008,7 +1008,7 @@ update(int anychanged)		/* did any cell really change in value? */
 	    if (!printed)
 		(void) addstr("[]");
 	    /* Display if cell is locked */
-	    if (p1 && p1->flags&is_locked)
+	    if (p1 && p1->flags&IS_LOCKED)
 		(void) addstr(" locked");
 	}
 	if (braille)

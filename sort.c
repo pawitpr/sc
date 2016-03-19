@@ -148,13 +148,13 @@ compare(const void *row1, const void *row2)
 	    else if (p2 && p2->label)
 		result = 1;
 	} else
-	    if (p1 && p2 && p1->flags & is_valid && p2->flags & is_valid) {
+	    if (p1 && p2 && p1->flags & IS_VALID && p2->flags & IS_VALID) {
 		diff = (p1->v - p2->v);
 		result = (diff > 0 ? 1 : diff < 0 ? -1 : 0);
 	    }
-	    else if (p1 && p1->flags & is_valid)
+	    else if (p1 && p1->flags & IS_VALID)
 		result = -1;
-	    else if (p2 && p2->flags & is_valid)
+	    else if (p2 && p2->flags & IS_VALID)
 		result = 1;
 
 	result *= sort[i].direction;
