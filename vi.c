@@ -1566,11 +1566,11 @@ search_again(bool reverse)
 #endif
 
 #ifdef REGCOMP
-    if ((last_search == NULL))
+    if (last_search == NULL)
 	return;
 #else
 #ifndef RE_COMP
-    if ((last_search == NULL) || (*last_search == '\0'))
+    if (last_search == NULL || *last_search == '\0')
 	return;
 #endif
 #endif
@@ -2015,7 +2015,7 @@ dogoto()
 }
 
 void
-query(char *s, char *data)
+query(const char *s, char *data)
 {
     int c;
 

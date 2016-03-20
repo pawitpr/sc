@@ -521,7 +521,7 @@ extern	void num_search(double n, int firstrow, int firstcol, int lastrow,
 	int lastcol, int errsearch);
 extern	void printfile(char *fname, int r0, int c0, int rn, int cn);
 extern	void pullcells(int to_insert);
-extern	void query(char *s, char *data);
+extern	void query(const char *s, char *data);
 extern	void read_hist();
 extern	void remember(int save);
 extern	void resetkbd();

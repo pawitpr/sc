@@ -63,10 +63,10 @@ checkbounds(int *rowp, int *colp)
     oldptr = newptr /* wait incase we can't alloc */
 
 #ifndef PSC
-static char	nolonger[] = "The table can't be any longer";
+static const char	nolonger[] = "The table can't be any longer";
 #endif /* !PSC */
 
-static char	nowider[] = "The table can't be any wider";
+static const char	nowider[] = "The table can't be any wider";
 
 /*
  * grow the main && auxiliary tables (reset maxrows/maxcols as needed)
