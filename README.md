@@ -33,7 +33,7 @@ make install
 ```
 to the base directory `/usr/local`.
 This path can be changed in the
-[`Makefile`](https://github.com/n-t-roff/sc/blob/master/Makefile).
+[`Makefile.in`](https://github.com/n-t-roff/sc/blob/master/Makefile.in).
 All generated files are removed with
 ```sh
 make distclean
