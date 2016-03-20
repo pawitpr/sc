@@ -480,7 +480,7 @@ main (int argc, char  **argv)
 			     */
 			    if (mode_ind == 'i')
 				write_line(ctl('v'));
-			    //error("");
+			    error(" ");
 			    update(1);
 			}
 			stopdisp();
@@ -885,7 +885,7 @@ main (int argc, char  **argv)
 			    break;
 			case ESC:
 			case ctl('g'):
-			    //error("");
+			    error(" ");
 			    --modflg;	/* negate the modflg++ */
 			    break;
 			case 'r': case 'R':
@@ -909,7 +909,7 @@ main (int argc, char  **argv)
 				    break;
 				case ESC:
 				case ctl('g'):
-				    //error("");
+				    error(" ");
 				    break;
 				default:
 				    error("Not a valid direction");
@@ -1157,7 +1157,7 @@ main (int argc, char  **argv)
 		    (void) refresh();
 
 		    c = nmgetch();
-		    //error("");
+		    error(" ");
 		    switch (c) {
 		    case 'l':
 			(void) sprintf(line, "lock [range] ");
@@ -1224,7 +1224,7 @@ main (int argc, char  **argv)
 			refresh();
 			linelim = 0;
 			c = nmgetch();
-			//error("");
+			error(" ");
 			switch (c) {
 			    case 't':
 				sprintf(line, "frametop [<outrange> rows] ");
@@ -1346,16 +1346,16 @@ main (int argc, char  **argv)
 		case '"':
 		    error("Select buffer (a-z or 0-9):");
 		    if ((c=nmgetch()) == ESC || c == ctl('g')) {
-			//error("");
+			error(" ");
 		    } else if (c >= '0' && c <= '9') {
 			qbuf = c - '0' + (DELBUFSIZE - 10);
-			//error("");
+			error(" ");
 		    } else if (c >= 'a' && c <= 'z') {
 			qbuf = c - 'a' + (DELBUFSIZE - 36);
-			//error("");
+			error(" ");
 		    } else if (c == '"') {
 			qbuf = 0;
-			//error("");
+			error(" ");
 		    } else
 			error("Invalid buffer");
 		    break;
@@ -1382,7 +1382,7 @@ main (int argc, char  **argv)
 			    break;
 			}
 
-			//error("");	/* clear line */
+			error(" ");	/* clear line */
 
 			if (rcqual == ESC || rcqual == ctl('g'))
 			    break;
@@ -1667,14 +1667,14 @@ main (int argc, char  **argv)
 		    }
 		    error("Color number to set (1-8)?");
 		    if ((c=nmgetch()) == ESC || c == ctl('g')) {
-			//error("");
+			error(" ");
 			break;
 		    }
 		    if ((c -= ('1' - 1)) < 1 || c > 8) {
 			error("Invalid color number.");
 			break;
 		    }
-		    //error("");
+		    error(" ");
 		    sprintf(line, "color %d = ", c);
 		    linelim = strlen(line);
 		    if (cpairs[c-1] && cpairs[c-1]->expr) {
@@ -1926,7 +1926,7 @@ main (int argc, char  **argv)
 		case 'c':
 		    error("Copy marked cell:");
 		    if ((c = nmgetch()) == ESC || c == ctl('g')) {
-			//error("");
+			error(" ");
 			break;
 		    }
 		    if (c == '.') {
@@ -1948,7 +1948,7 @@ main (int argc, char  **argv)
 			error("Mark not set");
 			break;
 		    }
-		    //error("");
+		    error(" ");
 		    {
 			struct ent *p = *ATBL(tbl, savedrow[c], savedcol[c]);
 			int c1;
@@ -1985,7 +1985,7 @@ main (int argc, char  **argv)
 
 			error("Note: Add/Delete/Show/*(go to note)?");
 			if ((c = nmgetch()) == ESC || c == ctl('g')) {
-			    //error("");
+			    error(" ");
 			    break;
 			}
 			if (c == 'a' || c == 'A') {
@@ -1994,7 +1994,7 @@ main (int argc, char  **argv)
 			    linelim = strlen(line);
 			    insert_mode();
 			    write_line(ctl('v'));
-			    //error("");
+			    error(" ");
 			    FullUpdate++;
 			    break;
 			}
@@ -2002,7 +2002,7 @@ main (int argc, char  **argv)
 			    p = lookat(currow, curcol);
 			    p->nrow = p->ncol = -1;
 			    p->flags |= IS_CHANGED;
-			    //error("");
+			    error(" ");
 			    modflg++;
 			    FullUpdate++;
 			    break;
@@ -2016,7 +2016,7 @@ main (int argc, char  **argv)
 			}
 			if (c == '*') {
 			    gotonote();
-			    //error("");
+			    error(" ");
 			    break;
 			}
 			error("Invalid command");

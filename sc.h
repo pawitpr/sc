@@ -620,6 +620,13 @@ void ljustify(int, int, int, int);
 void yankcol(int);
 void yankrow(int);
 void list_frames(FILE *);
+void yankr(struct ent *, struct ent *);
+void dogetkey(void);
+void doseval(struct enode *, int, int, int);
+void doeval(struct enode *, char *, int, int, int);
+void getrange(char *, int);
+void getframe(int);
+void add_abbr(char *);
 
 #if BSD42 || SYSIII
 

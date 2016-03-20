@@ -14,7 +14,10 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <curses.h>
 #include "sc.h"
+
+static int are_abbrevs(void);
 
 static	struct abbrev *abbr_base;
 
@@ -66,23 +69,23 @@ add_abbr(char *string)
     if ((expansion = strchr(string, ' ')))
 	*expansion++ = '\0';
 
-    if (isalpha(*string) || isdigit(*string) || *string == '_') {
+    if (isalpha((int)*string) || isdigit((int)*string) || *string == '_') {
 	for (p = string; *p; p++)
-	    if (!(isalpha(*p) || isdigit(*p) || *p == '_')) {
+	    if (!(isalpha((int)*p) || isdigit((int)*p) || *p == '_')) {
 		error("Invalid abbreviation: %s", string);
 		scxfree(string);
 		return;
 	    }
     } else {
 	for (p = string; *p; p++)
-	    if ((isalpha(*p) || isdigit(*p) || *p == '_') && *(p+1)) {
+	    if ((isalpha((int)*p) || isdigit((int)*p) || *p == '_') && *(p+1)) {
 		error("Invalid abbreviation: %s", string);
 		scxfree(string);
 		return;
 	    }
     }
     
-    if (expansion == NULL)
+    if (expansion == NULL) {
 	if ((a = find_abbr(string, strlen(string), &prev))) {
 	    error("abbrev \"%s %s\"", a->abbr, a->exp);
 	    return;
@@ -90,7 +93,8 @@ add_abbr(char *string)
 	    error("abreviation \"%s\" doesn't exist", string);
 	    return;
 	}
- 
+    }
+
     if (find_abbr(string, strlen(string), &prev))
 	del_abbr(string);
 
@@ -117,9 +121,9 @@ void
 del_abbr(char *abbrev)
 {
     struct abbrev *a;
-    struct abbrev **prev;
+    struct abbrev *prev;
 
-    if (!(a = find_abbr(abbrev, strlen(abbrev), prev))) 
+    if (!(a = find_abbr(abbrev, strlen(abbrev), &prev))) 
 	return;
 
     if (a->a_next)
@@ -168,8 +172,8 @@ write_abbrevs(FILE *f)
     }
 }
 
-int
-are_abbrevs()
+static int
+are_abbrevs(void)
 {
     return (abbr_base != 0);
 }

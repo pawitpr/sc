@@ -320,9 +320,9 @@ deleterow(register int arg)
     }
     if (fr) {
 	if (any_locked_cells(currow, fr->or_left->col,
-		currow + arg - 1, fr->or_right->col))
+		currow + arg - 1, fr->or_right->col)) {
 	    error("Locked cells encountered. Nothing changed");
-	else {
+	} else {
 	    FullUpdate++;
 	    modflg++;
 	    if (dbidx < 0) dbidx++;
@@ -417,9 +417,9 @@ deleterow(register int arg)
 	}
     } else {
 	
-	if (any_locked_cells(currow, 0, currow + arg - 1, maxcol))
+	if (any_locked_cells(currow, 0, currow + arg - 1, maxcol)) {
 	    error("Locked cells encountered. Nothing changed");
-	else {
+	} else {
 	    if (dbidx < 0) dbidx++;
 	    delbuf[dbidx] = delbuf[DELBUFSIZE - 1];
 	    delbuffmt[dbidx] = delbuffmt[DELBUFSIZE - 1];
@@ -468,7 +468,7 @@ yankrow(int arg) {
     int i, qtmp;
     char buf[50];
     struct frange *fr;
-    struct ent *obuf;
+    struct ent *obuf = NULL;
 
     if ((fr = find_frange(currow, curcol)))
 	rs = fr->or_right->row - currow + 1;
@@ -524,7 +524,7 @@ yankcol(int arg) {
     int cs = maxcol - curcol + 1;
     int i, qtmp;
     char buf[50];
-    struct ent *obuf;
+    struct ent *obuf = NULL;
 
     if (cs - arg < 0) {
     	cs = cs > 0 ? cs : 0;
@@ -799,7 +799,7 @@ pullcells(int to_insert)
 
     if (to_insert == 'r') {
 	insertrow(numrows, 0);
-	if (fr = find_frange(currow, curcol))
+	if ((fr = find_frange(currow, curcol)))
 	    deltac = fr->or_left->col - mincol;
 	else {
 	    for (i = 0; i < numrows; i++)
@@ -934,9 +934,9 @@ colshow_op()
 	if (!col_hidden[j])
 	    break;
     j--;
-    if (i >= maxcols)
+    if (i >= maxcols) {
 	error("No hidden columns to show");
-    else {
+    } else {
 	(void) sprintf(line,"show %s:", coltoa(i));
 	(void) sprintf(line + strlen(line),"%s",coltoa(j));
 	linelim = strlen(line);
@@ -956,9 +956,9 @@ rowshow_op()
 	}
     j--;
 
-    if (i >= maxrows)
+    if (i >= maxrows) {
 	error("No hidden rows to show");
-    else {
+    } else {
 	(void)sprintf(line,"show %d:%d", i, j);
         linelim = strlen(line);
     }
@@ -1380,7 +1380,7 @@ doend(int rowinc, int colinc)
 	if (!loading)
 	    remember(1);
 
-	error ("");	/* clear line */
+	error(" ");	/* clear line */
 	return;
     }
 
@@ -1555,7 +1555,7 @@ formatcol(arg)
 			    insert_mode();
 			    linelim = strlen(line);
 			}
-			error("");
+			error(" ");
 		    } else {
 			error("Invalid format type");
 			c = -1;
@@ -1588,7 +1588,7 @@ formatcol(arg)
     }
     scxfree((char *)oldformat);
     if (c >= 0)
-	error("");
+	error(" ");
 }
 
 void
@@ -2265,7 +2265,7 @@ copye(register struct enode *e, int Rdelta, int Cdelta, int r1, int c1,
 	ret->e.r.right.vp = lookat(newrow, newcol);
 	ret->e.r.right.vf = e->e.r.right.vf;
     } else {
-	struct enode *temprange;
+	struct enode *temprange = NULL;
 
 	if (freeenodes) {
 	    ret = freeenodes;
@@ -2323,8 +2323,8 @@ copye(register struct enode *e, int Rdelta, int Cdelta, int r1, int c1,
 		break;
 	    case 'f':
 	    case 'F':
-		if (range && ret->op == 'F' ||
-			!range && ret->op == 'f')
+		if (( range && ret->op == 'F') ||
+		    (!range && ret->op == 'f')   )
 		    Rdelta = Cdelta = 0;
 		ret->e.o.left = copye(e->e.o.left, Rdelta, Cdelta,
 			r1, c1, r2, c2, transpose);
@@ -2549,7 +2549,7 @@ openfile(char *fname, int *rpid, int *rfd)
 	    (void) dup(pipefd[3]);	/* connect to second pipe */
 	}
 	(void) signal(SIGINT, SIG_DFL);	/* reset */
-	(void) execl("/bin/sh", "sh", "-c", efname, 0);
+	(void) execl("/bin/sh", "sh", "-c", efname, NULL);
 	exit (-127);
     } else {				/* else parent */
 	*rpid = pid;
@@ -2847,12 +2847,12 @@ writefile(char *fname, int r0, int c0, int rn, int cn)
 	if ((plugin = findplugin(p+1, 'w')) != NULL) {
 	    if (!plugin_exists(plugin, strlen(plugin), save + 1)) {
 		error("plugin not found");
-		return;
+		return -1;
 	    }
 	    *save = '|';
 	    if ((strlen(save) + strlen(fname) + 20) > PATHLEN) {
 		error("Path too long");
-		return;
+		return -1;
 	    }
 	    sprintf(save + strlen(save), " %s%d:", coltoa(c0), r0);
 	    sprintf(save + strlen(save), "%s%d \"%s\"", coltoa(cn), rn, fname);
@@ -2869,13 +2869,14 @@ writefile(char *fname, int r0, int c0, int rn, int cn)
     }
 #endif /* VMS */
 
-    if (*fname == '\0')
+    if (*fname == '\0') {
 	if (isatty(STDOUT_FILENO) || *curfile != '\0')
 	    fname = curfile;
 	else {
 	    write_fd(stdout, r0, c0, rn, cn);
 	    return (0);
 	}
+    }
 
 #ifdef MSDOS
     namelen = 12;
@@ -2930,9 +2931,9 @@ writefile(char *fname, int r0, int c0, int rn, int cn)
         (void) strcpy(curfile, save);
         modflg = 0;
 	FullUpdate++;
-	if (usecurses)
+	if (usecurses) {
 	    error("File \"%s\" written", curfile);
-	else
+	} else
 	    fprintf(stderr, "\nFile \"%s\" written", curfile);
     }
 
@@ -2967,12 +2968,12 @@ readfile(char *fname, int eraseflg)
 	if ((plugin = findplugin(p+1, 'r')) != NULL) {
 	    if (!(plugin_exists(plugin, strlen(plugin), save + 1))) {
 		error("plugin not found");
-		return;
+		return 0;
 	    }
 	    *save = '|';
 	    if ((strlen(save) + strlen(fname) + 2) > PATHLEN) {
 		error("Path too long");
-		return;
+		return 0;
 	    }
 	    sprintf(save + strlen(save), " \"%s\"", fname);
 	    eraseflg = 0;
@@ -3242,14 +3243,14 @@ markcell()
 
     error("Mark cell:");
     if ((c=nmgetch()) == ESC || c == ctl('g')) {
-	error("");
+	error(" ");
 	return;
     }
     if ((c -= ('a' - 1)) < 1 || c > 26) {
 	error("Invalid mark (must be a-z)");
 	return;
     }
-    error("");
+    error(" ");
     savedrow[c] = currow;
     savedcol[c] = curcol;
     savedstrow[c] = strow;
@@ -3265,7 +3266,7 @@ dotick(int tick)
 
     error("Go to marked cell:");
     if ((c = nmgetch()) == ESC || c == ctl('g')) {
-	error("");
+	error(" ");
 	return;
     }
     if (c == '`' || c == '\'')
@@ -3279,7 +3280,7 @@ dotick(int tick)
 	error("Mark not set");
 	return;
     }
-    error("");
+    error(" ");
     currow = savedrow[c];
     curcol = savedcol[c];
     rowsinrange = 1;
@@ -3301,9 +3302,9 @@ gotonote(void)
     register struct ent *p;
 
     p = lookat(currow, curcol);
-    if (p->nrow == -1)
+    if (p->nrow == -1) {
 	error("No note attached");
-    else
+    } else
 	moveto(p->nrow, p->ncol, p->nlastrow, p->nlastcol, -1, -1);
 }
 

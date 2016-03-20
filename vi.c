@@ -130,7 +130,7 @@ write_line(int c)
     struct frange *fr;
     struct crange *cr;
 
-    //error("");
+    error(" ");
     if (c != ctl('i')) completethis = NULL;
     if (mode == EDIT_MODE) {
 	nosavedot = 0;
@@ -1465,7 +1465,7 @@ for_hist()
     if (histp) {
 	error("History line %d", endhist - lasthist + histp);
     } else {
-	//error("");
+	error(" ");
     }
 }
 
@@ -1495,7 +1495,7 @@ back_hist()
     if (histp) {
 	error("History line %d", endhist - lasthist + histp);
     } else {
-	//error("");
+	error(" ");
     }
 }
 
@@ -1575,7 +1575,7 @@ search_again(bool reverse)
 #endif
 #endif
     prev_match = histp > 0 ? histp : 0;
-    //error("");
+    error(" ");
 
     do {
 	if (lasthist > 0) {
@@ -2035,12 +2035,12 @@ query(char *s, char *data)
 	update(0);
 	switch (c = nmgetch()) {
 	    case ctl('m'):
-		//error("");
+		error(" ");
 		return;
 	    case ctl('g'):
 		line[0] = '\0';
 		linelim = -1;
-		//error("");
+		error(" ");
 		update(0);
 		return;
 	    case ctl('l'):

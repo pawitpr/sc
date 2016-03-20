@@ -14,6 +14,7 @@
 
 #include <sys/types.h>
 #include <string.h>
+#include <math.h>
 
 #if defined(BSD42) || defined(BSD43)
 #include <sys/ioctl.h>
@@ -111,11 +112,11 @@ yylex()
     static char *tokenst = NULL;
     static int tokenl;
 
-    while (isspace(*p)) p++;
+    while (isspace((int)*p)) p++;
     if (*p == '\0') {
 	isfunc = isgoto = 0;
 	ret = -1;
-    } else if (isalpha(*p) || (*p == '_')) {
+    } else if (isalpha((int)*p) || (*p == '_')) {
 	register char *la;	/* lookahead pointer */
 	register struct key *tblp;
 
@@ -128,23 +129,23 @@ yylex()
 	 *  tokens made up of alphanumeric chars and '_' (a function or
 	 *  token or command or a range name)
 	 */
-	while (isalpha(*p) && isascii(*p)) {
+	while (isalpha((int)*p) && isascii((int)*p)) {
 	    p++;
 	    tokenl++;
 	}
 	la = p;
-	while (isdigit(*la) || (*la == '$'))
+	while (isdigit((int)*la) || (*la == '$'))
 	    la++;
 	/*
 	 * A COL is 1 or 2 char alpha with nothing but digits following
 	 * (no alpha or '_')
 	 */
-	if (!isdigit(*tokenst) && tokenl && tokenl <= 2 && (colstate ||
-		(isdigit(*(la-1)) && !(isalpha(*la) || (*la == '_'))))) {
+	if (!isdigit((int)*tokenst) && tokenl && tokenl <= 2 && (colstate ||
+		(isdigit((int)*(la-1)) && !(isalpha((int)*la) || (*la == '_'))))) {
 	    ret = COL;
 	    yylval.ival = atocol(tokenst, tokenl);
 	} else {
-	    while (isalpha(*p) || (*p == '_') || isdigit(*p)) {
+	    while (isalpha((int)*p) || (*p == '_') || isdigit((int)*p)) {
 		p++;
 		tokenl++;
 	    }
@@ -192,7 +193,7 @@ yylex()
 		}
 	    }
 	}
-    } else if ((*p == '.') || isdigit(*p)) {
+    } else if ((*p == '.') || isdigit((int)*p)) {
 #ifdef SIGVOID
 	void (*sig_save)();
 #else
@@ -222,7 +223,7 @@ yylex()
 		do {
 		    v = v*10.0 + (double) ((unsigned) *p - '0');
 		    tokenl++;
-		} while (isdigit(*++p));
+		} while (isdigit((int)*++p));
 		if (dateflag) {
 		    ret = NUMBER;
 		    yylval.ival = (int)v;
@@ -232,19 +233,19 @@ yylex()
 		 *  .'s as tokens instead of interpreting them as decimal
 		 *  points.  dateflag counts the .'s as they're returned.
 		 */
-		} else if (*p=='.' && isdigit(*(p+1)) && (*(p+2)=='.' ||
-			(isdigit(*(p+2)) && *(p+3)=='.'))) {
+		} else if (*p=='.' && isdigit((int)*(p+1)) && (*(p+2)=='.' ||
+			(isdigit((int)*(p+2)) && *(p+3)=='.'))) {
 		    ret = NUMBER;
 		    yylval.ival = (int)v;
 		    dateflag = 2;
 		} else if (*p == 'e' || *p == 'E') {
-		    while (isdigit(*++p)) /* */;
-		    if (isalpha(*p) || *p == '_') {
+		    while (isdigit((int)*++p)) /* */;
+		    if (isalpha((int)*p) || *p == '_') {
 			linelim = p - line;
 			return (yylex());
 		    } else
 			ret = FNUMBER;
-		} else if (isalpha(*p) || *p == '_') {
+		} else if (isalpha((int)*p) || *p == '_') {
 		    linelim = p - line;
 		    return (yylex());
 		}
@@ -322,7 +323,7 @@ plugin_exists(char *name, int len, char *path)
 	strcpy((char *)path, HomeDir);
 	strcat((char *)path, "/.sc/plugins/");
 	strncat((char *)path, name, len);
-	if (fp = fopen((char *)path, "r")) {
+	if ((fp = fopen((char *)path, "r"))) {
 	    fclose(fp);
 	    return 1;
 	}
@@ -330,7 +331,7 @@ plugin_exists(char *name, int len, char *path)
     strcpy((char *)path, LIBDIR);
     strcat((char *)path, "/plugins/");
     strncat((char *)path, name, len);
-    if (fp = fopen((char *)path, "r")) {
+    if ((fp = fopen((char *)path, "r"))) {
 	fclose(fp);
 	return 1;
     }
@@ -352,10 +353,10 @@ atocol(char *string, int len)
 {
     register int col;
 
-    col = (toupper(string[0])) - 'A';
+    col = (toupper((int)string[0])) - 'A';
 
     if (len == 2)		/* has second char */
-	col = ((col + 1) * 26) + ((toupper(string[1])) - 'A');
+	col = ((col + 1) * 26) + ((toupper((int)string[1])) - 'A');
 
     return (col);
 }

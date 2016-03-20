@@ -299,15 +299,14 @@ doquery(char *s, char *data, int fd)
 
     line[0] = '\0';
     linelim = -1;
-    //error("");
+    error(" ");
     update(0);
 
     if (s) scxfree(s);
 }
 
 void
-dogetkey()
-{
+dogetkey(void) {
     int c, len;
 
     goraw();

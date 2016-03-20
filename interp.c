@@ -1118,12 +1118,12 @@ doext(struct enode *se)
 		error("Warning: running \"%s\" failed", buff);
 		cellerror = CELLERROR;
 	    } else {
-		if (fgets(buff, sizeof(buff)-1, pp) == NULL)	/* one line */
+		if (fgets(buff, sizeof(buff)-1, pp) == NULL) {	/* one line */
 		    error("Warning: external function returned nothing");
-		else {
+		} else {
 		    char *cp;
 
-		    error("");				/* erase notice */
+		    error(" ");				/* erase notice */
 		    buff[sizeof(buff)-1] = '\0';
 
 		    if ((cp = strchr(buff, '\n')))	/* contains newline */
@@ -1212,15 +1212,15 @@ docase(int acase, char *s)
 
     if( acase == UPPER ) {
         while( *p != '\0' ) {
-           if( islower(*p) )
-		*p = toupper(*p);
+           if( islower((int)*p) )
+		*p = toupper((int)*p);
 	   p++;
 	}
     }
     else if (acase == LOWER) {
 	while (*p != '\0') {
-	    if (isupper(*p))
-		*p = tolower(*p);
+	    if (isupper((int)*p))
+		*p = tolower((int)*p);
 	    p++;
 	}
     }
@@ -1244,19 +1244,19 @@ docapital(char *s)
     if (s == NULL)
 	return (NULL);
     for (p = s; *p != '\0' && AllUpper != 0; p++)
-	if (isalpha(*p) && islower(*p))  AllUpper = 0;
+	if (isalpha((int)*p) && islower((int)*p))  AllUpper = 0;
     for (p = s; *p != '\0'; p++) {
-	if (!isalnum(*p))
+	if (!isalnum((int)*p))
 		skip = 1;
 	else
 	if (skip == 1) {
 	    skip = 0;
-	    if (islower(*p))
-		*p = toupper(*p);
+	    if (islower((int)*p))
+		*p = toupper((int)*p);
 	}
 	else	/* if the string was all upper before */
-        if (isupper(*p) && AllUpper != 0)
-	    *p = tolower(*p);
+        if (isupper((int)*p) && AllUpper != 0)
+	    *p = tolower((int)*p);
     }
     return (s);
 }
@@ -1561,12 +1561,10 @@ void
 copy(struct ent *dv1, struct ent *dv2, struct ent *v1, struct ent *v2)
 {
     struct ent *p;
-    struct ent *n;
     static int minsr = -1, minsc = -1;
     static int maxsr = -1, maxsc = -1;
     int mindr, mindc;
     int maxdr, maxdc;
-    int vr, vc;
     int r, c;
     int deltar, deltac;
 
@@ -1933,11 +1931,12 @@ num_search(double n, int firstrow, int firstcol, int lastrow,
 		(p->cellerror == errsearch)))	/* CELLERROR vs CELLINVALID */
 	    break;
 	if (r == endr && c == endc) {
-	    if (errsearch)
+	    if (errsearch) {
 		error("no %s cell found", errsearch == CELLERROR ? "ERROR" :
 		      "INVALID");
-	    else
+	    } else {
 		error("Number not found");
+	    }
 	    return;
 	}
     }
@@ -2055,7 +2054,7 @@ str_search(char *s, int firstrow, int firstcol, int lastrow, int lastcol,
 		    *line = '\0';
 	    }
 	}
-	if (!col_hidden[c])
+	if (!col_hidden[c]) {
 	    if (gs.g_type == G_STR) {
 		if (p && p->label
 #if defined(REGCOMP)
@@ -2088,6 +2087,7 @@ str_search(char *s, int firstrow, int firstcol, int lastrow, int lastcol,
 #endif
 #endif
 		    break;
+	}
 	if (r == endr && c == endc) {
 	    error("String not found");
 #if defined(REGCOMP)
@@ -2464,7 +2464,7 @@ constant(register struct enode *e)
 	 e == NULL
 	 || e->op == O_CONST
 	 || e->op == O_SCONST
-	 || e->op == 'm' && constant(e->e.o.left)
+	 || (e->op == 'm' && constant(e->e.o.left))
 	 || (
 	     e->op != O_VAR
 	     && !(e->op & REDUCE)
