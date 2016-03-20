@@ -638,8 +638,6 @@ nmgetch()
 
 #endif
 
-#if defined(SYSV2) || defined(SYSV3) || defined(MSDOS)
-
 void
 initkbd()
 {
@@ -701,8 +699,6 @@ nmgetch()
     }
     return (c);
 }
-
-#endif /* SYSV2 || SYSV3 */
 
 #endif /* SIMPLE */
 

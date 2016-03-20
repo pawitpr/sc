@@ -2596,13 +2596,13 @@ closefile(FILE *f, int pid, int rfd)
 # ifdef VMS
 		VMS_read_raw = 1;
 # else /* VMS */
-#  if 0 //SYSV2 || SYSV3
+#  ifdef HAVE_FIXTERM
 		fixterm();
-#  else /* SYSV2 || SYSV3 */
+#  else
 		cbreak();
 		nonl();
 		noecho ();
-#  endif /* SYSV2 || SYSV3 */
+#  endif
 		kbd_again();
 # endif /* VMS */
 		if (color && has_colors())

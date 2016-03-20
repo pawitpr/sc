@@ -1232,13 +1232,13 @@ void
 goraw()
 {
     if (usecurses) {
-#if 0 //SYSV2 || SYSV3
+#ifdef HAVE_FIXTERM
 	fixterm();
-#else /* SYSV2 || SYSV3 */
+#else
 	cbreak();
 	nonl();
 	noecho ();
-#endif /* SYSV2 || SYSV3 */
+#endif
 	kbd_again();
 	if (color && has_colors())
 	    bkgdset(COLOR_PAIR(1) | ' ');
@@ -1258,7 +1258,7 @@ deraw(int ClearLastLine)
 	    (void) clrtoeol();
 	    (void) refresh();
 	}
-#if 0 //SYSV2 || SYSV3
+#ifdef HAVE_RESETTERM
 	resetterm();
 #else
 	nocbreak();
