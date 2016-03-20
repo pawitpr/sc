@@ -27,7 +27,6 @@ char *regcmp();
 char *regex();
 #endif
 
-void doshell();
 void gohome();
 void leftlimit();
 void rightlimit();
@@ -1362,7 +1361,7 @@ cr_line()
 }
 
 void
-doshell()
+doshell(void)
 {
     /*
     *  "! command"  executes command

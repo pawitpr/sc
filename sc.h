@@ -627,6 +627,9 @@ void doeval(struct enode *, char *, int, int, int);
 void getrange(char *, int);
 void getframe(int);
 void add_abbr(char *);
+void repaint(int, int, int, int, int);
+void update(int);
+void doshell(void);
 
 #if BSD42 || SYSIII
 

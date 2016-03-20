@@ -75,9 +75,6 @@ int brokenpipe = FALSE;	/* Set to true if SIGPIPE is received */
 int	wasforw	= FALSE;
 #endif
 
-void		update();
-void		repaint();
-extern void	doshell();
 extern void	gohome();
 extern void	leftlimit();
 extern void	rightlimit();
@@ -817,7 +814,7 @@ main (int argc, char  **argv)
 			    break;
 			case 'c':
 			    showcell = (!showcell);
-			    repaint(lastmx, lastmy, fwidth[lastcol]);
+			    repaint(lastmx, lastmy, fwidth[lastcol], 0, 0);
 			    error("Cell highlighting %sabled.",
 				    showcell ? "en" : "dis");
 			    --modflg;	/* negate the modflg++ */

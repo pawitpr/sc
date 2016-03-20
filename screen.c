@@ -34,8 +34,6 @@ extern int VMS_read_raw;   /*sigh*/
 #define nonl()	 (_tty.sg_flags &= ~CRMOD, _pfast = TRUE, stty(_tty_ch, &_tty))
 #endif
 
-void	repaint(int x, int y, int len, int attron, int attroff);
-
 char	under_cursor = ' '; /* Data under the < cursor */
 char	mode_ind = 'i';
 char	search_ind = ' ';
