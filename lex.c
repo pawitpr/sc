@@ -103,7 +103,7 @@ int
 yylex()
 {
     char *p = line + linelim;
-    int ret;
+    int ret = -1;
     static int isfunc = 0;
     static bool isgoto = 0;
     static bool colstate = 0;

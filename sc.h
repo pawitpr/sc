@@ -63,12 +63,14 @@
 #define color_set(c, o)		attron(COLOR_PAIR(c))
 #endif
 
+/*
 #if !defined(attr_get) || defined(NCURSES_VERSION) && NCURSES_VERSION_MAJOR < 5
 #undef attr_get
 #define attr_get(a, p, o)	((void)((a) != 0 && (*(a) = stdscr->_attrs)), \
 				(void)((p) != 0 && \
 				(*(p) = PAIR_NUMBER(stdscr->_attrs))), OK)
 #endif
+*/
 
 #if (defined(BSD42) || defined(BSD43)) && !defined(strrchr)
 #define strrchr rindex
@@ -612,6 +614,12 @@ extern	int  pagesize;	/* If nonzero, use instead of 1/2 screen height */
 extern	int rowlimit;
 extern	int collimit;
 void gotonote(void);
+void center(int, int, int, int);
+void rjustify(int, int, int, int);
+void ljustify(int, int, int, int);
+void yankcol(int);
+void yankrow(int);
+void list_frames(FILE *);
 
 #if BSD42 || SYSIII
 

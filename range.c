@@ -13,6 +13,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <curses.h>
 #include "sc.h"
 
 static	struct range *rng_base;
@@ -59,24 +60,24 @@ add_range(char *name, struct ent_ptr left, struct ent_ptr right, int is_range)
     }
 
     for (p = name; *p; p++)
-	if (!(isalpha(*p) || isdigit(*p) || *p == '_')) {
+	if (!(isalpha((int)*p) || isdigit((int)*p) || *p == '_')) {
 	    error("Invalid range name \"%s\" - illegal combination", name);
 	    scxfree(name);
 	    return;
 	}
  
     p = name;
-    if (isdigit(*p) || (isalpha(*p++) && (isdigit(*p) ||
-		(isalpha(*p++) && isdigit(*p))))) {
+    if (isdigit((int)*p) || (isalpha((int)*p++) && (isdigit((int)*p) ||
+		(isalpha((int)*p++) && isdigit((int)*p))))) {
 	if (*name == '0' && (name[1] == 'x' || name[1] == 'X')) {
 	    ++p;
-	    while (isxdigit(*++p)) /* */;
+	    while (isxdigit((int)*++p)) /* */;
 	    if (*p == 'p' || *p == 'P')
-		while (isxdigit(*++p)) /* */;
+		while (isxdigit((int)*++p)) /* */;
 	} else {
-	    while (isdigit(*++p)) /* */;
-	    if (isdigit(*name) && (*p == 'e' || *p == 'E'))
-		while (isdigit(*++p)) /* */;
+	    while (isdigit((int)*++p)) /* */;
+	    if (isdigit((int)*name) && (*p == 'e' || *p == 'E'))
+		while (isdigit((int)*++p)) /* */;
 	}
 	if (!(*p)) {
 	    error("Invalid range name \"%s\" - ambiguous", name);

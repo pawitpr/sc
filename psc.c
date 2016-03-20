@@ -317,13 +317,13 @@ getcol(char *p)
     col = 0;
     if (!p)
 	return (0);
-    while (*p && !isalpha(*p)) 
+    while (*p && !isalpha((int)*p)) 
 	p++; 
     if (!*p)
 	return (0);
-    col = (toupper(*p) - 'A');
-    if (isalpha(*++p)) 
-	col = (col + 1)*26 + (toupper(*p) - 'A');
+    col = (toupper((int)*p) - 'A');
+    if (isalpha((int)*++p)) 
+	col = (col + 1)*26 + (toupper((int)*p) - 'A');
     return (col);
 }
 
@@ -336,12 +336,12 @@ getrow(char *p)
     row = 0;
     if (!p)
 	return (0);
-    while (*p && !isdigit(*p))
+    while (*p && !isdigit((int)*p))
 	p++; 
     if (!*p)
 	return (0);
-    while (*p && isdigit(*p))
-    {	row = row * 10 + *p - '0';
+    while (*p && isdigit((int)*p)) {
+	row = row * 10 + *p - '0';
 	p++;
     }
     return (row);

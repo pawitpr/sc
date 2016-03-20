@@ -79,13 +79,13 @@ sortrange(struct ent *left, struct ent *right, char *criteria)
 		    return;
 	    }
 	    if (criteria[cp])
-		col = toupper(criteria[cp++]) - 'A';
+		col = toupper((int)criteria[cp++]) - 'A';
 	    else {
 		error("Invalid sort criteria");
 		return;
 	    }
 	    if (criteria[cp] && criteria[cp] != '+' && criteria[cp] != '-')
-		col = (col + 1) * 26 + toupper(criteria[cp++]) - 'A';
+		col = (col + 1) * 26 + toupper((int)criteria[cp++]) - 'A';
 	    sort[howmany].column = col;
 	    if (col < minc || col > maxc) {
 		error("Invalid sort criteria");

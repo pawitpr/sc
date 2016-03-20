@@ -200,8 +200,7 @@ write_franges(FILE *f)
 }
 
 void
-list_frames(FILE *f)
-{
+list_frames(FILE *f) {
     register struct frange *r;
     register struct frange *nextr;
 

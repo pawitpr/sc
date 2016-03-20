@@ -26,12 +26,13 @@ getnum(int r0, int c0, int rn, int cn, int fd)
 	for (c = c0, pp = ATBL(tbl, r, c); c <= cn; pp++, c++) {
 	    *line = '\0';
 	    p = *pp;
-	    if (p)
+	    if (p) {
 		if (p->cellerror)
 		    sprintf(line, "%s", (*pp)->cellerror == CELLERROR ?
 			    "ERROR" : "INVALID");
 		else if (p->flags & IS_VALID)
 		    sprintf(line, "%.15g", p->v);
+	    }
 	    if (c < cn)
 		strcat(line, "\t");
 	    else
@@ -298,7 +299,7 @@ doquery(char *s, char *data, int fd)
 
     line[0] = '\0';
     linelim = -1;
-    error("");
+    //error("");
     update(0);
 
     if (s) scxfree(s);

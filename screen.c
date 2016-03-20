@@ -1232,7 +1232,7 @@ void
 goraw()
 {
     if (usecurses) {
-#if SYSV2 || SYSV3
+#if 0 //SYSV2 || SYSV3
 	fixterm();
 #else /* SYSV2 || SYSV3 */
 	cbreak();
@@ -1258,7 +1258,7 @@ deraw(int ClearLastLine)
 	    (void) clrtoeol();
 	    (void) refresh();
 	}
-#if SYSV2 || SYSV3
+#if 0 //SYSV2 || SYSV3
 	resetterm();
 #else
 	nocbreak();

@@ -463,8 +463,7 @@ deleterow(register int arg)
 }
 
 void
-yankrow(int arg)
-{
+yankrow(int arg) {
     int rs = maxrow - currow + 1;
     int i, qtmp;
     char buf[50];
@@ -521,8 +520,7 @@ yankrow(int arg)
 }
 
 void
-yankcol(int arg)
-{
+yankcol(int arg) {
     int cs = maxcol - curcol + 1;
     int i, qtmp;
     char buf[50];
@@ -1594,8 +1592,7 @@ formatcol(arg)
 }
 
 void
-ljustify(sr, sc, er, ec)
-{
+ljustify(int sr, int sc, int er, int ec) {
     struct ent *p;
     int i, j;
 
@@ -1623,8 +1620,7 @@ ljustify(sr, sc, er, ec)
 }
 
 void
-rjustify(sr, sc, er, ec)
-{
+rjustify(int sr, int sc, int er, int ec) {
     struct ent *p;
     int i, j;
 
@@ -1652,8 +1648,7 @@ rjustify(sr, sc, er, ec)
 }
 
 void
-center(sr, sc, er, ec)
-{
+center(int sr, int sc, int er, int ec) {
     struct ent *p;
     int i, j;
 
@@ -2601,7 +2596,7 @@ closefile(FILE *f, int pid, int rfd)
 # ifdef VMS
 		VMS_read_raw = 1;
 # else /* VMS */
-#  if SYSV2 || SYSV3
+#  if 0 //SYSV2 || SYSV3
 		fixterm();
 #  else /* SYSV2 || SYSV3 */
 		cbreak();

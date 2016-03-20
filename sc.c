@@ -203,7 +203,7 @@ flush_saved()
 
     if (dbidx < 0)
 	return;
-    if (p = delbuf[dbidx]) {
+    if ((p = delbuf[dbidx])) {
 	scxfree(delbuffmt[dbidx]);
 	delbuffmt[dbidx] = NULL;
     }
@@ -230,7 +230,6 @@ main (int argc, char  **argv)
     int     nedistate;
     int	    running;
     char    *revi;
-    char    *home;
     int	    anychanged = FALSE;
     int     tempx, tempy; 	/* Temp versions of curx, cury */
 
@@ -481,7 +480,7 @@ main (int argc, char  **argv)
 			     */
 			    if (mode_ind == 'i')
 				write_line(ctl('v'));
-			    error("");
+			    //error("");
 			    update(1);
 			}
 			stopdisp();
@@ -836,7 +835,7 @@ main (int argc, char  **argv)
 			    break;
 			case 'C':
 			    color = !color;
-			    if (has_colors())
+			    if (has_colors()) {
 				if (color) {
 				    attron(COLOR_PAIR(1));
 				    bkgd(COLOR_PAIR(1) | ' ');
@@ -844,6 +843,7 @@ main (int argc, char  **argv)
 				    attron(COLOR_PAIR(0));
 				    bkgd(COLOR_PAIR(0) | ' ');
 				}
+			    }
 			    error("Color %sabled.", color ? "en" : "dis");
 			    break;
 			case 'N':
@@ -885,7 +885,7 @@ main (int argc, char  **argv)
 			    break;
 			case ESC:
 			case ctl('g'):
-			    error("");
+			    //error("");
 			    --modflg;	/* negate the modflg++ */
 			    break;
 			case 'r': case 'R':
@@ -909,7 +909,7 @@ main (int argc, char  **argv)
 				    break;
 				case ESC:
 				case ctl('g'):
-				    error("");
+				    //error("");
 				    break;
 				default:
 				    error("Not a valid direction");
@@ -1157,7 +1157,7 @@ main (int argc, char  **argv)
 		    (void) refresh();
 
 		    c = nmgetch();
-		    error("");
+		    //error("");
 		    switch (c) {
 		    case 'l':
 			(void) sprintf(line, "lock [range] ");
@@ -1224,7 +1224,7 @@ main (int argc, char  **argv)
 			refresh();
 			linelim = 0;
 			c = nmgetch();
-			error("");
+			//error("");
 			switch (c) {
 			    case 't':
 				sprintf(line, "frametop [<outrange> rows] ");
@@ -1276,9 +1276,9 @@ main (int argc, char  **argv)
 			/* Show color definitions and various types of
 			 * ranges
 			 */
-			if (!are_ranges() && !are_frames() && !are_colors())
+			if (!are_ranges() && !are_frames() && !are_colors()) {
 			    error("Nothing to show");
-			else {
+			} else {
 			    FILE *f;
 			    int pid;
 			    char px[MAXCMD];
@@ -1346,16 +1346,16 @@ main (int argc, char  **argv)
 		case '"':
 		    error("Select buffer (a-z or 0-9):");
 		    if ((c=nmgetch()) == ESC || c == ctl('g')) {
-			error("");
+			//error("");
 		    } else if (c >= '0' && c <= '9') {
 			qbuf = c - '0' + (DELBUFSIZE - 10);
-			error("");
+			//error("");
 		    } else if (c >= 'a' && c <= 'z') {
 			qbuf = c - 'a' + (DELBUFSIZE - 36);
-			error("");
+			//error("");
 		    } else if (c == '"') {
 			qbuf = 0;
-			error("");
+			//error("");
 		    } else
 			error("Invalid buffer");
 		    break;
@@ -1382,7 +1382,7 @@ main (int argc, char  **argv)
 			    break;
 			}
 
-			error("");	/* clear line */
+			//error("");	/* clear line */
 
 			if (rcqual == ESC || rcqual == ctl('g'))
 			    break;
@@ -1454,9 +1454,9 @@ main (int argc, char  **argv)
 						    writefile(curfile, 0, 0,
 							    maxrow, maxcol);
 						    running = 0;
-						} else if (modflg)
+						} else if (modflg) {
 						    error("No file name.");
-						else
+						} else
 						    running = 0;
 						break;
 				}
@@ -1667,14 +1667,14 @@ main (int argc, char  **argv)
 		    }
 		    error("Color number to set (1-8)?");
 		    if ((c=nmgetch()) == ESC || c == ctl('g')) {
-			error("");
+			//error("");
 			break;
 		    }
 		    if ((c -= ('1' - 1)) < 1 || c > 8) {
 			error("Invalid color number.");
 			break;
 		    }
-		    error("");
+		    //error("");
 		    sprintf(line, "color %d = ", c);
 		    linelim = strlen(line);
 		    if (cpairs[c-1] && cpairs[c-1]->expr) {
@@ -1826,21 +1826,22 @@ main (int argc, char  **argv)
 				    strlen(scext) + 1, ".\0");
 			}
 		    }
-		    if (*curfile && tbl_style == 0)
+		    if (*curfile && tbl_style == 0) {
 			error("Default file is \"%s.%s\"", curfile,
 				tbl0ext == NULL ? "cln" : tbl0ext);
-		    else if (*curfile && tbl_style == TBL)
+		    } else if (*curfile && tbl_style == TBL) {
 			error("Default file is \"%s.%s\"", curfile,
 				tblext == NULL ? "tbl" : tblext);
-		    else if (*curfile && tbl_style == LATEX)
+		    } else if (*curfile && tbl_style == LATEX) {
 			error("Default file is \"%s.%s\"", curfile,
 				latexext == NULL ? "lat" : latexext);
-		    else if (*curfile && tbl_style == SLATEX)
+		    } else if (*curfile && tbl_style == SLATEX) {
 			error("Default file is \"%s.%s\"", curfile,
 				slatexext == NULL ? "stx" : slatexext);
-		    else if (*curfile && tbl_style == TEX)
+		    } else if (*curfile && tbl_style == TEX) {
 			error("Default file is \"%s.%s\"", curfile,
 				texext == NULL ? "tex" : texext);
+		    }
 		    c = *(curfile + strlen(curfile) +
 			    strlen(curfile + strlen(curfile) + 1));
 		    *(curfile + strlen(curfile) +
@@ -1925,7 +1926,7 @@ main (int argc, char  **argv)
 		case 'c':
 		    error("Copy marked cell:");
 		    if ((c = nmgetch()) == ESC || c == ctl('g')) {
-			error("");
+			//error("");
 			break;
 		    }
 		    if (c == '.') {
@@ -1947,7 +1948,7 @@ main (int argc, char  **argv)
 			error("Mark not set");
 			break;
 		    }
-		    error("");
+		    //error("");
 		    {
 			struct ent *p = *ATBL(tbl, savedrow[c], savedcol[c]);
 			int c1;
@@ -1984,7 +1985,7 @@ main (int argc, char  **argv)
 
 			error("Note: Add/Delete/Show/*(go to note)?");
 			if ((c = nmgetch()) == ESC || c == ctl('g')) {
-			    error("");
+			    //error("");
 			    break;
 			}
 			if (c == 'a' || c == 'A') {
@@ -1993,7 +1994,7 @@ main (int argc, char  **argv)
 			    linelim = strlen(line);
 			    insert_mode();
 			    write_line(ctl('v'));
-			    error("");
+			    //error("");
 			    FullUpdate++;
 			    break;
 			}
@@ -2001,7 +2002,7 @@ main (int argc, char  **argv)
 			    p = lookat(currow, curcol);
 			    p->nrow = p->ncol = -1;
 			    p->flags |= IS_CHANGED;
-			    error("");
+			    //error("");
 			    modflg++;
 			    FullUpdate++;
 			    break;
@@ -2015,7 +2016,7 @@ main (int argc, char  **argv)
 			}
 			if (c == '*') {
 			    gotonote();
-			    error("");
+			    //error("");
 			    break;
 			}
 			error("Invalid command");
@@ -2060,11 +2061,12 @@ main (int argc, char  **argv)
 		    break;
 #endif
 		default:
-		    if ((toascii(c)) != c)
+		    if ((toascii(c)) != c) {
 			error ("Weird character, decimal %d\n",
 				(int) c);
-		    else
+		    } else {
 			    error ("No such command (%c)", c);
+		    }
 		    break;
 	    }
 	edistate = nedistate;

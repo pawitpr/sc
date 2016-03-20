@@ -337,7 +337,7 @@ LN=ln
 # people who don't understand them.
 CFLAGS=-DSYSV3 -O2 -Wall -pipe
 #CFLAGS=-DSYSV3 -O2 -pipe
-LIB=-lm -lncurses
+LIB=-lm -lcurses
 
 # All of the source files
 SRC=Makefile abbrev.c cmds.c color.c crypt.c eres.sed frame.c format.c gram.y \

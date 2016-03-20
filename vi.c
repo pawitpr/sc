@@ -130,7 +130,7 @@ write_line(int c)
     struct frange *fr;
     struct crange *cr;
 
-    error("");
+    //error("");
     if (c != ctl('i')) completethis = NULL;
     if (mode == EDIT_MODE) {
 	nosavedot = 0;
@@ -659,10 +659,10 @@ dotab()
     static struct range *nextmatch;
     int len;
 
-    if ((linelim > 0 && isalnum(line[linelim-1])) || line[linelim-1] == '_' ||
+    if ((linelim > 0 && isalnum((int)line[linelim-1])) || line[linelim-1] == '_' ||
 	    (completethis && line[linelim-1] == ' ')) {
 	if (!completethis) {
-	    for (completethis = line + linelim - 1; isalnum(*completethis) ||
+	    for (completethis = line + linelim - 1; isalnum((int)*completethis) ||
 		    *completethis == '_'; completethis--) /* */;
 	    completethis++;
 	    len = line + linelim - completethis;
@@ -926,7 +926,7 @@ for_word(int arg, int end_word, int big_word, int stop_null)
 	if (big_word)
 	    while ((c = line[cpos]) && c != ' ')
 		cpos++;
-	else if (istext(line[cpos])) {
+	else if (istext((int)line[cpos])) {
 	    while ((c = line[cpos]) && istext(c)) 
 		cpos++;
 	} else {
@@ -969,8 +969,8 @@ back_word(int arg, int big_word)
 	    while (cpos > 0 && line[cpos] == ' ')
 		--cpos;
 	} else if (cpos > 0 && (line[cpos-1] == ' ' 
-			|| ( istext(line[cpos]) && !istext(line[cpos-1]))
-			|| (!istext(line[cpos]) &&  istext(line[cpos-1])))) {
+			|| ( istext((int)line[cpos]) && !istext((int)line[cpos-1]))
+			|| (!istext((int)line[cpos]) &&  istext((int)line[cpos-1])))) {
 	    /* Started on the first char of a word - back up to prev. word */
 	    --cpos;
 	    while (cpos > 0 && line[cpos] == ' ')
@@ -981,7 +981,7 @@ back_word(int arg, int big_word)
 	if (big_word)
 	    while (cpos > 0 && (c = line[cpos]) && c != ' ')
 		--cpos;
-	else if (istext(line[cpos])) {
+	else if (istext((int)line[cpos])) {
 	    while (cpos > 0 && (c = line[cpos]) && istext(c)) 
 		--cpos;
 	} else {
@@ -1062,29 +1062,29 @@ doabbrev()
     struct abbrev *a;
     struct abbrev *prev;
     
-    if (!(isalpha(line[linelim-1]) || isdigit(line[linelim-1]) ||
+    if (!(isalpha((int)line[linelim-1]) || isdigit((int)line[linelim-1]) ||
 	    line[linelim-1] == '_') || !(mode == INSERT_MODE ||
 	    mode == SEARCH_MODE) || istart >= linelim)
 	return;
 
     pos = linelim - 2;
-    if (isalpha(line[pos]) || isdigit(line[pos]) || line[pos] == '_') {
+    if (isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] == '_') {
 	for (; pos >= istart; pos--)
-	    if (!(isalpha(line[pos]) || isdigit(line[pos]) || line[pos] == '_'))
+	    if (!(isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] == '_'))
 		break;
     } else if (line[pos] != ' ')
 	for (; pos >= istart; pos--)
-	    if (isalpha(line[pos]) || isdigit(line[pos]) || line[pos] == '_' ||
+	    if (isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] == '_' ||
 		    line[pos] == ' ')
 		break;
     pos++;
 
     if (istart && pos == istart) {
-	if (isalpha(line[pos]) || isdigit(line[pos]) || line[pos] == '_') {
-	    if (isalpha(line[--pos]) || isdigit(line[pos]) || line[pos] == '_')
+	if (isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] == '_') {
+	    if (isalpha((int)line[--pos]) || isdigit((int)line[pos]) || line[pos] == '_')
 		return;
 	} else {
-	    if (!(isalpha(line[--pos]) || isdigit(line[pos]) ||
+	    if (!(isalpha((int)line[--pos]) || isdigit((int)line[pos]) ||
 		    line[pos] == '_' || line[pos] == ' '))
 		return;
 	}
@@ -1120,10 +1120,10 @@ change_case(arg)
 	*line = '\0';
     }
     while (arg--) {
-	if (islower(line[linelim]))
-	    line[linelim] = toupper(line[linelim]);
-	else if (isupper(line[linelim]))
-	    line[linelim] = tolower(line[linelim]);
+	if (islower((int)line[linelim]))
+	    line[linelim] = toupper((int)line[linelim]);
+	else if (isupper((int)line[linelim]))
+	    line[linelim] = tolower((int)line[linelim]);
 	linelim = for_line(1, 0);
     }
 }
@@ -1465,7 +1465,7 @@ for_hist()
     if (histp) {
 	error("History line %d", endhist - lasthist + histp);
     } else {
-	error("");
+	//error("");
     }
 }
 
@@ -1495,7 +1495,7 @@ back_hist()
     if (histp) {
 	error("History line %d", endhist - lasthist + histp);
     } else {
-	error("");
+	//error("");
     }
 }
 
@@ -1575,7 +1575,7 @@ search_again(bool reverse)
 #endif
 #endif
     prev_match = histp > 0 ? histp : 0;
-    error("");
+    //error("");
 
     do {
 	if (lasthist > 0) {
@@ -2035,12 +2035,12 @@ query(char *s, char *data)
 	update(0);
 	switch (c = nmgetch()) {
 	    case ctl('m'):
-		error("");
+		//error("");
 		return;
 	    case ctl('g'):
 		line[0] = '\0';
 		linelim = -1;
-		error("");
+		//error("");
 		update(0);
 		return;
 	    case ctl('l'):
