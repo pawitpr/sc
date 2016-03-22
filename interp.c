@@ -47,12 +47,6 @@ char *regcmp();
 char *regex();
 #endif
 
-#ifdef SIGVOID
-    void doquit();
-#else
-    int doquit();
-#endif
-
 /* Use this structure to save the last 'g' command */
 struct go_save gs;
 
@@ -84,7 +78,7 @@ double	dolookup(struct enode * val, int minr, int minc, int maxr,
 	int maxc, int offr, int offc);
 double	fn1_eval(double (*fn)(), double arg);
 double	fn2_eval(double (*fn)(), double arg1, double arg2);
-int	RealEvalAll();
+static int RealEvalAll(void);
 int	constant(register struct enode *e);
 void	RealEvalOne(register struct ent *p, int i, int j, int *chgct);
 void	copydbuf(int deltar, int deltac);
@@ -99,6 +93,14 @@ void	two_arg_index(char *s, struct enode *e);
 
 double	rint(double d);
 int	cellerror = CELLOK;	/* is there an error in this cell */
+static void g_free(void);
+static
+#ifdef SIGVOID
+void
+#else
+int
+#endif
+eval_fpe(int);
 
 #ifndef M_PI
 #define M_PI (double)3.14159265358979323846
@@ -956,12 +958,13 @@ eval(register struct enode *e)
     return ((double)0.0);
 }
 
+static
 #ifdef SIGVOID
 void
 #else
 int
 #endif
-eval_fpe() /* Trap for FPE errors in eval */
+eval_fpe(int i) /* Trap for FPE errors in eval */
 {
 #if defined(i386) && !defined(M_XENIX)
     asm("	fnclex");
@@ -1369,8 +1372,7 @@ setiterations(int i)
 }
 
 void
-EvalAll()
-{
+EvalAll(void) {
     int lastcnt, pair, v;
   
     repct = 1;
@@ -1409,8 +1411,8 @@ EvalAll()
  * values.  Return the number of cells which changed.
  */
 
-int 
-RealEvalAll()
+static int 
+RealEvalAll(void)
 {
     register int i,j;
     int chgct = 0;
@@ -1790,8 +1792,8 @@ mover(struct ent *d, struct ent *v1, struct ent *v2)
 
 /* Goto subroutines */
 
-void
-g_free()
+static void
+g_free(void)
 {
     switch (gs.g_type) {
 	case G_STR:
@@ -1804,8 +1806,7 @@ g_free()
 
 /* repeat the last goto command */
 void
-go_last()
-{
+go_last(void) {
     int num = 0;
 
     switch (gs.g_type) {

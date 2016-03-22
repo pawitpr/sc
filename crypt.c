@@ -15,8 +15,6 @@
 #include <unistd.h>
 #include "sc.h"
 
-char        *getpass();
-
 int         Crypt = 0;
 #define MAXKEYWORDSIZE 30
 char	    KeyWord[MAXKEYWORDSIZE] = {""};

@@ -31,6 +31,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <curses.h>
+#include <term.h>
 #include "sc.h"
 
 #ifdef NONOTIMEOUT
@@ -38,7 +40,7 @@
 #endif
 
 #ifdef VMS
-#include "gram_tab.h"
+# include "gram_tab.h"
 typedef union {
     int ival;
     double fval;
@@ -50,11 +52,11 @@ typedef union {
 extern YYSTYPE yylval;
 extern int VMS_read_raw;   /*sigh*/
 #else	/* VMS */
-#if defined(MSDOS)
-#include "y_tab.h"
-#else
-#include "y.tab.h"
-#endif /* MSDOS */
+# if defined(MSDOS)
+#  include "y_tab.h"
+# else
+#  include "y.tab.h"
+# endif /* MSDOS */
 #endif /* VMS */
 
 #ifdef hpux
@@ -75,12 +77,12 @@ fpe_trap(int signo)
     asm("	fnclex");
     asm("	fwait");
 #else
-#ifdef IEEE_MATH
+# ifdef IEEE_MATH
     (void)fpsetsticky((fp_except)0);	/* Clear exception */
-#endif /* IEEE_MATH */
-#ifdef PC
+# endif /* IEEE_MATH */
+# ifdef PC
     _fpreset();
-#endif
+# endif
 #endif
     longjmp(fpe_buf, 1);
 }
@@ -101,7 +103,7 @@ struct key statres[] = {
 };
 
 int
-yylex()
+yylex(void)
 {
     char *p = line + linelim;
     int ret = -1;
@@ -365,29 +367,29 @@ atocol(char *string, int len)
 #ifdef SIMPLE
 
 void
-initkbd()
+initkbd(void)
 {}
 
 void
-kbd_again()
+kbd_again(void)
 {}
 
 void
-resetkbd()
+resetkbd(void)
 {}
 
-#ifndef VMS
+# ifndef VMS
 
 int
-nmgetch()
+nmgetch(void)
 {
     return (getchar());
 }
 
-#else /* VMS */
+# else /* VMS */
 
 int
-nmgetch()
+nmgetch(void)
 /*
    This is not perfect, it doesn't move the cursor when goraw changes
    over to deraw, but it works well enough since the whole sc package
@@ -403,7 +405,7 @@ nmgetch()
     short c;
     static int key_id=0;
     int status;
-#define VMScheck(a) {if (~(status = (a)) & 1) VMS_MSG (status);}
+#  define VMScheck(a) {if (~(status = (a)) & 1) VMS_MSG (status);}
 
     if (VMS_read_raw) {
       VMScheck(smg$read_keystroke (&stdkb->_id, &c, 0, 0, 0));
@@ -426,11 +428,11 @@ VMS_MSG (int status)
    Routine to put out the VMS operating system error (if one occurs).
 */
 {
-#include <descrip.h>
+#  include <descrip.h>
    char errstr[81], buf[120];
    $DESCRIPTOR(errdesc, errstr);
    short length;
-#define err_out(msg) fprintf (stderr,msg)
+#  define err_out(msg) fprintf (stderr,msg)
 
 /* Check for no error or standard error */
 
@@ -444,13 +446,13 @@ VMS_MSG (int status)
 	    err_out("System error");
     }
 }
-#endif /* VMS */
+# endif /* VMS */
 
 #else /*SIMPLE*/
 
-#if defined(BSD42) || defined (SYSIII) || defined(BSD43)
+# if defined(BSD42) || defined (SYSIII) || defined(BSD43)
 
-#define N_KEY 4
+#  define N_KEY 4
 
 struct key_map {
     char *k_str;
@@ -462,16 +464,14 @@ struct key_map km[N_KEY];
 
 char keyarea[N_KEY*30];
 
-char *tgetstr();
-char *getenv();
 char *ks;
 char ks_buf[20];
 char *ke;
 char ke_buf[20];
 
-#ifdef TIOCSLTC
+#  ifdef TIOCSLTC
 struct ltchars old_chars, new_chars;
-#endif
+#  endif
 
 char dont_use[] = {
     ctl('['), ctl('a'), ctl('b'), ctl('c'), ctl('e'), ctl('f'), ctl('g'),
@@ -487,7 +487,7 @@ charout(int c)
 }
 
 void
-initkbd()
+initkbd(void)
 {
     register struct key_map *kp;
     register i,j;
@@ -533,7 +533,7 @@ initkbd()
     }
 
 
-#ifdef TIOCSLTC
+#  ifdef TIOCSLTC
     (void)ioctl(fileno(stdin), TIOCGLTC, (char *)&old_chars);
     new_chars = old_chars;
     if (old_chars.t_lnextc == ctl('v'))
@@ -541,34 +541,33 @@ initkbd()
     if (old_chars.t_rprntc == ctl('r'))
 	new_chars.t_rprntc = -1;
     (void)ioctl(fileno(stdin), TIOCSLTC, (char *)&new_chars);
-#endif
+#  endif
 }
 
 void
-kbd_again()
+kbd_again(void)
 {
     if (ks) 
 	tputs(ks, 1, charout);
 
-#ifdef TIOCSLTC
+#  ifdef TIOCSLTC
     (void)ioctl(fileno(stdin), TIOCSLTC, (char *)&new_chars);
-#endif
+#  endif
 }
 
 void
-resetkbd()
+resetkbd(void)
 {
     if (ke) 
 	tputs(ke, 1, charout);
 
-#ifdef TIOCSLTC
+#  ifdef TIOCSLTC
     (void)ioctl(fileno(stdin), TIOCSLTC, (char *)&old_chars);
-#endif
+#  endif
 }
 
 int
-nmgetch() 
-{
+nmgetch(void) {
     register int c;
     register struct key_map *kp;
     register struct key_map *biggest;
@@ -579,11 +578,11 @@ nmgetch()
     static char dumpbuf[10];
     static char *dumpindex;
 
-#ifdef SIGVOID
-    void time_out();
-#else
-    int time_out();
-#endif
+#  ifdef SIGVOID
+    void time_out(int);
+#  else
+    int time_out(int);
+#  endif
 
     if (dumpindex && *dumpindex)
 	return (*dumpindex++);
@@ -637,40 +636,39 @@ nmgetch()
     return(c);
 }
 
-#endif
+# endif /* if defined(BSD42) || defined (SYSIII) || defined(BSD43) */
 
 void
-initkbd()
+initkbd(void)
 {
     keypad(stdscr, TRUE);
     notimeout(stdscr,TRUE);
 }
 
 void
-kbd_again()
+kbd_again(void)
 {
     keypad(stdscr, TRUE);
     notimeout(stdscr,TRUE);
 }
 
 void
-resetkbd()
+resetkbd(void)
 {
     keypad(stdscr, FALSE);
     notimeout(stdscr, FALSE);
 }
 
 int
-nmgetch()
-{
+nmgetch(void) {
     register int c;
 
     c = getch();
     switch (c) {
-#ifdef KEY_SELECT
+# ifdef KEY_SELECT
 	case KEY_SELECT:	c = 'm';	break;
-#endif
-#ifdef KEY_C1
+# endif
+# ifdef KEY_C1
 /* This stuff works for a wyse wy75 in ANSI mode under 5.3.  Good luck. */
 /* It is supposed to map the curses keypad back to the numeric equiv. */
 
@@ -695,7 +693,7 @@ nmgetch()
  *
  *
  */
-#endif
+# endif
 	default:	break;
     }
     return (c);

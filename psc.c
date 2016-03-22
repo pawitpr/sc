@@ -36,7 +36,7 @@ char	*coltoa(int col);
 char	*progname;
 int	getrow(char *p);
 int	getcol(char *p);
-int	scan();
+static int scan(void);
 
 int *fwidth;
 int *precision;
@@ -238,9 +238,8 @@ main(int argc, char **argv)
     }
 }
 
-int
-scan()
-{
+static int
+scan(void) {
     register int c;
     register char *p;
     register int founddigit;

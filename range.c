@@ -142,8 +142,7 @@ del_range(struct ent *left, struct ent *right)
 }
 
 void
-clean_range()
-{
+clean_range(void) {
     register struct range *r;
     register struct range *nextr;
 
@@ -195,7 +194,7 @@ find_range(char *name, int len, struct ent *lmatch, struct ent *rmatch,
 }
 
 void
-sync_ranges()
+sync_ranges(void)
 {
     int i, j;
     struct range *r;
@@ -324,8 +323,7 @@ r_name(int r1, int c1, int r2, int c2)
 }
 
 int
-are_ranges()
-{
+are_ranges(void) {
     return (rng_base != 0);
 }
 

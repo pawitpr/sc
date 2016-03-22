@@ -1103,7 +1103,7 @@ struct termio tmio;
 #endif
 
 void
-startdisp()
+startdisp(void)
 {
 #if sun
     int	 fd;
@@ -1180,7 +1180,7 @@ startdisp()
 }
 
 void
-stopdisp()
+stopdisp(void)
 {
 #ifndef MSDOS
     if (usecurses) {
@@ -1200,8 +1200,7 @@ stopdisp()
 #ifdef VMS
 
 void
-goraw()
-{
+goraw(void) {
     if (usecurses) {
 	VMS_read_raw = 1;
 	if (color && has_colors())
@@ -1227,8 +1226,7 @@ deraw(int ClearLastLine)
 
 #else /* VMS */
 void
-goraw()
-{
+goraw(void) {
     if (usecurses) {
 #ifdef HAVE_FIXTERM
 	fixterm();

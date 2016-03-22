@@ -75,12 +75,6 @@ int brokenpipe = FALSE;	/* Set to true if SIGPIPE is received */
 int	wasforw	= FALSE;
 #endif
 
-extern void	gohome();
-extern void	leftlimit();
-extern void	rightlimit();
-extern void	gototop();
-extern void	gotobottom();
-
 char    curfile[PATHLEN];
 char    revmsg[80];
 
@@ -193,8 +187,7 @@ free_ent(register struct ent *p, int unlock)
 
 /* free deleted cells */
 void
-flush_saved()
-{
+flush_saved(void) {
     register struct ent *p;
     register struct ent *q;
 
@@ -2096,26 +2089,8 @@ setauto(int i)
 }
 
 void
-signals()
+signals(void)
 {
-#ifdef SIGVOID
-    void doquit();
-    void time_out();
-    void dump_me();
-    void nopipe();
-#ifdef	SIGWINCH
-    void winchg();
-#endif
-#else
-    int doquit();
-    int time_out();
-    int dump_me();
-    int nopipe();
-#ifdef	SIGWINCH
-    int winchg();
-#endif
-#endif
-
     (void) signal(SIGINT, doquit);
 #if !defined(MSDOS)
     (void) signal(SIGQUIT, dump_me);
@@ -2137,7 +2112,7 @@ void
 #else
 int
 #endif
-nopipe()
+nopipe(int i)
 {
     brokenpipe = TRUE;
 }
@@ -2147,7 +2122,7 @@ void
 #else
 int
 #endif
-winchg()
+winchg(int i)
 {
     stopdisp();
     startdisp();
@@ -2171,7 +2146,7 @@ void
 #else
 int
 #endif
-doquit()
+doquit(int i)
 {
     if (usecurses) {
 	diesave();
@@ -2186,7 +2161,7 @@ void
 #else
 int
 #endif
-dump_me()
+dump_me(int i)
 {
     if (usecurses)
 	diesave();
@@ -2196,8 +2171,8 @@ dump_me()
 
 /* try to save the current spreadsheet if we can */
 void
-diesave()
-{   char	path[PATHLEN];
+diesave(void) {
+    char	path[PATHLEN];
 
     if (modcheck(" before Spreadsheet dies") == 1)
     {	(void) sprintf(path, "~/%s", SAVENAME);

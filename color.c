@@ -170,8 +170,7 @@ add_crange(struct ent *r_left, struct ent *r_right, int pair)
 }
 
 void
-clean_crange()
-{
+clean_crange(void) {
     register struct crange *cr;
     register struct crange *nextcr;
 
@@ -200,7 +199,7 @@ find_crange(int row, int col)
 }
 
 void
-sync_cranges()
+sync_cranges(void)
 {
     struct crange *cr;
 
@@ -275,8 +274,7 @@ list_colors(FILE *f)
 }
 
 int
-are_colors()
-{
+are_colors(void) {
     return (color_base != 0);
 }
 

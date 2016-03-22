@@ -138,8 +138,7 @@ add_frange(struct ent *or_left, struct ent *or_right, struct ent *ir_left,
 }
 
 void
-clean_frange()
-{
+clean_frange(void) {
     register struct frange *fr;
     register struct frange *nextfr;
 
@@ -169,7 +168,7 @@ find_frange(int row, int col)
 }
 
 void
-sync_franges()
+sync_franges(void)
 {
     struct frange *fr;
 
@@ -226,8 +225,7 @@ list_frames(FILE *f) {
 }
 
 int
-are_frames()
-{
+are_frames(void) {
     return (frame_base != 0);
 }
 

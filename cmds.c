@@ -53,8 +53,7 @@ struct impexfilt *filt = NULL; /* root of list of impex filters */
 
 /* copy the current row (currow) and place the cursor in the new row */
 void
-duprow()
-{
+duprow(void) {
     int c1, c2, coltmp = curcol;
     struct frange *fr;
 
@@ -82,8 +81,7 @@ duprow()
 
 /* copy the current column (curcol) and place the cursor in the new column */
 void
-dupcol() 
-{
+dupcol(void) {
     int rowtmp = currow;
 
     if (curcol >= maxcols - 1 || maxcol >= maxcols - 1) {
@@ -924,8 +922,7 @@ pullcells(int to_insert)
 }
 
 void
-colshow_op()
-{
+colshow_op(void) {
     register int i,j;
     for (i = 0; i < maxcols; i++)
 	if (col_hidden[i]) 
@@ -944,7 +941,7 @@ colshow_op()
 }
 
 void
-rowshow_op()
+rowshow_op(void)
 {
     register int i,j;
     for (i = 0; i < maxrows; i++)
@@ -2364,7 +2361,7 @@ copye(register struct enode *e, int Rdelta, int Cdelta, int r1, int c1,
  * in tbl.  Thus the free_ent calls in sc.c
  */
 void
-sync_refs()
+sync_refs(void)
 {
     int i, j;
     register struct ent *p;
@@ -3073,8 +3070,7 @@ readfile(char *fname, int eraseflg)
 
 /* erase the database (tbl, etc.) */
 void
-erasedb()
-{
+erasedb(void) {
     int  r, c;
     char *home;
 
@@ -3237,7 +3233,7 @@ backrow(int arg)
 }
 
 void
-markcell()
+markcell(void)
 {
     int c;
 

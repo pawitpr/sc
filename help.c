@@ -539,8 +539,7 @@ char *timef[] = {
 static	int	pscreen(char *screen[]);
 
 void
-help()
-{
+help(void) {
     int option;
     char **ns = intro;
 
@@ -596,8 +595,8 @@ char	** pages[] = { intro, toggleoptions, setoptions, cursor, cell, vi,
 			finf, timef, NULL};
 
 int
-main()
-{   int	lineno;
+main(int argc, char **argv) {
+    int	lineno;
     char	***pagep = pages;
 #ifdef TROFF
     int	pageno = 0;

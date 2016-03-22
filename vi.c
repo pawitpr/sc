@@ -27,50 +27,45 @@ char *regcmp();
 char *regex();
 #endif
 
-void gohome();
-void leftlimit();
-void rightlimit();
-void gototop();
-void gotobottom();
-
 #define istext(a) (isalnum(a) || ((a) == '_'))
 
-static void append_line();
-static void back_hist();
+static void append_line(void);
+static void back_hist(void);
 static int  back_line(int arg);
 static int  back_word(int arg, int big_word);
-static void back_space();
+static void back_space(void);
 static void change_case(int arg);
-static void col_0();
-static void cr_line();
+static void col_0(void);
+static void cr_line(void);
 static void del_in_line(int arg, int back_null);
-static void del_to_end();
-static void doabbrev();
-static void dogoto();
-static void dotab();
-static void dotcmd();
+static void del_to_end(void);
+static void doabbrev(void);
+static void dogoto(void);
+static void dotab(void);
+static void dotcmd(void);
 static int  find_char(int arg, int n);
-static void for_hist();
+static void for_hist(void);
 static int  for_line(int arg, int stop_null);
 static int  for_word(int arg, int end_word, int big_word, int stop_null);
 static int  istart;
-static void last_col();
-static void match_paren();
+static void last_col(void);
+static void match_paren(void);
 static void readhistfile(FILE *fp);
-static void rep_char();
+static void rep_char(void);
 static void replace_in_line(int c);
-static void replace_mode();
-static void restore_it();
+static void replace_mode(void);
+static void restore_it(void);
 static void savedot(int c);
-static void save_hist();
+static void save_hist(void);
 static void search_again(bool reverse);
-static void search_hist();
+static void search_hist(void);
 static void search_mode(char sind);
-static void stop_edit();
+static void stop_edit(void);
 static int  to_char(int arg, int n);
 static void u_save(int c);
 static void yank_cmd(int delete, int change);
 static void yank_chars(register int first, register int last, int delete);
+int vigetch(void);
 
 extern int framerows;		/* Rows in current frame */
 extern char mode_ind;		/* Mode indicator */
@@ -569,8 +564,7 @@ write_line(int c)
 }
 
 void
-edit_mode()
-{
+edit_mode(void) {
     mode_ind = 'e';
     mode = EDIT_MODE;
     if (linelim < 0)	/* -1 says stop editing, ...so we still aren't */
@@ -580,7 +574,7 @@ edit_mode()
 }
 
 void
-insert_mode()
+insert_mode(void)
 {
     mode_ind = 'i';
     mode = INSERT_MODE;
@@ -610,14 +604,13 @@ search_mode(char sind)
 }
 
 static void
-replace_mode()
-{
+replace_mode(void) {
     mode_ind = 'R';
     mode = REP_MODE;
 }
 
 void
-toggle_navigate_mode()
+toggle_navigate_mode(void)
 {
     static char prev_mode = NAVIGATE_MODE;
     int limtmp;
@@ -651,8 +644,7 @@ toggle_navigate_mode()
 }
 
 void
-dotab()
-{
+dotab(void) {
     static struct range *firstmatch;
     static struct range *lastmatch;
     static struct range *nextmatch;
@@ -692,7 +684,7 @@ dotab()
 
 /* show the current range (see ^I), we are moving around to define a range */
 void
-startshow()
+startshow(void)
 {
     showrange = 1;
     showsr = currow;
@@ -703,7 +695,7 @@ startshow()
 /* insert the range we defined by moving around the screen, see startshow() */
 
 void
-showdr()
+showdr(void)
 {
     int			minsr, minsc, maxsr, maxsc;
     char		r[12];
@@ -767,8 +759,7 @@ savedot(int c)
 static int dotcalled = 0;
 
 static void
-dotcmd()
-{
+dotcmd(void) {
     int c;
 
     if (dotcalled)	/* stop recursive calling of dotcmd() */
@@ -791,8 +782,7 @@ dotcmd()
 }
 
 int
-vigetch()
-{
+vigetch(void) {
     int c;
 
     if (do_dot) {
@@ -834,8 +824,7 @@ u_save(int c)
 
 /* Restores the current line saved by u_save() */
 static void
-restore_it()
-{
+restore_it(void) {
     static char		*tempc = NULL;
     static unsigned	templen = 0;
     int			tempi;
@@ -858,8 +847,7 @@ restore_it()
 
 /* This command stops the editing process. */
 static void
-stop_edit()
-{
+stop_edit(void) {
     if (search_ind != ' ') {
 	search_ind = ' ';
 	(void) strcpy(line, history[0].histline);
@@ -1055,8 +1043,7 @@ ins_string(char *s)
 }
 
 void
-doabbrev()
-{
+doabbrev(void) {
     int len, pos;
     struct abbrev *a;
     struct abbrev *prev;
@@ -1101,8 +1088,7 @@ doabbrev()
 }
 
 static void
-append_line()
-{
+append_line(void) {
     register int i;
 
     i = linelim;
@@ -1128,8 +1114,7 @@ change_case(arg)
 }
 
 static void
-rep_char()
-{
+rep_char(void) {
     int c;
 
     if (linelim < 0) {
@@ -1163,8 +1148,7 @@ replace_in_line(int c)
 }
 
 static void
-back_space()
-{
+back_space(void) {
     if (linelim == 0)
 	return;
 
@@ -1258,8 +1242,7 @@ yank_chars(register int first, register int last, int delete)
 }
 
 static void
-del_to_end()
-{
+del_to_end(void) {
     if (linelim < 0)
 	return;
     strcpy(putbuf, line + linelim);
@@ -1268,8 +1251,7 @@ del_to_end()
 }
 
 static void
-cr_line()
-{
+cr_line(void) {
     struct frange *fr;
 
     ins_in_line(0);
@@ -1417,8 +1399,7 @@ doshell(void)
 /* History functions */
 
 static void
-save_hist()
-{
+save_hist(void) {
     if (!lasthist || strcmp(history[lasthist].histline, line)) {
 	if (lasthist < 0)
 	    lasthist = 1;
@@ -1445,8 +1426,7 @@ save_hist()
 }
 
 static void
-for_hist()
-{
+for_hist(void) {
     if (histp == 0) {
 	last_col();
     	return;
@@ -1469,8 +1449,7 @@ for_hist()
 }
 
 static void
-back_hist()
-{
+back_hist(void) {
     if (histp == 0) {
 	if (history[0].len < strlen(line) + 1) {
 	    history[0].len = strlen(line) + 40;
@@ -1499,8 +1478,7 @@ back_hist()
 }
 
 static void
-search_hist()
-{
+search_hist(void) {
 #ifdef RECOMP
     char	*tmp;
 #endif
@@ -1648,7 +1626,7 @@ search_again(bool reverse)
 
 #if !defined(MSDOS) && defined HISTORY_FILE
 void
-write_hist()
+write_hist(void)
 {
     int i;
     FILE *fp, *tmpfp = NULL;
@@ -1695,7 +1673,7 @@ readhistfile(FILE *fp)
 }
 
 void
-read_hist()
+read_hist(void)
 {
     FILE *fp;
     char histfile[PATHLEN];
@@ -1709,14 +1687,12 @@ read_hist()
 #endif
 
 static void
-col_0()
-{
+col_0(void) {
     linelim = 0;
 }
 
 static void
-last_col()
-{
+last_col(void) {
     linelim = strlen(line);
     if (linelim > 0 && mode_ind == 'e')
 	--linelim;
@@ -1768,8 +1744,7 @@ to_char(int arg, int n)
 }
 
 static void
-match_paren()
-{
+match_paren(void) {
     int nest = 1;
     int tmp = linelim;
 
@@ -1819,8 +1794,7 @@ remember(int save)
 }
 
 void
-gohome()
-{
+gohome(void) {
     struct frange *fr;
 
     remember(0);
@@ -1852,8 +1826,7 @@ gohome()
 }
 
 void
-leftlimit()
-{
+leftlimit(void) {
     struct frange *fr;
 
     remember(0);
@@ -1876,8 +1849,7 @@ leftlimit()
 }
 
 void
-rightlimit()
-{
+rightlimit(void) {
     register struct ent *p;
     struct frange *fr;
 
@@ -1912,8 +1884,7 @@ rightlimit()
 }
 
 void
-gototop()
-{
+gototop(void) {
     struct frange *fr;
 
     remember(0);
@@ -1936,8 +1907,7 @@ gototop()
 }
 
 void
-gotobottom()
-{
+gotobottom(void) {
     register struct ent *p;
     struct frange *fr;
 
@@ -1972,8 +1942,7 @@ gotobottom()
 }
 
 static void
-dogoto()
-{
+dogoto(void) {
     static char		*tempc = NULL;
     static unsigned	templen = 0;
     int			tempi;
