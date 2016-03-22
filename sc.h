@@ -345,7 +345,7 @@ struct go_save {
 #define	GROWBOTH	4	/* grow both */
 extern	struct ent ***tbl;	/* data table ref. in vmtbl.c and ATBL() */
 
-extern	char curfile[];
+extern	char curfile[PATHLEN];
 extern	int arg;
 extern	int strow, stcol;
 extern	int currow, curcol;

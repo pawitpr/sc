@@ -26,6 +26,7 @@
 #ifndef MSDOS
 #include <unistd.h>
 #endif
+#include "compat.h"
 
 void	syncref(register struct enode *e);
 void	unspecial(FILE *f, char *str, int delim);
@@ -1766,7 +1767,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
     if (fname) {
 	/* printfile will be the [path/]file ---> [path/]file.out */
 	if (*fname == '\0') {
-	    strcpy(path, curfile);
+	    strlcpy(path, curfile, sizeof path);
 
 #ifdef MSDOS
 	    namelen = 12;
@@ -1784,7 +1785,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 #endif
 		tpp++;
 	    }
-	    strcpy(file, tpp);
+	    strlcpy(file, tpp, sizeof file);
 
 	    if (!strcmp(file + strlen(file) - 3, ".sc"))
 		file[strlen(file) - 3] = '\0';
@@ -1987,7 +1988,7 @@ tblprintfile(char *fname, int r0, int c0, int rn, int cn)
 
     /* tblprintfile will be the [path/]file ---> [path/]file.out */
     if (*fname == '\0') {
-	strcpy(path, curfile);
+	strlcpy(path, curfile, sizeof path);
 
 #ifdef MSDOS
 	namelen = 12;
@@ -2005,7 +2006,7 @@ tblprintfile(char *fname, int r0, int c0, int rn, int cn)
 #endif
 	    tpp++;
 	}
-	strcpy(file, tpp);
+	strlcpy(file, tpp, sizeof file);
 
 	if (!strcmp(file + strlen(file) - 3, ".sc"))
 	    file[strlen(file) - 3] = '\0';
@@ -2889,7 +2890,7 @@ writefile(char *fname, int r0, int c0, int rn, int cn)
     }
 #endif /* MSDOS */
 
-    (void) strcpy(tfname, fname);
+    (void) strlcpy(tfname, fname, sizeof tfname);
     for (tpp = tfname; *tpp != '\0'; tpp++)
 	if (*tpp == '\\' && *(tpp + 1) == '"')
 	    (void) memmove(tpp, tpp + 1, strlen(tpp));
@@ -2902,11 +2903,11 @@ writefile(char *fname, int r0, int c0, int rn, int cn)
 		!strcmp(tfname + strlen(tfname) - strlen(scext), scext))
 	    tfname[strlen(tfname) - strlen(scext) - 1] = '\0';
 	tfname[namelen - strlen(scext) - 1] = '\0';
-	strcat(tfname, ".");
-	strcat(tfname, scext);
+	strlcat(tfname, ".", sizeof tfname);
+	strlcat(tfname, scext, sizeof tfname);
     }
 
-    (void) strcpy(save, tfname);
+    (void) strlcpy(save, tfname, sizeof save);
     for (tpp = save; *tpp != '\0'; tpp++)
 	if (*tpp == '"') {
 	    (void) memmove(tpp + 1, tpp, strlen(tpp) + 1);
@@ -2927,7 +2928,7 @@ writefile(char *fname, int r0, int c0, int rn, int cn)
     closefile(f, pid, 0);
 
     if (!pid) {
-        (void) strcpy(curfile, save);
+        (void) strlcpy(curfile, save, sizeof curfile);
         modflg = 0;
 	FullUpdate++;
 	if (usecurses) {
@@ -2954,12 +2955,12 @@ readfile(char *fname, int eraseflg)
     autolabel = 0;			/* reading a file */
 
     if (*fname == '*' && mdir) { 
-       (void) strcpy(save, mdir);
-       (void) strcat(save, fname);
+       (void) strlcpy(save, mdir, sizeof save);
+       (void) strlcat(save, fname, sizeof save);
     } else {
         if (*fname == '\0')
 	    fname = curfile;
-	(void) strcpy(save, fname);
+	(void) strlcpy(save, fname, sizeof save);
     }
 
 #ifndef MSDOS
@@ -2986,7 +2987,7 @@ readfile(char *fname, int eraseflg)
 		}
 		p--;
 	    }
-	    (void) strcpy(curfile, p);
+	    (void) strlcpy(curfile, p, sizeof curfile);
 	}
     }
 #endif
@@ -3058,7 +3059,7 @@ readfile(char *fname, int eraseflg)
 #endif /* MSDOS */
     linelim = -1;
     if (eraseflg) {
-	(void) strcpy(curfile, save);
+	(void) strlcpy(curfile, save, sizeof curfile);
 	modflg = 0;
 	cellassign = 0;
 	if (autorun && !skipautorun) (void) readfile(autorun, 0);
@@ -3142,8 +3143,8 @@ erasedb(void) {
      * Load $HOME/.scrc if present.
      */
     if ((home = getenv("HOME"))) {
-	strcpy(curfile, home);
-	strcat(curfile, "/.scrc");
+	strlcpy(curfile, home, sizeof curfile);
+	strlcat(curfile, "/.scrc", sizeof curfile);
 	if ((c = open(curfile, O_RDONLY)) > -1) {
 	    close(c);
 	    (void) readfile(curfile, 0);
@@ -3489,7 +3490,7 @@ findhome(char *path)
 	}
 	pathptr = path + 1;
 	if ((*pathptr == '/') || (*pathptr == '\0'))
-	    strcpy(tmppath, HomeDir);
+	    strlcpy(tmppath, HomeDir, sizeof tmppath);
 #if !defined(MSDOS) && !defined(VMS)
 	else {
 	    struct	passwd *pwent;
@@ -3504,10 +3505,10 @@ findhome(char *path)
 	    	(void) sprintf(path, "Can't find user %s", name);
 		return (NULL);
 	    }
-	    strcpy(tmppath, pwent->pw_dir);
+	    strlcpy(tmppath, pwent->pw_dir, sizeof tmppath);
 	}
 #endif
-	strcat(tmppath, pathptr);
+	strlcat(tmppath, pathptr, sizeof tmppath);
 	strcpy(path, tmppath);
     }
     return (path);
@@ -3540,12 +3541,12 @@ backup_file(char *path)
     mode_t	oldumask;
 
     /* tpath will be the [path/]file ---> [path/]file~ */
-    strcpy(tpath, path);
+    strlcpy(tpath, path, sizeof tpath);
     if ((tpp = strrchr(tpath, '/')) == NULL)
 	tpp = tpath;
     else
 	tpp++;
-    strcpy(fname, tpp);
+    strlcpy(fname, tpp, sizeof fname);
     (void) sprintf(tpp, "%s~", fname);
 
     if (stat(path, &statbuf) == 0) {

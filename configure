@@ -1,11 +1,11 @@
 #!/bin/sh
 
 # Copyright (c) 2016, Carsten Kunze <carsten.kunze@arcor.de>
-
+#
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
 # copyright notice and this permission notice appear in all copies.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
 # REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
 # AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
@@ -237,8 +237,8 @@ LIB_CURSES=
 gen_mk
 
 check_for_make
-#check_for_strlcpy
-#check_for_strlcat
+check_for_strlcpy
+check_for_strlcat
 #check_for_wcslcpy
 check_for_lib_curses
 check_for_fixterm

@@ -348,7 +348,7 @@ SRC=Makefile abbrev.c cmds.c color.c crypt.c eres.sed frame.c format.c gram.y \
 # The objects
 OBJS=abbrev.o cmds.o color.o crypt.o format.o frame.o gram.o help.o interp.o \
 	lex.o pipe.o range.o sc.o screen.o sort.o version.o vi.o vmtbl.o \
-	xmalloc.o
+	xmalloc.o compat.o
 
 # The documents in the Archive
 DOCS=CHANGES README sc.doc psc.doc tutorial.sc VMS_NOTES torev build.com
