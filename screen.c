@@ -815,7 +815,7 @@ update(int anychanged)		/* did any cell really change in value? */
 			    for (i = 0; i < fwidth[col]; i++) {
 				if (note) {
 				    attr_t attr;
-				    short curcolor;
+				    short curcolor = 0;
 				    if (!i && color && has_colors()) {
 					attr_get(&attr, &curcolor, NULL);
 					color_set(4, NULL);
@@ -835,7 +835,7 @@ update(int anychanged)		/* did any cell really change in value? */
 				    (void)addch(' ');
 			    if (note) {
 				attr_t attr;
-				short curcolor;
+				short curcolor = 0;
 				if (color && has_colors()) {
 				    attr_get(&attr, &curcolor, NULL);
 				    color_set(4, NULL);

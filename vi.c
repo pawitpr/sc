@@ -1536,7 +1536,7 @@ static void
 search_again(bool reverse)
 {
     int prev_match;
-    int found_it;
+    int found_it = 0;
 #if !defined(REGCOMP) && !defined(RE_COMP) && !defined(REGCMP)
     char *look_here;
     int do_next;

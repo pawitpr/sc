@@ -2781,7 +2781,9 @@ void
 write_cells(register FILE *f, int r0, int c0, int rn, int cn, int dr, int dc)
 {
     register struct ent **pp;
-    int r, c, rs, cs, mf;
+    int r, c, mf;
+    int rs = 0;
+    int cs = 0;
     char *dpointptr;
 
     mf = modflg;
