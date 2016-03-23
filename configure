@@ -49,7 +49,15 @@ test_result () {
 	fi
 }
 
-check_for_make () {
+gen_mk () {
+	rm -f $OUTMK
+	[ -n "$FLOAT_STORE" ] && echo "FLOAT_STORE=$FLOAT_STORE" >> $OUTMK
+	[ -n "$DEFS" ] && echo "DEFINES=$DEFS" >> $OUTMK
+	[ -n "$LIB_CURSES" ] && echo "LIB_CURSES=$LIB_CURSES" >> $OUTMK
+	cat $INMK >> $OUTMK || exit 1
+}
+
+check_make () {
 	check_for "make(1)"
 
 	cat <<EOT >$TMPMK
@@ -75,7 +83,28 @@ EOT
 	test_result && MAKE=bmake
 }
 
-check_for_strlcpy () {
+check_float_store () {
+	FLOAT_STORE=-ffloat-store
+	check_for "$FLOAT_STORE"
+	cat <<EOT >$TMPC
+int
+main (int argc, char **argv) {
+return 0;
+}
+EOT
+	gen_mk
+	cat <<EOT >>$OUTMK
+${TMPNAM}.o:
+	\$(CC) $FLOAT_STORE -c $TMPC
+EOT
+	rm -f ${TMPNAM}.o
+	$MAKE -f $OUTMK ${TMPNAM}.o >> $LOG 2> $TMPNAM
+	cat $TMPNAM >> $LOG
+	if [ -s $TMPNAM ]; then false; else true; fi
+	test_result || FLOAT_STORE=
+}
+
+check_strlcpy () {
 	check_for "strlcpy(3)"
 
 	cat <<EOT >$TMPC
@@ -91,7 +120,7 @@ EOT
 	test_result && DEFS="$DEFS -DHAVE_STRLCPY"
 }
 
-check_for_strlcat () {
+check_strlcat () {
 	check_for "strlcat(3)"
 
 	cat <<EOT >$TMPC
@@ -108,7 +137,7 @@ EOT
 	test_result && DEFS="$DEFS -DHAVE_STRLCAT"
 }
 
-check_for_wcslcpy () {
+check_wcslcpy () {
 	check_for "wcslcpy(3)"
 
 	cat <<EOT >$TMPC
@@ -126,7 +155,7 @@ EOT
 	test_result && DEFS="$DEFS -DHAVE_WCSLCPY"
 }
 
-check_for_lib_curses () {
+check_lib_curses () {
 	LIB_CURSES="-lcurses"
 	check_for $LIB_CURSES
 
@@ -164,7 +193,7 @@ EOT
 	test_result
 }
 
-check_for_fixterm () {
+check_fixterm () {
 	check_for fixterm
 
 	cat <<EOT >$TMPC
@@ -184,7 +213,7 @@ EOT
 	test_result && DEFS="$DEFS -DHAVE_FIXTERM"
 }
 
-check_for_resetterm () {
+check_resetterm () {
 	check_for resetterm
 
 	cat <<EOT >$TMPC
@@ -202,13 +231,6 @@ $TMPNAM: ${TMPNAM}.o
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_RESETTERM"
-}
-
-gen_mk () {
-	rm -f $OUTMK
-	[ -n "$DEFS" ] && echo "DEFINES=$DEFS" >> $OUTMK
-	[ -n "$LIB_CURSES" ] && echo "LIB_CURSES=$LIB_CURSES" >> $OUTMK
-	cat $INMK >> $OUTMK || exit 1
 }
 
 SFLAG=
@@ -236,13 +258,14 @@ DEFS=
 LIB_CURSES=
 gen_mk
 
-check_for_make
-check_for_strlcpy
-check_for_strlcat
-#check_for_wcslcpy
-check_for_lib_curses
-check_for_fixterm
-check_for_resetterm
+check_make
+check_float_store
+check_strlcpy
+check_strlcat
+#check_wcslcpy
+check_lib_curses
+check_fixterm
+check_resetterm
 
 gen_mk
 rm -f $TMPNAM*

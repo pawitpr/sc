@@ -482,10 +482,9 @@ char dont_use[] = {
     ctl('x'), ctl('z'), 0
 };
 
-void
-charout(int c)
-{
-    (void)putchar(c);
+int
+charout(int c) {
+    return putchar(c);
 }
 
 void
