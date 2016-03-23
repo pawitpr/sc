@@ -16,6 +16,7 @@
 #include <time.h>
 #include <stdbool.h>
 #include "sc.h"
+#include "compat.h"
 
 #ifndef MSDOS
 #include <unistd.h>
@@ -37,7 +38,7 @@ extern int VMS_read_raw;   /*sigh*/
 char	under_cursor = ' '; /* Data under the < cursor */
 char	mode_ind = 'i';
 char	search_ind = ' ';
-extern	char    revmsg[];
+extern	char    revmsg[80];
 
 int	lines, cols;
 int	rows, lcols;
@@ -643,9 +644,9 @@ update(int anychanged)		/* did any cell really change in value? */
 	    if (showtop && !message) {
 		char r[6];
 
-		strcpy(r, coltoa(minsc));
-		strcat(r, ":");
-		strcat(r, coltoa(maxsc));
+		strlcpy(r, coltoa(minsc), sizeof r);
+		strlcat(r, ":", sizeof r);
+		strlcat(r, coltoa(maxsc), sizeof r);
 		(void) clrtoeol();
 		(void) printw("Default range:  %s", r);
 	    }
@@ -999,7 +1000,7 @@ update(int anychanged)		/* did any cell really change in value? */
 		if (p1->flags & IS_VALID) {
 		    /* has value or num expr */
 		    if ((!(p1->expr)) || (p1->flags & IS_STREXPR))
-			(void) sprintf(line, "%.15g", p1->v);
+			snprintf(line, sizeof line, "%.15g", p1->v);
 
 		    (void) addch('[');
 		    (void) addstr(line);

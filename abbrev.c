@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <curses.h>
 #include "sc.h"
+#include "compat.h"
 
 static int are_abbrevs(void);
 
@@ -41,10 +42,10 @@ add_abbr(char *string)
 	    struct abbrev *a;
 	    struct abbrev *nexta;
 
-	    (void) strcpy(px, "| ");
+	    strlcpy(px, "| ", sizeof px);
 	    if (!(pager = getenv("PAGER")))
 		pager = DFLT_PAGER;
-	    (void) strcat(px, pager);
+	    strlcat(px, pager, sizeof px);
 	    f = openfile(px, &pid, NULL);
 	    if (!f) {
 		error("Can't open pipe to %s", pager);

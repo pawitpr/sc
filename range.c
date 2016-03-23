@@ -299,7 +299,7 @@ v_name(int row, int col)
     if (!find_range((char *)0, 0, v, v, &r)) {
 	return (r->r_name);
     } else {
-        (void) sprintf(buf, "%s%d", coltoa(col), row);
+        snprintf(buf, sizeof buf, "%s%d", coltoa(col), row);
 	return (buf);
     }
 }
@@ -316,8 +316,10 @@ r_name(int r1, int c1, int r2, int c2)
     if (!find_range((char *)0, 0, v1, v2, &r)) {
 	return (r->r_name);
     } else {
-        (void) sprintf(buf, "%s", v_name(r1, c1));
-	(void) sprintf(buf+strlen(buf), ":%s", v_name(r2, c2));
+	size_t l;
+        snprintf(buf, sizeof buf, "%s", v_name(r1, c1));
+	l = strlen(buf);
+	snprintf(buf + l, sizeof(buf) - l, ":%s", v_name(r2, c2));
 	return (buf);
     }
 }

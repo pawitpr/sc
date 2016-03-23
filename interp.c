@@ -30,6 +30,7 @@
 #include <curses.h>
 #include <stdbool.h>
 #include "sc.h"
+#include "compat.h"
 
 #ifndef MSDOS
 #include <unistd.h>
@@ -172,8 +173,9 @@ dostindex(int minr, int minc, int maxr, int maxc, struct enode *val)
 	p = *ATBL(tbl, r, c);
 
     if (p && p->label) {
-	pr = scxmalloc((size_t)(strlen(p->label)+1));
-	(void) strcpy(pr, p->label);
+	size_t l = strlen(p->label) + 1;
+	pr = scxmalloc(l);
+	strlcpy(pr, p->label, l);
 	if (p->cellerror)
 	    cellerror = CELLINVALID;
 	return (pr);
@@ -1017,14 +1019,16 @@ docat(register char *s1, register char *s2)
 {
     register char *p;
     char *arg1, *arg2;
+    size_t l;
 
     if (!s1 && !s2)
 	return ((char *)0);
     arg1 = s1 ? s1 : "";
     arg2 = s2 ? s2 : "";
-    p = scxmalloc((size_t)(strlen(arg1)+strlen(arg2)+1));
-    (void) strcpy(p, arg1);
-    (void) strcat(p, arg2);
+    l = strlen(arg1) + strlen(arg2) + 1;
+    p = scxmalloc(l);
+    strlcpy(p, arg1, l);
+    strlcat(p, arg2, l);
     if (s1)
         scxfree(s1);
     if (s2)
@@ -1037,12 +1041,14 @@ dodate(time_t tloc, char *fmtstr)
 {
     char buff[FBUFLEN];
     char *p;
+    size_t l;
 
     if (!fmtstr)
 	fmtstr = "%a %b %d %H:%M:%S %Y";
     strftime(buff, FBUFLEN, fmtstr, localtime(&tloc));
-    p = scxmalloc((size_t)(strlen(buff)+1));
-    (void) strcpy(p, buff);
+    l = strlen(buff) + 1;
+    p = scxmalloc(l);
+    strlcpy(p, buff, l);
     return (p);
 }
 
@@ -1052,12 +1058,14 @@ dofmt(char *fmtstr, double v)
 {
     char buff[FBUFLEN];
     char *p;
+    size_t l;
 
     if (!fmtstr)
 	return ((char *)0);
     (void) snprintf(buff, FBUFLEN, fmtstr, v);
-    p = scxmalloc((size_t)(strlen(buff)+1));
-    (void) strcpy(p, buff);
+    l = strlen(buff) + 1;
+    p = scxmalloc(l);
+    strlcpy(p, buff, l);
     scxfree(fmtstr);
     return (p);
 }
@@ -1087,7 +1095,7 @@ doext(struct enode *se)
     return (strcpy(scxmalloc((size_t) 1), "\0"));
 }
 
-#else /* VMS */
+#else /* if defined(VMS) || defined(MSDOS) */
 
 char *
 doext(struct enode *se)
@@ -1111,7 +1119,7 @@ doext(struct enode *se)
 	} else {
 	    FILE *pp;
 
-	    (void) sprintf(buff, "%s %g", command, value); /* build cmd line */
+	    snprintf(buff, sizeof buff, "%s %g", command, value); /* build cmd line */
 	    scxfree(command);
 
 	    error("Running external function...");
@@ -1148,7 +1156,7 @@ doext(struct enode *se)
 	return (strcpy(scxmalloc((size_t)1), ""));
 }
 
-#endif /* VMS */
+#endif  /* if !(defined(VMS) || defined(MSDOS)) */
 
 
 /*
@@ -1268,12 +1276,15 @@ char *
 seval(register struct enode *se)
 {
     register char *p;
+    size_t l;
 
     if (se == (struct enode *)0) return (char *)0;
     switch (se->op) {
-	case O_SCONST: p = scxmalloc((size_t)(strlen(se->e.s)+1));
-		     (void) strcpy(p, se->e.s);
-		     return (p);
+	case O_SCONST:
+		l = strlen(se->e.s) + 1;
+		p = scxmalloc(l);
+		strlcpy(p, se->e.s, l);
+		return (p);
 	case O_VAR:    {
 			struct ent *vp = se->e.v.vp;
 			int row, col;
@@ -1287,8 +1298,9 @@ seval(register struct enode *se)
 			}
 			if (!vp || !vp->label)
 			    return (NULL);
-			p = scxmalloc((size_t)(strlen(vp->label)+1));
-			(void) strcpy(p, vp->label);
+			l = strlen(vp->label) + 1;
+			p = scxmalloc(l);
+			strlcpy(p, vp->label, l);
 			return (p);
 	}
 	case '#':    return (docat(seval(se->e.o.left), seval(se->e.o.right)));
@@ -1336,8 +1348,9 @@ seval(register struct enode *se)
 		     char *s = strrchr(curfile, '/');
 
 		     if (n || s++ == NULL) s = curfile;
-		     p = scxmalloc((size_t)(strlen(s)+1));
-		     (void) strcpy(p, s);
+		     l = strlen(s) + 1;
+		     p = scxmalloc(l);
+		     strlcpy(p, s, l);
 		     return (p);
 	}
 	default:
@@ -2029,7 +2042,7 @@ str_search(char *s, int firstrow, int firstcol, int lastrow, int lastcol,
 	    *line = '\0';
 	    if (p) {
 		if (p->cellerror)
-		    sprintf(line, "%s", p->cellerror == CELLERROR ?
+		    snprintf(line, sizeof line, "%s", p->cellerror == CELLERROR ?
 			    "ERROR" : "INVALID");
 		else if (p->flags & IS_VALID) {
 		    if (p->format) {
@@ -2518,8 +2531,9 @@ label(register struct ent *v, register char *s, int flushdir)
 	}
 	if (v->label) scxfree((char *)(v->label));
 	if (s && s[0]) {
-	    v->label = scxmalloc((unsigned)(strlen(s)+1));
-	    (void) strcpy (v->label, s);
+	    size_t l = strlen(s) + 1;
+	    v->label = scxmalloc(l);
+	    strlcpy(v->label, s, l);
 	} else
 	    v->label = (char *)0;
 	if (flushdir<0) v->flags |= IS_LEFTFLUSH;
@@ -2537,11 +2551,11 @@ decodev(struct ent_ptr v)
 	struct range *r;
 
 	if (!v.vp || v.vp->flags & IS_DELETED)
-	    (void) sprintf(line + linelim, "@ERR");
+	    snprintf(line + linelim, sizeof(line) - linelim, "@ERR");
 	else if (!find_range((char *)0, 0, v.vp, v.vp, &r) && !r->r_is_range)
-	    (void) sprintf(line+linelim, "%s", r->r_name);
+	    snprintf(line + linelim, sizeof(line) - linelim, "%s", r->r_name);
 	else {
-	    (void) sprintf(line+linelim, "%s%s%s%d",
+	    snprintf(line + linelim, sizeof(line) - linelim, "%s%s%s%d",
 		v.vf & FIX_COL ? "$" : "",
 		coltoa(v.vp->col),
 		v.vf & FIX_ROW ? "$" : "",
@@ -2615,10 +2629,12 @@ decompile(register struct enode *e, int	priority)
 			break;
 	case O_VAR:	decodev(e->e.v);
 			break;
-	case O_CONST:	(void) sprintf(line+linelim, "%.15g", e->e.k);
+	case O_CONST:	snprintf(line + linelim, sizeof(line) - linelim,
+			    "%.15g", e->e.k);
 			linelim += strlen(line+linelim);
 			break;
-	case O_SCONST:	(void) sprintf(line+linelim, "\"%s\"", e->e.s);
+	case O_SCONST:	snprintf(line + linelim, sizeof(line) - linelim,
+			    "\"%s\"", e->e.s);
 			linelim += strlen(line+linelim);
 			break;
 
@@ -2832,7 +2848,8 @@ range_arg(char *s, struct enode *e)
     linelim--;
     if (!find_range((char *)0, 0, e->e.r.left.vp,
 	    e->e.r.right.vp, &r) && r->r_is_range) {
-	(void) sprintf(line+linelim, "%s", r->r_name);
+	snprintf(line + linelim, sizeof(line) - linelim,
+	    "%s", r->r_name);
 	linelim += strlen(line+linelim);
     } else {
 	decodev(e->e.r.left);
@@ -2849,7 +2866,7 @@ editfmt(int row, int col)
 
     p = lookat(row, col);
     if (p->format) {
-        (void) sprintf(line, "fmt %s \"%s\"", v_name(row, col), p->format);
+        snprintf(line, sizeof line,  "fmt %s \"%s\"", v_name(row, col), p->format);
 	linelim = strlen(line);
     }
 }
@@ -2860,11 +2877,12 @@ editv(int row, int col)
     register struct ent *p;
 
     p = lookat(row, col);
-    (void) sprintf(line, "let %s = ", v_name(row, col));
+    snprintf(line, sizeof line, "let %s = ", v_name(row, col));
     linelim = strlen(line);
     if (p->flags & IS_VALID) {
 	if (p->flags & IS_STREXPR || p->expr == NULL) {
-	    (void) sprintf(line+linelim, "%.15g", p->v);
+	    snprintf(line + linelim, sizeof(line) - linelim,
+	        "%.15g", p->v);
 	    linelim = strlen(line);
 	} else
 	    editexp(row, col);
@@ -2888,19 +2906,19 @@ edits(int row, int col)
 
     p = lookat(row, col);
     if (p->flags & IS_LABEL)
-	(void) sprintf(line, "label %s = ", v_name(row, col));
+	snprintf(line, sizeof line, "label %s = ", v_name(row, col));
     else
-	(void) sprintf(line, "%sstring %s = ",
+	snprintf(line, sizeof line, "%sstring %s = ",
 		((p->flags & IS_LEFTFLUSH) ? "left" : "right"),
 		v_name(row, col));
     linelim = strlen(line);
     if (p->flags & IS_STREXPR && p->expr) {
 	editexp(row, col);
     } else if (p->label) {
-        (void) sprintf(line+linelim, "\"%s\"", p->label);
+        snprintf(line + linelim, sizeof(line) - linelim, "\"%s\"", p->label);
         linelim += strlen(line+linelim);
     } else {
-        (void) sprintf(line+linelim, "\"");
+        snprintf(line + linelim, sizeof(line) - linelim, "\"");
         linelim += 1;
     }
 }

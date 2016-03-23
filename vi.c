@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include "sc.h"
+#include "compat.h"
 
 #if defined(REGCOMP)
 #include <regex.h>
@@ -407,7 +408,7 @@ write_line(int c)
 				    char temp[100];
 
 				    if (p && p->flags & IS_VALID) {
-					(void) sprintf(temp, "%.*f",
+					snprintf(temp, sizeof temp, "%.*f",
 						precision[curcol], p->v);
 					ins_string(temp);
 					toggle_navigate_mode();
@@ -708,7 +709,7 @@ showdr(void)
 	maxsc = fr ? fr->or_right->col : maxcols;
 
 	toggle_navigate_mode();
-	sprintf(r, "%d:%d", minsr, maxsr);
+	snprintf(r, sizeof r, "%d:%d", minsr, maxsr);
 	ins_string(r);
     } else if (showrange == SHOWCOLS) {
 	minsr = 0;
@@ -716,9 +717,9 @@ showdr(void)
 	maxsr = maxrows;
 	maxsc = showsc > curcol ? showsc : curcol;
 
-	strcpy(r, coltoa(minsc));
-	strcat(r, ":");
-	strcat(r, coltoa(maxsc));
+	strlcpy(r, coltoa(minsc), sizeof r);
+	strlcat(r, ":", sizeof r);
+	strlcat(r, coltoa(maxsc), sizeof r);
 
 	toggle_navigate_mode();
 	ins_string(r);
@@ -810,7 +811,7 @@ u_save(int c)
 
 	undo_line = scxrealloc(undo_line, undolen);
     }
-    (void) strcpy(undo_line, line);
+    strlcpy(undo_line, line, undolen);
 
     undo_lim = linelim;
 
@@ -837,9 +838,9 @@ restore_it(void) {
 	tempc = scxrealloc(tempc, templen);
     }
 
-    strcpy(tempc, line);
+    strlcpy(tempc, line, templen);
     tempi = linelim;
-    (void) strcpy(line, undo_line);
+    strlcpy(line, undo_line, sizeof line);
     linelim = undo_lim;
     strcpy(undo_line, tempc);
     undo_lim = tempi;
@@ -850,7 +851,7 @@ static void
 stop_edit(void) {
     if (search_ind != ' ') {
 	search_ind = ' ';
-	(void) strcpy(line, history[0].histline);
+	strlcpy(line, history[0].histline, sizeof line);
 	write_line('G');
     } else {
 	showrange = 0;
@@ -1245,7 +1246,7 @@ static void
 del_to_end(void) {
     if (linelim < 0)
 	return;
-    strcpy(putbuf, line + linelim);
+    strlcpy(putbuf, line + linelim, sizeof putbuf);
     line[linelim] = '\0';
     linelim = back_line(1);
 }
@@ -1367,9 +1368,9 @@ doshell(void)
     (void) fgets(cmd, MAXCMD, stdin);
     cmd[strlen(cmd) - 1] = '\0';	/* clobber \n */
     if (strcmp(cmd,"!") == 0)		/* repeat? */
-	(void) strcpy(cmd, lastcmd);
+	strlcpy(cmd, lastcmd, sizeof cmd);
     else
-	(void) strcpy(lastcmd, cmd);
+	strlcpy(lastcmd, cmd, sizeof lastcmd);
 
     if (modflg) {
 	(void) puts("[No write since last change]");
@@ -1414,7 +1415,7 @@ save_hist(void) {
 	    history[lasthist].histline = scxrealloc(history[lasthist].histline,
 		    history[lasthist].len);
 	}
-	(void) strcpy(history[lasthist].histline, line);
+	strlcpy(history[lasthist].histline, line, history[lasthist].len);
 	histsessionnew++;
     }
     if (history[0].histline) {
@@ -1438,7 +1439,7 @@ for_hist(void) {
 	histp = histp % endhist + 1;
 
     if (lasthist >= 0) {
-	(void) strcpy(line, history[histp].histline);
+	strlcpy(line, history[histp].histline, sizeof line);
 	last_col();
     }
     if (histp) {
@@ -1456,7 +1457,7 @@ back_hist(void) {
 	    history[0].histline = scxrealloc(history[0].histline,
 		    history[0].len);
 	}
-	(void) strcpy(history[0].histline, line);
+	strlcpy(history[0].histline, line, history[0].len);
 
 	if (lasthist >= 0)
 	    histp = lasthist;
@@ -1467,7 +1468,7 @@ back_hist(void) {
 	histp--;
 
     if (lasthist >= 0) {
-    	(void) strcpy(line, history[histp].histline);
+    	strlcpy(line, history[histp].histline, sizeof line);
 	last_col();
     }
     if (histp) {
@@ -1522,11 +1523,11 @@ search_hist(void) {
     	lastsrchlen = strlen(line) + 40;
 	last_search = scxrealloc(last_search, lastsrchlen);
     }
-    (void) strcpy(last_search, line);
+    strlcpy(last_search, line, lastsrchlen);
 #endif
 #endif
 #endif
-    (void) strcpy(line, history[0].histline);
+    strlcpy(line, history[0].histline, sizeof line);
     search_again(false);
     if (mode != EDIT_MODE) edit_mode();
     search_ind = ' ';
@@ -1559,14 +1560,14 @@ search_again(bool reverse)
 	    if (!(search_dir ^ reverse) && histp != lasthist)
 		if (histp <= 0) {
 		    histp = ((lasthist + 1) % endhist);
-		    (void) strcpy(line, history[histp].histline);
+		    strlcpy(line, history[histp].histline, sizeof line);
 		} else
 		    for_hist();
 	    else if ((search_dir ^ reverse) && histp != ((lasthist + 1) % endhist))
 		back_hist();
 	    else {
 		histp = 0;
-		(void) strcpy(line, history[0].histline);
+		strlcpy(line, history[0].histline, sizeof line);
 		last_col();
 	    }
 	} else
@@ -1582,7 +1583,7 @@ search_again(bool reverse)
 		back_hist();
 	    else
 		histp = ((lasthist + 1) % endhist);
-		(void) strcpy(line, history[histp].histline);
+		strlcpy(line, history[histp].histline, sizeof line);
 	}
 	found_it = 0;
 #ifdef REGCOMP
@@ -1651,7 +1652,7 @@ write_hist(void)
     }
 
     /* now write to whole lot out to the proper save file */
-    strcpy(histfile, HISTORY_FILE);
+    strlcpy(histfile, HISTORY_FILE, sizeof histfile);
     if (findhome(histfile) && (fp = fopen(histfile, "w")) != NULL) {
 	for (i = 1; i <= endhist; i++) {
 	    lasthist = lasthist % endhist + 1;
@@ -1678,7 +1679,7 @@ read_hist(void)
     FILE *fp;
     char histfile[PATHLEN];
 
-    strcpy(histfile, HISTORY_FILE);
+    strlcpy(histfile, HISTORY_FILE, sizeof histfile);
     if (findhome(histfile) && (fp = fopen(histfile, "r")) != NULL)
 	readhistfile(fp);
     histsessionstart = lasthist;
@@ -1952,7 +1953,7 @@ dogoto(void) {
 	tempc = scxrealloc(tempc, templen);
     }
 
-    strcpy(tempc, line);
+    strlcpy(tempc, line, templen);
     tempi = linelim;
 
     /* Can't switch back to navigate mode if insert_mode() is used here
@@ -1971,7 +1972,7 @@ dogoto(void) {
 	yyparse();
     }
 
-    strcpy(line, tempc);
+    strlcpy(line, tempc, sizeof line);
     linelim = tempi;
     /* Now we need to change back to navigate mode ourselves so that
      * toggle_navigate_mode() will work properly again.
@@ -1989,7 +1990,7 @@ query(const char *s, char *data)
 
     insert_mode();
     if (data != NULL) {
-	strcpy(line, data);
+	strlcpy(line, data, sizeof line);
 	linelim = strlen(line);
     } else {
     	*line = '\0';

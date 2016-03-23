@@ -95,6 +95,7 @@
 #include <time.h>
 #include <stdbool.h>
 #include "sc.h"
+#include "compat.h"
 
 #define EOS	'\0'
 #define MAXBUF	256
@@ -135,7 +136,8 @@ format(char *fmt, int lprecision, double val, char *buf, int buflen)
 	tmpfmt2 = scxrealloc(tmpfmt2, fmtlen);
 	exptmp = scxrealloc(exptmp, fmtlen);
     }
-    fmt = strcpy(tmpfmt1, fmt);
+    strlcpy(tmpfmt1, fmt, fmtlen);
+    fmt = tmpfmt1;
     if (buflen + 1 > mantlen) {
     	mantlen = buflen + 40;
 	mantissa = scxrealloc(mantissa, mantlen);
@@ -208,7 +210,8 @@ format(char *fmt, int lprecision, double val, char *buf, int buflen)
 	    cp++;
 	else if (*cp == 'e' || *cp == 'E') {
 	    if (cp[1] == '+' || cp[1] == '-') {
-		exponent = strcpy(exptmp, cp);
+		strlcpy(exptmp, cp, fmtlen);
+		exponent = exptmp;
 		*cp = EOS;
 		if (val != 0.0) {
 		    while (val < 1.0) {
@@ -254,8 +257,8 @@ format(char *fmt, int lprecision, double val, char *buf, int buflen)
 	}
 	zero_pad = strlen(decimal) - zero_pad;
     }
-    (void) sprintf(prtfmt, "%%.%dlf", width);
-    (void) sprintf(mantissa, prtfmt, val);
+    snprintf(prtfmt, sizeof prtfmt, "%%.%dlf", width);
+    snprintf(mantissa, mantlen, prtfmt, val);
     for (cp = integer = mantissa; *cp != dpoint && *cp != EOS; cp++) {
 	if (*integer == '0')
 	    integer++;
@@ -289,7 +292,8 @@ format(char *fmt, int lprecision, double val, char *buf, int buflen)
     	cilen = len_ci + 40;
 	citmp = scxrealloc(citmp, cilen);
     }
-    ci = strcpy(citmp, ci);
+    strlcpy(citmp, ci, cilen);
+    ci = citmp;
 
     cf = decimal ? fmt_frac(fraction, decimal, lprecision) : "";
     len_cf = strlen(cf);
@@ -297,7 +301,8 @@ format(char *fmt, int lprecision, double val, char *buf, int buflen)
     	cflen = len_cf + 40;
 	cftmp = scxrealloc(cftmp, cilen);
     }
-    cf = strcpy(cftmp, cf);
+    strlcpy(cftmp, cf, cilen);
+    cf = cftmp;
 
     ce = (exponent) ? fmt_exp(exp_val, exponent) : "";
     len_ce = strlen(ce);
@@ -306,7 +311,7 @@ format(char *fmt, int lprecision, double val, char *buf, int buflen)
  *   ce = strcpy(scxmalloc((unsigned)((len_ce = strlen(ce)) + 1)), ce);
  */
     if (len_ci + len_cf + len_ce < buflen) {
-	(void) sprintf(buf, "%s%s%s", ci, cf, ce);
+	snprintf(buf, buflen, "%s%s%s", ci, cf, ce);
 	ret = true;
     }
 
@@ -429,9 +434,9 @@ fmt_exp(int val,	/* value of the exponent */
 	val = -val;
 	negative = false;
     }
-    (void) sprintf(valbuf, "%d", val);
+    snprintf(valbuf, sizeof valbuf, "%d", val);
   
-    (void) strcat(buf, fmt_int(valbuf, fmt, false, negative));
+    strlcat(buf, fmt_int(valbuf, fmt, false, negative), sizeof buf);
     return (buf);
 }
 
@@ -505,12 +510,12 @@ engformat(int fmt, int width, int lprecision, double val, char *buf, int buflen)
     if (fmt >= 0 && fmt < COLFORMATS && colformat[fmt])
 	return (format(colformat[fmt], lprecision, val, buf, buflen));
     if (fmt == REFMTFIX)
-	(void) sprintf(buf,"%*.*f", width, lprecision, val);
+	snprintf(buf, buflen, "%*.*f", width, lprecision, val);
     if (fmt == REFMTFLT)
-	(void) sprintf(buf,"%*.*E", width, lprecision, val);
+	snprintf(buf, buflen, "%*.*E", width, lprecision, val);
     if (fmt == REFMTENG) {
 	if (val == 0e0) {	/* Hack to get zeroes to line up in engr fmt */
-	    (void) sprintf((buf-1),"%*.*f ", width, lprecision, val);
+	    snprintf(buf - 1, buflen, "%*.*f ", width, lprecision, val);
 	} else {
 	    engabs = (val);
 	    if ( engabs <  0e0)       engabs = -engabs;
@@ -529,11 +534,11 @@ engformat(int fmt, int width, int lprecision, double val, char *buf, int buflen)
 	    if ((engabs >= 1e18)  && (engabs <  1e21 )) engind=12;
 	    if ((engabs < 1e-18)  || (engabs >= 1e21 )) {
 		/* Revert to floating point */
-		(void) sprintf(buf,"%*.*E", width, lprecision, val);
+		snprintf(buf, buflen, "%*.*E", width, lprecision, val);
 	    } else {
 		engexp = (double) (engind-6)*3;
 		engmant = val/pow(10.0e0,engexp);
-		(void) sprintf(buf,"%*.*fe%s", width-4,
+		snprintf(buf, buflen, "%*.*fe%s", width-4,
 			lprecision, engmant, engmult[engind]);
 	    }
 	}

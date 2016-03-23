@@ -312,7 +312,7 @@ deleterow(register int arg)
 	rs = fr->or_right->row - currow + 1;
     if (rs - arg < 0) {
 	rs = rs > 0 ? rs : 0;
-	(void) sprintf(buf, "Can't delete %d row%s %d row%s left", arg,
+	snprintf(buf, sizeof buf, "Can't delete %d row%s %d row%s left", arg,
 		(arg != 1 ? "s," : ","), rs, (rs != 1 ? "s" : ""));
 	error(buf);
 	return;
@@ -473,7 +473,7 @@ yankrow(int arg) {
 	rs = fr->or_right->row - currow + 1;
     if (rs - arg < 0) {
 	rs = rs > 0 ? rs : 0;
-	(void) sprintf(buf, "Can't yank %d row%s %d row%s left", arg,
+	snprintf(buf, sizeof buf, "Can't yank %d row%s %d row%s left", arg,
 		(arg != 1 ? "s," : ","), rs, (rs != 1 ? "s" : ""));
 	error(buf);
 	return;
@@ -527,8 +527,8 @@ yankcol(int arg) {
 
     if (cs - arg < 0) {
     	cs = cs > 0 ? cs : 0;
-	(void) sprintf(buf, "Can't yank %d column%s %d column%s left", arg,
-		(arg != 1 ? "s," : ","), cs, (cs != 1 ? "s" : ""));
+	snprintf(buf, sizeof buf, "Can't yank %d column%s %d column%s left",
+	    arg, (arg != 1 ? "s," : ","), cs, (cs != 1 ? "s" : ""));
 	error(buf);
 	return;
     }
@@ -935,8 +935,9 @@ colshow_op(void) {
     if (i >= maxcols) {
 	error("No hidden columns to show");
     } else {
-	(void) sprintf(line,"show %s:", coltoa(i));
-	(void) sprintf(line + strlen(line),"%s",coltoa(j));
+	snprintf(line, sizeof line, "show %s:", coltoa(i));
+	linelim = strlen(line);
+	snprintf(line + linelim, sizeof(line) - linelim, "%s", coltoa(j));
 	linelim = strlen(line);
     }
 }
@@ -957,7 +958,7 @@ rowshow_op(void)
     if (i >= maxrows) {
 	error("No hidden rows to show");
     } else {
-	(void)sprintf(line,"show %d:%d", i, j);
+	snprintf(line, sizeof line, "show %d:%d", i, j);
         linelim = strlen(line);
     }
 }
@@ -1051,11 +1052,11 @@ get_rcqual(int ch)
 	case ctl('b'):
 	case ctl('n'):
 	case ctl('p'):	if (ch == 'd')
-			    (void) sprintf(line,"deleterow [range] ");
+			    snprintf(line, sizeof line, "deleterow [range] ");
 			else if (ch == 'y')
-			    (void) sprintf(line,"yankrow [range] ");
+			    snprintf(line, sizeof line, "yankrow [range] ");
 			else if (ch == 'Z')
-			    (void) sprintf(line,"hide [range] ");
+			    snprintf(line, sizeof line, "hide [range] ");
 			else
 			    return (0);
 			edit_mode();
@@ -1074,11 +1075,11 @@ get_rcqual(int ch)
 	case 'l':
 	case 'H':
 	case 'L':	if (ch == 'd')
-			    (void) sprintf(line,"deletecol [range] ");
+			    snprintf(line, sizeof line, "deletecol [range] ");
 			else if (ch == 'y')
-			    (void) sprintf(line,"yankcol [range] ");
+			    snprintf(line, sizeof line, "yankcol [range] ");
 			else if (ch == 'Z')
-			    (void) sprintf(line,"hide [range] ");
+			    snprintf(line, sizeof line, "hide [range] ");
 			else
 			    return (0);
 			edit_mode();
@@ -1197,8 +1198,8 @@ closecol(int arg)
 
     if (cs - arg < 0) {
     	cs = cs > 0 ? cs : 0;
-	(void) sprintf(buf, "Can't delete %d column%s %d column%s left", arg,
-		(arg != 1 ? "s," : ","), cs, (cs != 1 ? "s" : ""));
+	snprintf(buf, sizeof buf, "Can't delete %d column%s %d column%s left",
+	    arg, (arg != 1 ? "s," : ","), cs, (cs != 1 ? "s" : ""));
 	error(buf);
 	return;
     }
@@ -1522,15 +1523,16 @@ formatcol(arg)
 		    break;
 		case ' ':
 		    if (arg == 1)
-			(void) sprintf(line,
+			snprintf(line, sizeof line,
 				"format [for column] %s ",
 				coltoa(curcol));
 		    else {
-			(void) sprintf(line,
+			snprintf(line, sizeof line,
 				"format [for columns] %s:",
 				coltoa(curcol));
-			(void) sprintf(line+strlen(line), "%s ",
-				coltoa(curcol+arg-1));
+			linelim = strlen(line);
+			snprintf(line + strlen(line), sizeof(line) - linelim,
+			    "%s ", coltoa(curcol+arg-1));
 		    }
 		    linelim = strlen(line);
 		    insert_mode();
@@ -1543,12 +1545,12 @@ formatcol(arg)
 		    refresh();
 		    if ((c = nmgetch()) >= '0' && c <= '9') {
 			if (colformat[c-'0']) {
-			    (void) sprintf(line,
+			    snprintf(line, sizeof line,
 				    "format %c = \"%s\"", c, colformat[c-'0']);
 			    edit_mode();
 			    linelim = strlen(line) - 1;
 			} else {
-			    (void) sprintf(line,
+			    snprintf(line, sizeof line,
 				    "format %c = \"", c);
 			    insert_mode();
 			    linelim = strlen(line);
@@ -2264,6 +2266,7 @@ copye(register struct enode *e, int Rdelta, int Cdelta, int r1, int c1,
 	ret->e.r.right.vf = e->e.r.right.vf;
     } else {
 	struct enode *temprange = NULL;
+	size_t l;
 
 	if (freeenodes) {
 	    ret = freeenodes;
@@ -2330,8 +2333,9 @@ copye(register struct enode *e, int Rdelta, int Cdelta, int r1, int c1,
  		break;
 	    case '$':
 	    case EXT:
-		ret->e.s = scxmalloc((unsigned) strlen(e->e.s)+1);
-		(void) strcpy(ret->e.s, e->e.s);
+		l = strlen(e->e.s) + 1;
+		ret->e.s = scxmalloc(l);
+		strlcpy(ret->e.s, e->e.s, l);
 		if (e->op == '$')	/* Drop through if ret->op is EXT */
 		    break;
 	    default:
@@ -2625,6 +2629,7 @@ void
 copyent(register struct ent *n, register struct ent *p, int dr, int dc,
 	int r1, int c1, int r2, int c2, int special)
 {
+    size_t l;
     if (!n || !p) {
 	error("internal error");
 	return;
@@ -2644,8 +2649,9 @@ copyent(register struct ent *n, register struct ent *p, int dr, int dc,
 	if (p->label) {
 	    if (n->label)
 		scxfree(n->label);
-	    n->label = scxmalloc((unsigned) (strlen(p->label) + 1));
-	    (void) strcpy(n->label, p->label);
+	    l = strlen(p->label) + 1;
+	    n->label = scxmalloc(l);
+	    strlcpy(n->label, p->label, l);
 	    n->flags &= ~IS_LEFTFLUSH;
 	    n->flags |= ((p->flags & IS_LABEL) | (p->flags & IS_LEFTFLUSH));
 	} else if (special != 'm') {
@@ -2657,8 +2663,9 @@ copyent(register struct ent *n, register struct ent *p, int dr, int dc,
     if (p->format) {
 	if (n->format)
 	    scxfree(n->format);
-        n->format = scxmalloc((unsigned) (strlen(p->format) + 1));
-	(void) strcpy(n->format, p->format);
+	l = strlen(p->format) + 1;
+        n->format = scxmalloc(l);
+	strlcpy(n->format, p->format, l);
     } else if (special != 'm' && special != 'f')
 	n->format = NULL;
     n->flags |= IS_CHANGED;
@@ -2845,6 +2852,7 @@ writefile(char *fname, int r0, int c0, int rn, int cn)
     /* find the extension and mapped plugin if exists */
     if ((p = strrchr(fname, '.'))) {
 	if ((plugin = findplugin(p+1, 'w')) != NULL) {
+	    size_t l;
 	    if (!plugin_exists(plugin, strlen(plugin), save + 1)) {
 		error("plugin not found");
 		return -1;
@@ -2854,8 +2862,11 @@ writefile(char *fname, int r0, int c0, int rn, int cn)
 		error("Path too long");
 		return -1;
 	    }
-	    sprintf(save + strlen(save), " %s%d:", coltoa(c0), r0);
-	    sprintf(save + strlen(save), "%s%d \"%s\"", coltoa(cn), rn, fname);
+	    l = strlen(save);
+	    snprintf(save + l, sizeof(save) - l, " %s%d:", coltoa(c0), r0);
+	    l = strlen(save);
+	    snprintf(save + l, sizeof(save) - l, "%s%d \"%s\"", coltoa(cn),
+		rn, fname);
 	    /* pass it to readfile as an advanced macro */
 	    readfile(save, 0);
 	    return (0);
@@ -2966,6 +2977,7 @@ readfile(char *fname, int eraseflg)
 #ifndef MSDOS
     if ((p = strrchr(fname, '.')) && (fname[0] != '|')) {  /* exclude macros */
 	if ((plugin = findplugin(p+1, 'r')) != NULL) {
+	    size_t l;
 	    if (!(plugin_exists(plugin, strlen(plugin), save + 1))) {
 		error("plugin not found");
 		return 0;
@@ -2975,7 +2987,8 @@ readfile(char *fname, int eraseflg)
 		error("Path too long");
 		return 0;
 	    }
-	    sprintf(save + strlen(save), " \"%s\"", fname);
+	    l = strlen(save);
+	    snprintf(save + l, sizeof(save) - l, " \"%s\"", fname);
 	    eraseflg = 0;
 	    /* get filename: could be preceded by params if this is
 	    * a save

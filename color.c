@@ -234,7 +234,7 @@ write_colors(FILE *f, int indent)
 
     for (i = 0; i < 8; i++) {
 	if (cpairs[i] && cpairs[i]->expr) {
-	    sprintf(line, "color %d = ", i + 1);
+	    snprintf(line, sizeof line, "color %d = ", i + 1);
 	    linelim = strlen(line);
 	    decompile(cpairs[i]->expr, 0);
 	    line[linelim] = '\0';

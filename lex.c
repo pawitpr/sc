@@ -34,6 +34,7 @@
 #include <curses.h>
 #include <term.h>
 #include "sc.h"
+#include "compat.h"
 
 #ifdef NONOTIMEOUT
 #define	notimeout(a1, a2)
@@ -185,7 +186,7 @@ yylex(void)
 			ret = VAR;
 		} else if ((path = scxmalloc((unsigned)PATHLEN)) &&
 			plugin_exists(tokenst, tokenl, path)) {
-		    strcat(path, p);
+		    strlcat(path, p, PATHLEN);
 		    yylval.sval = path;
 		    ret = PLUGIN;
 		} else {
@@ -440,7 +441,8 @@ VMS_MSG (int status)
 	status = status & 0x8000 ? status & 0xFFFFFFF : status & 0xFFFF;
 	if (SYS$GETMSG(status, &length, &errdesc, 1, 0) == SS$_NORMAL) {
 	    errstr[length] = '\0';
-	    (void) sprintf(buf, "<0x%x> %s", status, errdesc.dsc$a_pointer);
+	    snprintf(buf, sizeof buf, "<0x%x> %s", status,
+	        errdesc.dsc$a_pointer);
 	    err_out(buf);
 	} else
 	    err_out("System error");
@@ -509,13 +511,13 @@ initkbd(void)
 
     ktmp = tgetstr("ks",&p);
     if (ktmp)  {
-	(void) strcpy(ks_buf, ktmp);
+	strlcpy(ks_buf, ktmp, sizeof ks_buf);
 	ks = ks_buf;
 	tputs(ks, 1, charout);
     }
     ktmp = tgetstr("ke",&p);
     if (ktmp)  {
-	(void) strcpy(ke_buf, ktmp);
+	strlcpy(ke_buf, ktmp, sizeof ke_buf);
 	ke = ke_buf;
     }
 

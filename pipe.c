@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include "sc.h"
-
+#include "compat.h"
 #include <time.h>
 #include <string.h>
 
@@ -28,15 +28,15 @@ getnum(int r0, int c0, int rn, int cn, int fd)
 	    p = *pp;
 	    if (p) {
 		if (p->cellerror)
-		    sprintf(line, "%s", (*pp)->cellerror == CELLERROR ?
+		    snprintf(line, sizeof line, "%s", (*pp)->cellerror == CELLERROR ?
 			    "ERROR" : "INVALID");
 		else if (p->flags & IS_VALID)
-		    sprintf(line, "%.15g", p->v);
+		    snprintf(line, sizeof line, "%.15g", p->v);
 	    }
 	    if (c < cn)
-		strcat(line, "\t");
+		strlcat(line, "\t", sizeof line);
 	    else
-		strcat(line, "\n");
+		strlcat(line, "\n", sizeof line);
 	    write(fd, line, strlen(line));
 	    if (brokenpipe) {
 		linelim = -1;
@@ -60,7 +60,7 @@ fgetnum(int r0, int c0, int rn, int cn, int fd)
 	    p = *pp;
 	    if (p) {
 		if (p->cellerror)
-		    sprintf(line, "%s", p->cellerror == CELLERROR ?
+		    snprintf(line, sizeof line, "%s", p->cellerror == CELLERROR ?
 			    "ERROR" : "INVALID");
 		else if (p->flags & IS_VALID) {
 		    if (p->format) {
@@ -77,9 +77,9 @@ fgetnum(int r0, int c0, int rn, int cn, int fd)
 		}
 	    }
 	    if (c < cn)
-		strcat(line, "\t");
+		strlcat(line, "\t", sizeof line);
 	    else
-		strcat(line, "\n");
+		strlcat(line, "\n", sizeof line);
 	    write(fd, line, strlen(line));
 	    if (brokenpipe) {
 		linelim = -1;
@@ -100,11 +100,11 @@ getstring(int r0, int c0, int rn, int cn, int fd)
 	for (c = c0, pp = ATBL(tbl, r, c); c <= cn; pp++, c++) {
 	    *line = '\0';
 	    if (*pp && (*pp)->label)
-		sprintf(line, "%s", (*pp)->label);
+		snprintf(line, sizeof line, "%s", (*pp)->label);
 	    if (c < cn)
-		strcat(line, "\t");
+		strlcat(line, "\t", sizeof line);
 	    else
-		strcat(line, "\n");
+		strlcat(line, "\n", sizeof line);
 	    write(fd, line, strlen(line));
 	    if (brokenpipe) {
 		linelim = -1;
@@ -134,9 +134,9 @@ getexp(int r0, int c0, int rn, int cn, int fd)
 		    *line = '\0';
 	    }
 	    if (c < cn)
-		strcat(line, "\t");
+		strlcat(line, "\t", sizeof line);
 	    else
-		strcat(line, "\n");
+		strlcat(line, "\n", sizeof line);
 	    write(fd, line, strlen(line));
 	    if (brokenpipe) {
 		linelim = -1;
@@ -150,7 +150,7 @@ getexp(int r0, int c0, int rn, int cn, int fd)
 void
 getformat(int col, int fd)
 {
-    sprintf(line, "%d %d %d\n", fwidth[col], precision[col], realfmt[col]);
+    snprintf(line, sizeof line, "%d %d %d\n", fwidth[col], precision[col], realfmt[col]);
     write(fd, line, strlen(line));
     linelim = -1;
 }
@@ -165,11 +165,11 @@ getfmt(int r0, int c0, int rn, int cn, int fd)
 	for (c = c0, pp = ATBL(tbl, r, c); c <= cn; pp++, c++) {
 	    *line = '\0';
 	    if (*pp && (*pp)->format)
-		sprintf(line, "%s", (*pp)->format);
+		snprintf(line, sizeof line, "%s", (*pp)->format);
 	    if (c < cn)
-		strcat(line, "\t");
+		strlcat(line, "\t", sizeof line);
 	    else
-		strcat(line, "\n");
+		strlcat(line, "\n", sizeof line);
 	    write(fd, line, strlen(line));
 	    if (brokenpipe) {
 		linelim = -1;
@@ -184,16 +184,18 @@ void
 getframe(int fd)
 {
     struct frange *fr;
+    size_t l;
 
     *line = '\0';
     if ((fr = find_frange(currow, curcol))) {
-	sprintf(line, "%s", r_name(fr->or_left->row, fr->or_left->col,
+	snprintf(line, sizeof line, "%s", r_name(fr->or_left->row, fr->or_left->col,
 		fr->or_right->row, fr->or_right->col));
-	strcat(line, " ");
-	sprintf(line + strlen(line), "%s", r_name(fr->ir_left->row,
+	strlcat(line, " ", sizeof line);
+	l = strlen(line);
+	snprintf(line + l, sizeof(line) - l, "%s", r_name(fr->ir_left->row,
 		fr->ir_left->col, fr->ir_right->row, fr->ir_right->col));
     }
-    strcat(line, "\n");
+    strlcat(line, "\n", sizeof line);
     write(fd, line, strlen(line));
     linelim = -1;
 }
@@ -206,7 +208,7 @@ getrange(char *name, int fd)
 
     *line = '\0';
     if (!find_range(name, strlen(name), (struct ent *)0, (struct ent *)0, &r)) {
-	sprintf(line, "%s%s%s%d",
+	snprintf(line, sizeof line, "%s%s%s%d",
 		r->r_left.vf & FIX_COL ? "$" : "",
 		coltoa(r->r_left.vp->col),
 		r->r_left.vf & FIX_ROW ? "$" : "",
@@ -215,7 +217,7 @@ getrange(char *name, int fd)
 	    p = line;
 	    while (*p)
 		p++;
-	    sprintf(p, ":%s%s%s%d",
+	    snprintf(p, sizeof(line) - (p - line), ":%s%s%s%d",
 		    r->r_right.vf & FIX_COL ? "$" : "",
 		    coltoa(r->r_right.vp->col),
 		    r->r_right.vf & FIX_ROW ? "$" : "",
@@ -236,7 +238,7 @@ getrange(char *name, int fd)
 	/*                                              */
 	/************************************************/
     }
-    strcat(line, "\n");
+    strlcat(line, "\n", sizeof line);
     write(fd, line, strlen(line));
     linelim = -1;
 }
@@ -257,8 +259,8 @@ doeval(struct enode *e, char *fmt, int row, int col, int fd)
 	} else
 	    format(fmt, precision[col], v, line, FBUFLEN);
     } else
-	sprintf(line, "%.15g", v);
-    strcat(line, "\n");
+	snprintf(line, sizeof line, "%.15g", v);
+    strlcat(line, "\n", sizeof line);
     write(fd, line, strlen(line));
     linelim = -1;
 
@@ -314,12 +316,12 @@ dogetkey(void) {
     deraw(0);
 
     if (c < 256) {
-	sprintf(line, "%c", c);
+	snprintf(line, sizeof line, "%c", c);
 	len = 1;
     } else if (c >= KEY_MIN && c <= KEY_MAX) {
 	int i, j;
 	line[0] = '\0';
-	sprintf(line + 1, "%s\n", keyname(c));
+	snprintf(line + 1, sizeof(line) - 1, "%s\n", keyname(c));
 	for (i = 1, j = 5; line[j-1]; ) {
 	    if (line[j] == '(' || line[j] == ')')
 		j++;
@@ -329,7 +331,7 @@ dogetkey(void) {
 	len = strlen(line + 1) + 1;
     } else {
 	line[0] = '0';
-	sprintf(line + 1, "UNKNOWN KEY");
+	snprintf(line + 1, sizeof(line) - 1, "UNKNOWN KEY");
 	len = strlen(line + 1) + 1;
     }
 
@@ -341,10 +343,10 @@ void
 dostat(int fd)
 {
     *line = '\0';
-    if (modflg)			sprintf(line, "m");
-    if (isatty(STDIN_FILENO))	strcat(line, "i");
-    if (isatty(STDOUT_FILENO))	strcat(line, "o");
-    strcat(line, "\n");
+    if (modflg)			snprintf(line, sizeof line, "m");
+    if (isatty(STDIN_FILENO))	strlcat(line, "i", sizeof line);
+    if (isatty(STDOUT_FILENO))	strlcat(line, "o", sizeof line);
+    strlcat(line, "\n", sizeof line);
     write(fd, line, strlen(line));
     linelim = -1;
 }

@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "sc.h"
+#include "compat.h"
 
 #ifdef USELOCALE
 #include <locale.h>
@@ -875,16 +876,20 @@ command:	S_LET var_or_range '=' e
 	|	S_PULLCOPY		{ copy(NULL, NULL, NULL, NULL); }
 	|	S_PULLCOPY var_or_range	{ copy($2.left.vp, $2.right.vp,
 					     NULL, (struct ent *)1); }
-	|	S_WHEREAMI		{ sprintf(line, "%s%d ",
+	|	S_WHEREAMI		{ size_t l;
+					  snprintf(line, sizeof line, "%s%d ",
 					     coltoa(curcol), currow);
-					  sprintf(line + strlen(line), "%s%d\n",
-					     coltoa(stcol), strow);
+					  l = strlen(line);
+					  snprintf(line + l, sizeof(line) - l,
+					     "%s%d\n", coltoa(stcol), strow);
 					  write(macrofd, line, strlen(line));
 					  line[0] = '\0'; }
-	|	S_WHEREAMI '|' NUMBER	{ sprintf(line, "%s%d ",
+	|	S_WHEREAMI '|' NUMBER	{ size_t l;
+					  snprintf(line, sizeof line, "%s%d ",
 					     coltoa(curcol), currow);
-					  sprintf(line + strlen(line), "%s%d\n",
-					     coltoa(stcol), strow);
+					  l = strlen(line);
+					  snprintf(line + l, sizeof(line) - l,
+					     "%s%d\n", coltoa(stcol), strow);
 					  write($3, line, strlen(line));
 					  line[0] = '\0'; }
 	|	S_GETNUM var_or_range	{ getnum($2.left.vp->row,
@@ -1011,7 +1016,8 @@ command:	S_LET var_or_range '=' e
 	|	S_PLUGOUT STRING '=' STRING
 					{ addplugin($2, $4, 'w'); } 
 	|       PLUGIN			{ *line = '|';
-					  sprintf(line + 1, $1);
+					  snprintf(line + 1, sizeof(line) - 1,
+					      $1);
 					  readfile(line, 0);
 					  scxfree($1); }
 	|	/* nothing */
@@ -1237,11 +1243,13 @@ num:		NUMBER		{ $$ = (double) $1; }
 strarg:		STRING		{ $$ = $1; }
 	|	var		{
 				    char *s, *s1;
+				    size_t l;
 				    s1 = $1.vp->label;
 				    if (!s1)
 					s1 = "NULL_STRING";
-				    s = scxmalloc((unsigned)strlen(s1)+1);
-				    (void) strcpy(s, s1);
+				    l = strlen(s1) + 1;
+				    s = scxmalloc(l);
+				    strlcpy(s, s1, l);
 				    $$ = s;
 				}
   	;

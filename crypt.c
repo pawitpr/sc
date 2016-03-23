@@ -42,7 +42,7 @@ creadfile(char *save, int  eraseflg)
     }
 
     deraw(1);
-    (void) strcpy(KeyWord, getpass("Enter key:"));
+    strlcpy(KeyWord, getpass("Enter key:"), sizeof KeyWord);
     goraw();
 
     if ((pid=fork()) == 0) {		/* if child		 */
@@ -78,7 +78,7 @@ creadfile(char *save, int  eraseflg)
     while (pid != wait(&fildes)) /**/;
     linelim = -1;
     if (eraseflg) {
-	(void) strcpy(curfile, save);
+	strlcpy(curfile, save, sizeof curfile);
 	modflg = 0;
     }
 }
@@ -105,7 +105,7 @@ cwritefile(char *fname, int r0, int c0, int rn, int cn)
 	return (-1);
 	}
 
-    (void) strcpy(save, fname);
+    strlcpy(save, fname, sizeof save);
 
     busave = findhome(save);
 #ifdef DOBACKUPS
@@ -125,7 +125,7 @@ cwritefile(char *fname, int r0, int c0, int rn, int cn)
 
     if (KeyWord[0] == '\0') {
 	deraw(1);
-	(void) strcpy(KeyWord, getpass("Enter key:"));
+	strlcpy(KeyWord, getpass("Enter key:"), sizeof KeyWord);
 	goraw();
     }
 
@@ -158,7 +158,7 @@ cwritefile(char *fname, int r0, int c0, int rn, int cn)
     (void) fclose(f);
     (void) close(pipefd[1]);
     while (pid != wait(&fildes)) /**/;
-    (void) strcpy(curfile,save);
+    strlcpy(curfile, save, sizeof curfile);
 
     modflg = 0;
     error("File \"%s\" written (encrypted).", curfile);

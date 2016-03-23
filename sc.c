@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "sc.h"
+#include "compat.h"
 
 #ifndef SAVENAME
 #define	SAVENAME "SC.SAVE" /* file name to use for emergency saves */
@@ -327,11 +328,11 @@ main (int argc, char  **argv)
     if (popt)
 	*revmsg = '\0';
     else {
-	(void) strcpy(revmsg, progname);
+	strlcpy(revmsg, progname, sizeof revmsg);
 	for (revi = rev; (*revi++) != ':'; );	/* copy after colon */
-	(void) strcat(revmsg, revi);
+	strlcat(revmsg, revi, sizeof revmsg);
 	revmsg[strlen(revmsg) - 2] = 0;		/* erase last character */
-	(void) strcat(revmsg, ":  Type '?' for help.");
+	strlcat(revmsg, ":  Type '?' for help.", sizeof revmsg);
     }
 
 #ifdef MSDOS
@@ -342,7 +343,7 @@ main (int argc, char  **argv)
     if (optind < argc && argv[optind][0] != '|' &&
 	    strcmp(argv[optind], "-"))
 #endif /* MSDOS */
-	(void) strcpy(curfile, argv[optind]);
+	strlcpy(curfile, argv[optind], sizeof curfile);
     for (dbidx = DELBUFSIZE - 1; dbidx >= 0; ) {
 	delbuf[dbidx] = NULL;
 	delbuffmt[dbidx--] = NULL;
@@ -445,12 +446,12 @@ main (int argc, char  **argv)
 				    }
 		    		    /* else drop through */
 				case ctl('m'):
-				    strcpy(line, "put ");
+				    strlcpy(line, "put ", sizeof line);
 				    linelim = 4;
 				    write_line('.');
 				    if (showrange)
 					write_line('.');
-				    strcat(line, optarg);
+				    strlcat(line, optarg, sizeof line);
 				    break;
 				case ESC:
 				case ctl('g'):
@@ -480,9 +481,9 @@ main (int argc, char  **argv)
 			close(out);
 			redraw = "recalc\nredraw\n";
 		    } else {
-			strcpy(line, "put ");
+			strlcpy(line, "put ", sizeof line);
 			linelim = 4;
-			strcat(line, optarg);
+			strlcat(line, optarg, sizeof line);
 		    }
 		    if (linelim > 0) {
 			linelim = 0;
@@ -491,8 +492,8 @@ main (int argc, char  **argv)
 		    Vopt = 0;
 		    break;
 		case 'W':
-		    strcpy(line, "write ");
-		    strcat(line, optarg);
+		    strlcpy(line, "write ", sizeof line);
+		    strlcat(line, optarg, sizeof line);
 		    linelim = 0;
 		    yyparse();
 		    break;
@@ -952,12 +953,12 @@ main (int argc, char  **argv)
 			    temp = scxrealloc(temp, templen);
 			    temp1= scxrealloc(temp1, templen);
 			}
-			strcpy(temp, line);
+			strlcpy(temp, line, templen);
 			templim = linelim;
 			linelim = 0;		/* reset line to empty	*/
 			editexp(currow,curcol);
-			strcpy(temp1, line);
-			strcpy(line, temp);
+			strlcpy(temp1, line, templen);
+			strlcpy(line, temp, sizeof line);
 			linelim = templim;
 			ins_string(temp1);
 		    }
@@ -1048,15 +1049,16 @@ main (int argc, char  **argv)
 		char *tpp;
 
 		insert_mode();
-		strcpy(line, fkey[c - KEY_F0 - 1]);
+		strlcpy(line, fkey[c - KEY_F0 - 1], sizeof line);
 		linelim = 0;
 		for (tpp = line; *tpp != '\0'; tpp++)
 		    if (*tpp == '\\' && *(tpp + 1) == '"')
 			memmove(tpp, tpp + 1, strlen(tpp));
 		for (tpp = line; *tpp != '\0'; tpp++) {
 		    char mycell[9];
-		    strcpy(mycell, coltoa(curcol));
-		    sprintf(mycell + strlen(mycell), "%d", currow);
+		    size_t l;
+		    l = strlcpy(mycell, coltoa(curcol), sizeof mycell);
+		    snprintf(mycell + l, sizeof(mycell) - l, "%d", currow);
 		    if (*tpp == '$' && *(tpp + 1) == '$') {
 			memmove(tpp + strlen(mycell), tpp + 2, strlen(tpp + 1));
 			memcpy(tpp, mycell, strlen(mycell));
@@ -1091,7 +1093,7 @@ main (int argc, char  **argv)
 		    savedstcol[27] = stcol;
 
 		    numeric_field = 1;
-		    (void) sprintf(line,"let %s = %c",
+		    snprintf(line, sizeof line, "let %s = %c",
 			    v_name(currow, curcol), c);
 		    linelim = strlen(line);
 		    insert_mode();
@@ -1127,7 +1129,7 @@ main (int argc, char  **argv)
 		    savedstrow[27] = strow;
 		    savedstcol[27] = stcol;
 
-		    (void) sprintf(line,"let %s = ", v_name(currow, curcol));
+		    snprintf(line, sizeof line, "let %s = ", v_name(currow, curcol));
 		    linelim = strlen(line);
 		    insert_mode();
 		    break;
@@ -1150,61 +1152,61 @@ main (int argc, char  **argv)
 		    error(" ");
 		    switch (c) {
 		    case 'l':
-			(void) sprintf(line, "lock [range] ");
+			snprintf(line, sizeof line, "lock [range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case 'U':
-			(void) sprintf(line, "unlock [range] ");
+			snprintf(line, sizeof line, "unlock [range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case 'c':
-			(void) sprintf(line, "copy [dest_range src_range] ");
+			snprintf(line, sizeof line, "copy [dest_range src_range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case 'm':
-			(void) sprintf(line, "move [destination src_range] %s ",
+			snprintf(line, sizeof line, "move [destination src_range] %s ",
 				v_name(currow, curcol));
 			linelim = strlen(line);
 			insert_mode();
 		        write_line(ctl('v'));
 			break;
 		    case 'x':
-			(void) sprintf(line, "erase [range] ");
+			snprintf(line, sizeof line, "erase [range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case 'y':
-			(void) sprintf(line, "yank [range] ");
+			snprintf(line, sizeof line, "yank [range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case 'v':
-			(void) sprintf(line, "value [range] ");
+			snprintf(line, sizeof line, "value [range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case 'f':
-			(void) sprintf(line, "fill [range start inc] ");
+			snprintf(line, sizeof line, "fill [range start inc] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case 'd':
-			(void) sprintf(line, "define [string range] \"");
+			snprintf(line, sizeof line, "define [string range] \"");
 			linelim = strlen(line);
 			insert_mode();
 			break;
 		    case 'u':
-			(void) sprintf(line, "undefine [range] ");
+			snprintf(line, sizeof line, "undefine [range] ");
 			linelim = strlen(line);
 			insert_mode();
 			break;
@@ -1217,22 +1219,22 @@ main (int argc, char  **argv)
 			error(" ");
 			switch (c) {
 			    case 't':
-				sprintf(line, "frametop [<outrange> rows] ");
+				snprintf(line, sizeof line, "frametop [<outrange> rows] ");
 				break;
 			    case 'b':
-				sprintf(line, "framebottom [<outrange> rows] ");
+				snprintf(line, sizeof line, "framebottom [<outrange> rows] ");
 				break;
 			    case 'l':
-				sprintf(line, "frameleft [<outrange> cols] ");
+				snprintf(line, sizeof line, "frameleft [<outrange> cols] ");
 				break;
 			    case 'r':
-				sprintf(line, "frameright [<outrange> cols] ");
+				snprintf(line, sizeof line, "frameright [<outrange> cols] ");
 				break;
 			    case 'a':
-				sprintf(line, "frame [<outrange> inrange] ");
+				snprintf(line, sizeof line, "frame [<outrange> inrange] ");
 				break;
 			    case 'u':
-				sprintf(line, "unframe [<range>] ");
+				snprintf(line, sizeof line, "unframe [<range>] ");
 				break;
 			    case ESC:
 			    case ctl('g'):
@@ -1251,13 +1253,13 @@ main (int argc, char  **argv)
 			    startshow();
 			break;
 		    case 's':
-			(void) sprintf(line, "sort [range \"criteria\"] ");
+			snprintf(line, sizeof line, "sort [range \"criteria\"] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case 'C':
-			(void) sprintf(line, "color [range color#] ");
+			snprintf(line, sizeof line, "color [range color#] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
@@ -1274,10 +1276,10 @@ main (int argc, char  **argv)
 			    char px[MAXCMD];
 			    char *pager;
 
-			    (void) strcpy(px, "| ");
+			    strlcpy(px, "| ", sizeof px);
 			    if (!(pager = getenv("PAGER")))
 				pager = DFLT_PAGER;
-			    (void) strcat(px, pager);
+			    strlcat(px, pager, sizeof px);
 			    f = openfile(px, &pid, NULL);
 			    if (!f) {
 				error("Can't open pipe to %s", pager);
@@ -1295,25 +1297,25 @@ main (int argc, char  **argv)
 			}
 			break;
 		    case 'F':
-			(void) sprintf(line, "fmt [range \"format\"] ");
+			snprintf(line, sizeof line, "fmt [range \"format\"] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case '{':
-			(void) sprintf(line, "leftjustify [range] ");
+			snprintf(line, sizeof line, "leftjustify [range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case '}':
-			(void) sprintf(line, "rightjustify [range] ");
+			snprintf(line, sizeof line, "rightjustify [range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
 			break;
 		    case '|':
-			(void) sprintf(line, "center [range] ");
+			snprintf(line, sizeof line, "center [range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
@@ -1328,7 +1330,7 @@ main (int argc, char  **argv)
 		    break;
 
 		case '~':
-		    (void) sprintf(line, "abbrev \"");
+		    snprintf(line, sizeof line, "abbrev \"");
 		    linelim = strlen(line);
 		    insert_mode();
 		    break;
@@ -1406,7 +1408,7 @@ main (int argc, char  **argv)
 
 			    case 'p':
 				if (rcqual == '.') {
-				    (void) sprintf(line, "pullcopy ");
+				    snprintf(line, sizeof line, "pullcopy ");
 				    linelim = strlen(line);
 				    insert_mode();
 				    startshow();
@@ -1536,7 +1538,7 @@ main (int argc, char  **argv)
 			savedstrow[27] = strow;
 			savedstcol[27] = stcol;
 
-			(void) sprintf(line, "label %s = \"",
+			snprintf(line, sizeof line, "label %s = \"",
 				v_name(currow, curcol));
 			linelim = strlen(line);
 			insert_mode();
@@ -1551,7 +1553,7 @@ main (int argc, char  **argv)
 			savedstrow[27] = strow;
 			savedstcol[27] = stcol;
 
-			(void) sprintf(line, "leftstring %s = \"",
+			snprintf(line, sizeof line, "leftstring %s = \"",
 				v_name(currow, curcol));
 			linelim = strlen(line);
 			insert_mode();
@@ -1566,7 +1568,7 @@ main (int argc, char  **argv)
 			savedstrow[27] = strow;
 			savedstcol[27] = stcol;
 
-		       (void) sprintf(line, "rightstring %s = \"",
+		       snprintf(line, sizeof line, "rightstring %s = \"",
 			      v_name(currow, curcol));
 		       linelim = strlen(line);
 		       insert_mode();
@@ -1638,12 +1640,12 @@ main (int argc, char  **argv)
 		case 'F': {
 		    register struct ent *p = *ATBL(tbl, currow, curcol);
 		    if (p && p->format) {
-			(void) sprintf(line, "fmt [format] %s \"%s",
+			snprintf(line, sizeof line, "fmt [format] %s \"%s",
 				v_name(currow, curcol), p->format);
 			edit_mode();
 			linelim = strlen(line) - 1;
 		    } else {
-			(void) sprintf(line, "fmt [format] %s \"",
+			snprintf(line, sizeof line, "fmt [format] %s \"",
 				   v_name(currow, curcol));
 			insert_mode();
 			linelim = strlen(line);
@@ -1665,7 +1667,7 @@ main (int argc, char  **argv)
 			break;
 		    }
 		    error(" ");
-		    sprintf(line, "color %d = ", c);
+		    snprintf(line, sizeof line, "color %d = ", c);
 		    linelim = strlen(line);
 		    if (cpairs[c-1] && cpairs[c-1]->expr) {
 			decompile(cpairs[c-1]->expr, 0);
@@ -1680,7 +1682,7 @@ main (int argc, char  **argv)
 		case KEY_FIND:
 #endif
 		case 'g':
-		    (void) sprintf(line, "goto [v] ");
+		    snprintf(line, sizeof line, "goto [v] ");
 		    linelim = strlen(line);
 		    insert_mode();
 		    break;
@@ -1688,21 +1690,23 @@ main (int argc, char  **argv)
 		    go_last();
 		    break;
 		case 'P':
-		    (void) sprintf(line, "put [\"dest\" range] \"");
+		    snprintf(line, sizeof line, "put [\"dest\" range] \"");
 
 /* See the comments under "case 'W':" below for an explanation of the
  * logic here.
  */
 		    curfile[strlen(curfile) + 1] = '\0';
 		    if (strrchr(curfile, '.') != NULL) {
+			size_t l;
 			if (!strcmp((strrchr(curfile, '.')), ".sc")) {
 			    *strrchr(curfile, '.') = '\0';
-			    strcpy(curfile + strlen(curfile) + 3, ".\0");
+			    l = strlen(curfile) + 3;
+			    strlcpy(curfile + l, ".\0", sizeof(curfile) - l);
 			} else if (scext != NULL &&
 				!strcmp((strrchr(curfile, '.') + 1), scext)) {
 			    *strrchr(curfile, '.') = '\0';
-			    strcpy(curfile + strlen(curfile) +
-				    strlen(scext) + 1, ".\0");
+			    l = strlen(curfile) + strlen(scext) + 1;
+			    strlcpy(curfile + l, ".\0", sizeof(curfile) - l);
 			}
 		    }
 		    if (*curfile)
@@ -1717,40 +1721,40 @@ main (int argc, char  **argv)
 		    insert_mode();
 		    break;
 		case 'M':
-		    (void) sprintf(line, "merge [\"source\"] \"");
+		    snprintf(line, sizeof line, "merge [\"source\"] \"");
 		    linelim = strlen(line);
 		    insert_mode();
 		    break;
 		case 'R':
 		    if (mdir)
-			(void) sprintf(line,"merge [\"macro_file\"] \"%s", mdir);
+			snprintf(line, sizeof line, "merge [\"macro_file\"] \"%s", mdir);
 		    else
-			(void) sprintf(line,"merge [\"macro_file\"] \"");
+			snprintf(line, sizeof line, "merge [\"macro_file\"] \"");
 		    linelim = strlen(line);
 		    insert_mode();
 		    break;
 		case 'D':
-		    (void) sprintf(line, "mdir [\"macro_directory\"] \"");
+		    (void) snprintf(line, sizeof line, "mdir [\"macro_directory\"] \"");
 		    linelim = strlen(line);
 		    insert_mode();
 		    break;
 		case 'A':
 		    if (autorun)
-			(void) sprintf(line,"autorun [\"macro_file\"] \"%s", autorun);
+			snprintf(line, sizeof line,"autorun [\"macro_file\"] \"%s", autorun);
 		    else
-			(void) sprintf(line, "autorun [\"macro_file\"] \"");
+			snprintf(line, sizeof line, "autorun [\"macro_file\"] \"");
 		    linelim = strlen(line);
 		    insert_mode();
 		    break;
 		case 'G':
-		    (void) sprintf(line, "get [\"source\"] \"");
+		    snprintf(line, sizeof line, "get [\"source\"] \"");
 		    if (*curfile)
 			error("Default file is \"%s\"", curfile);
 		    linelim = strlen(line);
 		    insert_mode();
 		    break;
 		case 'W':
-		    (void) sprintf(line, "write [\"dest\" range] \"");
+		    snprintf(line, sizeof line, "write [\"dest\" range] \"");
 
 /* First, append an extra null byte to curfile.  Then, if curfile ends in
  * ".sc" (or '.' followed by the string in scext), move the '.' to the
@@ -1762,14 +1766,16 @@ main (int argc, char  **argv)
  */
 		    curfile[strlen(curfile) + 1] = '\0';
 		    if (strrchr(curfile, '.') != NULL) {
+			size_t l;
 			if (!strcmp((strrchr(curfile, '.')), ".sc")) {
 			    *strrchr(curfile, '.') = '\0';
-			    strcpy(curfile + strlen(curfile) + 3, ".\0");
+			    l = strlen(curfile) + 3;
+			    strlcpy(curfile + l, ".\0", sizeof(curfile) - l);
 			} else if (scext != NULL &&
 				!strcmp((strrchr(curfile, '.') + 1), scext)) {
 			    *strrchr(curfile, '.') = '\0';
-			    strcpy(curfile + strlen(curfile) +
-				    strlen(scext) + 1, ".\0");
+			    l = strlen(curfile) + strlen(scext) + 1;
+			    strlcpy(curfile + l, ".\0", sizeof(curfile) - l);
 			}
 		    }
 
@@ -1793,27 +1799,29 @@ main (int argc, char  **argv)
 		    insert_mode();
 		    break;
 		case 'S':	/* set options */
-		    (void) sprintf(line, "set ");
+		    snprintf(line, sizeof line, "set ");
 		    error("Options:byrows,bycols,iterations=n,tblstyle=(0|tbl|latex|slatex|tex|frame),<MORE>");
 		    linelim = strlen(line);
 		    insert_mode();
 		    break;
 		case 'T':	/* tbl output */
-		    (void) sprintf(line, "tbl [\"dest\" range] \"");
+		    snprintf(line, sizeof line, "tbl [\"dest\" range] \"");
 
 /* See the comments under "case 'W':" above for an explanation of the
  * logic here.
  */
 		    curfile[strlen(curfile) + 1] = '\0';
 		    if (strrchr(curfile, '.') != NULL) {
+			size_t l;
 			if (!strcmp((strrchr(curfile, '.')), ".sc")) {
 			    *strrchr(curfile, '.') = '\0';
-			    strcpy(curfile + strlen(curfile) + 3, ".\0");
+			    l = strlen(curfile) + 3;
+			    strlcpy(curfile + l, ".\0", sizeof(curfile) - l);
 			} else if (scext != NULL &&
 				!strcmp((strrchr(curfile, '.') + 1), scext)) {
 			    *strrchr(curfile, '.') = '\0';
-			    strcpy(curfile + strlen(curfile) +
-				    strlen(scext) + 1, ".\0");
+			    l = strlen(curfile) + strlen(scext) + 1;
+			    strlcpy(curfile + l, ".\0", sizeof(curfile) - 1);
 			}
 		    }
 		    if (*curfile && tbl_style == 0) {
@@ -1921,7 +1929,7 @@ main (int argc, char  **argv)
 		    }
 		    if (c == '.') {
 			copy(NULL, NULL, lookat(currow, curcol), NULL);
-			(void) sprintf(line, "copy [dest_range src_range] ");
+			snprintf(line, sizeof line, "copy [dest_range src_range] ");
 			linelim = strlen(line);
 			insert_mode();
 			startshow();
@@ -1979,7 +1987,7 @@ main (int argc, char  **argv)
 			    break;
 			}
 			if (c == 'a' || c == 'A') {
-			    sprintf(line, "addnote [target range] %s ", 
+			    snprintf(line, sizeof line, "addnote [target range] %s ", 
 				    v_name(currow, curcol));
 			    linelim = strlen(line);
 			    insert_mode();
@@ -2175,10 +2183,10 @@ diesave(void) {
     char	path[PATHLEN];
 
     if (modcheck(" before Spreadsheet dies") == 1)
-    {	(void) sprintf(path, "~/%s", SAVENAME);
+    {	snprintf(path, sizeof path, "~/%s", SAVENAME);
 	if (writefile(path, 0, 0, maxrow, maxcol) < 0)
 	{
-	    (void) sprintf(path, "/tmp/%s", SAVENAME);
+	    snprintf(path, sizeof path, "/tmp/%s", SAVENAME);
 	    if (writefile(path, 0, 0, maxrow, maxcol) < 0)
 		error("Couldn't save current spreadsheet, Sorry");
 	}
@@ -2193,7 +2201,7 @@ modcheck(char *endstr)
 	int	yn_ans;
 	char	lin[100];
 
-	(void) sprintf(lin,"File \"%s\" is modified, save%s? ",curfile,endstr);
+	snprintf(lin, sizeof lin, "File \"%s\" is modified, save%s? ",curfile,endstr);
 	if ((yn_ans = yn_ask(lin)) < 0)
 		return(1);
 	else
