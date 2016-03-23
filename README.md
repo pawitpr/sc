@@ -1,15 +1,16 @@
 ### Mirror of the sc Spreadsheet Calculator source
 `sc` is a free curses-based spreadsheet program that uses key bindings similar to vi and less.
-This is a mirror of the latest source code which can be found at
-[http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz](http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz).
-For more information on `sc`please see the
+For more information on `sc` please see the
 [`README`](https://github.com/n-t-roff/sc/blob/master/README)
 file.
+This is a mirror of the latest source code version 7.16 from September 2002
+which can be found at
+[http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz](http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz).
+No functional modifications are done in this repository
+but the following changes had been made:
 
-This source code repository is based on the latest `sc` version 7.16 from September 2002.
-No functional modifications are done but the following changes had been made:
 * Found bugs are fixed
-* Most `-Wall` compiler warnings fixed
+* All `gcc` and most `clang` `-Wall` compiler warnings fixed
 * Most uses of `sprintf`, `strcpy`, and `strcat` replaced
   with `snprintf`, `strlcpy`, and `strlcat`
 * `./configure` script added and tested on NetBSD, OpenBSD, FreeBSD, and Linux
