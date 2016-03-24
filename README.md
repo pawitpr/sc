@@ -6,14 +6,20 @@ file.
 This is a mirror of the latest source code version 7.16 from September 2002
 which can be found at
 [http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz](http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz).
-No functional modifications are done in this repository
-but the following changes had been made:
+By intention no functional modifications (e.g. new features)
+are planned to be done in this repository
+except when necessary.
+The following changes had been made:
 
 * Found bugs are fixed
 * All `gcc` and most `clang` `-Wall` compiler warnings fixed
 * Most uses of `sprintf`, `strcpy`, and `strcat` replaced
   with `snprintf`, `strlcpy`, and `strlcat`
 * `./configure` script added and tested on NetBSD, OpenBSD, FreeBSD, and Linux
+* Functional change: By default `sc` made a backup of the database file
+  before overwriting it.
+  This could only be changed at compile time.
+  There are now options `backup` and `!backup` to control this.
 
 #### Getting the source
 The source can be cloned with
