@@ -565,9 +565,7 @@ extern	void yank_area(int sr, int sc, int er, int ec);
 extern	void yyerror(char *err);
 extern	int yylex(void);
 extern	int yyparse(void);
-#ifdef DOBACKUPS
 extern	int backup_file(char *path);
-#endif
 
 extern	int modflg;
 #if !defined(VMS) && !defined(MSDOS) && defined(CRYPT_PATH)
@@ -603,6 +601,7 @@ extern	int colorneg;
 extern	int colorerr;
 extern	int braille;
 extern	int braillealt;
+extern	int dobackups;
 extern	int loading;
 extern	int getrcqual;
 extern	int tbl_style;

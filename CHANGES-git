@@ -1,0 +1,5 @@
+2016-03-24       
+     Saving an existing database into a backup file before overwriting       
+     had been controlled by the Makefile definition DOBACKUPS.  This is      
+     removed now and replaced by the options backup/!backup which can        
+     be set in .scrc       

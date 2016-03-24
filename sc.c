@@ -115,6 +115,8 @@ int  colorerr  = 0;	/* Color cells with errors with color 3 */
 int  numeric_field = 0; /* Started the line editing with a number */
 int  craction = 0;	/* 1 for down, 2 for right */
 int  pagesize = 0;	/* If nonzero, use instead of 1/2 screen height */
+int  dobackups;         /* Copy current database file to backup file      */
+                        /* before overwriting                             */
 int  rowlimit = -1;
 int  collimit = -1;
 int  rowsinrange = 1;

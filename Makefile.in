@@ -50,10 +50,6 @@ BROKENCURSES=
 #USELOCALE=
 USELOCALE=-DUSELOCALE
 
-# Set DOBACKUPS if you would like a backup copy of a source file on a save
-#DOBACKUPS=
-DOBACKUPS=-DDOBACKUPS
-
 # Set SIGVOID if signal routines are type void.
 # use: SIGVOID=-DSIGVOID for:
 #	System 5.3, SunOS 4.X, VMS, BSD4.4 (reno), and ANSI C Compliant systems
@@ -406,12 +402,12 @@ abbrev.o: abbrev.c sc.h
 	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${DFLT_PAGER} -c abbrev.c
 
 cmds.o: cmds.c sc.h
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${DOBACKUPS} ${CRYPT} -c cmds.c
+	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${CRYPT} -c cmds.c
 
 color.o: color.c sc.h
 
 crypt.o: crypt.c sc.h
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${CRYPT} ${DOBACKUPS} -c crypt.c
+	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${CRYPT} -c crypt.c
 
 format.o: format.c
 

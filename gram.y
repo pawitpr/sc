@@ -245,6 +245,7 @@
 %token K_COLORNEG
 %token K_COLORERR
 %token K_BRAILLE
+%token K_BACKUP
 %token K_BLACK
 %token K_RED
 %token K_GREEN
@@ -1323,6 +1324,9 @@ setitem	:	K_AUTO			{ setauto(1); }
 	|	K_BRAILLE		{ braille = 1; }
 	|	'!' K_BRAILLE		{ braille = 0; }
 	|	'~' K_BRAILLE		{ braille = 0; }
+	|	K_BACKUP		{ dobackups = 1; }
+	|	'!' K_BACKUP		{ dobackups = 0; }
+	|	'~' K_BACKUP		{ dobackups = 0; }
 	|	K_ITERATIONS '=' NUMBER	{ setiterations($3); }
 	|	K_TBLSTYLE '=' NUMBER	{ tbl_style = $3; }
 	|	K_TBLSTYLE '=' K_TBL	{ tbl_style = TBL; }

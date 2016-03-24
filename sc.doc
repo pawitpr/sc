@@ -1069,6 +1069,15 @@ This risk is probably very slight, since a spreadsheet program
 is not likely to be run in just any directory, and should
 .B never
 be run as root.
+.TP
+.BR backup / !backup
+Before the database is written to an existing file
+a backup of that file can be saved as
+\fIfilename\fP\fB~\fP.
+This is enabled/disabled by this option.
+The default is
+.B not
+to do backups.
 .RE
 .\" ==========
 .SS "Cursor Control Commands"

@@ -19,6 +19,7 @@
 #include <sys/file.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#include <sys/stat.h>
 #include "sc.h"
 #include <signal.h>
 #include <errno.h>
@@ -2516,11 +2517,9 @@ openfile(char *fname, int *rpid, int *rfd)
 	    *rfd = 1;			/* Set to stdout just in case */
 	
 	efname = findhome(fname);
-#ifdef DOBACKUPS
-	if (rfd == NULL && !backup_file(efname) &&
+	if (dobackups && rfd == NULL && !backup_file(efname) &&
 	    (yn_ask("Could not create backup copy.  Save anyway?: (y,n)") != 1))
 		return (0);
-#endif
 	return (fopen(efname, rfd == NULL ? "w" : "r"));
     }
 
@@ -3527,9 +3526,6 @@ findhome(char *path)
     return (path);
 }
 
-#ifdef DOBACKUPS
-#include <sys/stat.h>
-
 /*
  * make a backup copy of a file, use the same mode and name in the format
  * [path/]file~
@@ -3607,4 +3603,3 @@ backup_file(char *path)
 	return (1);
     return (0);
 }
-#endif
