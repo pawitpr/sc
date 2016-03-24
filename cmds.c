@@ -1955,10 +1955,20 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 			while(slen--) {
 				*fp++ = *s++; if( *s == '\0' ) s = strt;
 			}
+		    } else {
+			while (slen--) {
+			    if (*s == '\\') {
+				if (s[1] == '"') {
+				    ++s;
+				    --slen;
+				} else if (s[1] == '\\' && s[2] == '"') {
+				    s    += 2;
+				    slen -= 2;
+				}
+			    }
+			    *fp++ = *s++;
+			}
 		    }
-		    else
-		    while (slen--)
-			*fp++ = *s++;
 
 		    if (!((*pp)->flags & IS_VALID) || fieldlen != fwidth[col])
 			while(fp < last)

@@ -1,5 +1,10 @@
 2016-03-24       
-     Saving an existing database into a backup file before overwriting       
-     had been controlled by the Makefile definition DOBACKUPS.  This is      
-     removed now and replaced by the options backup/!backup which can        
-     be set in .scrc       
+     * Saving an existing database into a backup file before overwriting     
+       had been controlled by the Makefile definition DOBACKUPS.  This is    
+       removed now and replaced by the options backup/!backup which can      
+       be set in .scrc     
+     * By definition command 'W' writes the database into a file as it       
+       appears on the screen.  This did not work for double quotes (") or    
+       escaped double quotes (\").  Here the required escape characters      
+       itself (\) had been displayed.  But sc does remove 1 or 2 '\'         
+       before a '"' when drawing on the screen.          
