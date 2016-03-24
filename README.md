@@ -9,7 +9,9 @@ which can be found at
 By intention no functional modifications (e.g. new features)
 are planned to be done in this repository
 except when necessary.
-The following changes had been made:
+The following
+[changes](https://github.com/n-t-roff/sc/blob/master/CHANGES-git)
+had been made:
 
 * Found bugs are fixed
 * All `gcc` and most `clang` `-Wall` compiler warnings fixed
@@ -26,7 +28,7 @@ The source can be cloned with
 ```sh
 git clone https://github.com/n-t-roff/sc.git
 ```
-and updated with
+and updated later with
 ```sh
 git pull
 ```
