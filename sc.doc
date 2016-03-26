@@ -8,39 +8,30 @@
 .\" - pname italicized and never uppercased (it's a proper name).
 .\" - Refer to lists of commands in the same order as introduced.
 .\" - Command and function names bold when introduced, italicized in all
-.\"   other places if possible, or in `` '' if not.
+.\"   other places if possible, or in \(lq \(rq if not.
 .\" - Cell names italicized except when used in expressions; row numbers
 .\"   and column names not italicized.
-.\" - Use `` '' rather than " " except referring to literal input or output.
+.\" - Use \(lq \(rq rather than `` '' or " " except referring to literal
+.\"   input or output.
 .\" - TPs use default indent except for function names, then 18.
 .\" - Smallify uppercase strings.
 .\" - Avoid passive voice and third person.
 .\" $Revision: 7.16 $
 .\"
-.TH PNAME 1 "19 September 2002" "PNAME #REVISION#"
+.TH PNAME 1 "March 26, 2016" "PNAME #REVISION#"
 .SH NAME
 pname \- spreadsheet calculator
 .SH SYNOPSIS
-.B pname
-.RB [ -a ]
-.RB [ -c ]
-.RB [ -e ]
-.RB [ -m ]
-.RB [ -n ]
-.RB [ -o ]
-.RB [ -q ]
-.RB [ -r ]
-.RB [ -v ]
-.RB [ -x ]
-.RB [ -C ]
-.RB [ -R ]
-.RB [ -P
+.SY pname
+.OP \-aCcemnoqRrvx
+.RB [ \-P
 .IR range [ /address ]
 |
 .IR /address ]
-.RB [ -W
-.IR range ]
-.RI [ file... ]
+.OP \-W range
+.RI [ file
+.IR .\|.\|. ]
+.YS
 .\" ==========
 .SH DESCRIPTION
 The spreadsheet calculator
@@ -49,7 +40,7 @@ is based on rectangular tables much like a financial spreadsheet.
 When invoked, it first looks for a file in the user's home
 directory called .scrc and if found, reads that file into memory.
 If that file contains the command
-.RI `` set\ scrc '',
+.RI \(lq set\ scrc \(rq,
 .I pname
 looks for a file called .scrc in the current directory,
 and if found, reads that file into memory, too.
@@ -69,18 +60,18 @@ The default filename for saving a file with the
 command will be the same as the first file specified,
 and the other files will be treated as macros.
 If you want to use advanced macros from the command
-line, the ``|'' must be quoted to prevent it from being
+line, the \(lq|\(rq must be quoted to prevent it from being
 expanded by the shell.
 .LP
-Options begin with -.
-However, an argument of a single - will be
+Options begin with \-.
+However, an argument of a single \- will be
 interpreted to mean that spreadsheet data
 will be taken from the standard input.
 This is useful for including
 .I pname
 in a pipeline if the system supports pipes.
 However, if standard input is not a terminal,
-the - is only necessary if there are multiple
+the \- is only necessary if there are multiple
 files and standard input is not the last to be
 read, since standard input is automatically
 read in after all other files in such cases
@@ -88,21 +79,21 @@ if it is not specified explicitly, or if there
 are no other filenames on the command line.
 If
 .I pname
-is included in a pipeline, and a filename of ``-''
+is included in a pipeline, and a filename of \(oq\-\(cq
 is not specified, the standard input will be merged
 in after all of the other named files have been
 processed.
 .LP
-The first argument not beginning with a -,
-or a single - by itself, and any subsequent
+The first argument not beginning with a \-,
+or a single \- by itself, and any subsequent
 arguments will all be interpreted as
-filenames (a filename of - meaning
+filenames (a filename of \- meaning
 standard input as noted above).
-In addition, an argument of -- may
+In addition, an argument of \(em may
 be used to signify that all subsequent
 arguments should be treated as filenames
-even if they begin with a -, but unlike -,
--- won't be treated as a filename itself.
+even if they begin with a \-, but unlike \-,
+\(em won't be treated as a filename itself.
 .LP
 Each cell may have associated with it
 a numeric value,
@@ -136,7 +127,7 @@ Start the program with round-to-even (banker's rounding) enabled.
 .TP
 .B \-m
 Start the program with automatic recalculation disabled.
-The spreadsheet will be recalculated only when the ``@'' command is used.
+The spreadsheet will be recalculated only when the \(lq@\(rq command is used.
 .\" ----------
 .TP
 .B \-n
@@ -164,19 +155,19 @@ order (default option).
 .TP
 .B \-v
 When piping data out using the
-.I -P
+.I \-P
 option (below), change all expressions to values.
 The
-.I -v
+.I \-v
 option must precede the
-.I -P
+.I \-P
 option to have an effect.
 If the
-.I -P
+.I \-P
 option is used more than once, there must be a separate
-.I -v
+.I \-v
 option for each instance of the
-.I -P
+.I \-P
 option.
 .\" ----------
 .TP
@@ -211,29 +202,29 @@ is used to adjust all addresses
 in the range to a new starting point.
 This is useful for copying data from one file to
 another, especially when used in conjunction with the 
-.I -v
+.I \-v
 option (above), using something like
-.I "merge ""|sc -v -Prange/address filename"""
+.I "merge ""|sc \-v \-Prange/address filename"""
 (note the pipe symbol).
 This option may be used more than once to specify multiple ranges.
 Note, however, that the
-.I -v
+.I \-v
 option must precede the
-.I -P
+.I \-P
 option on the command line,
 and there must be a separate
-.I -v
+.I \-v
 option for each instance of the
-.I -P
+.I \-P
 option.
 Any instance of
-.I -P
+.I \-P
 not preceded by its own
-.I -v
+.I \-v
 option will output unevaluated expressions.
 
 A range of
-.RI `` % ''
+.RI \(lq % \(rq
 may be used to refer to the entire spreadsheet.
 If the range is left out, as shown in the
 second form above,
@@ -257,7 +248,7 @@ The output is identical to that of the
 command (below).
 This option may be used more than once to specify multiple ranges.
 A range of
-.RI `` % ''
+.RI \(lq % \(rq
 may be used to refer to the entire spreadsheet.
 .\" ----------
 .PP
@@ -284,12 +275,12 @@ file, but should be reserved for setting certain defaults.
 Any options set which have equivalent command line options may
 be overridden by the command line.
 If that file contains the command
-.RI `` set\ scrc '',
+.RI \(lq set\ scrc \(rq,
 .I pname
 will then look for a file called .scrc in the current directory,
 and if found, load that file into memory, too (this is analogous
-to the ``set exrc'' command used by vi/ex).
-These ``dotfiles'' may be created by any text editor.
+to the \(lqset exrc\(rq command used by vi/ex).
+These \(lqdotfiles\(rq may be created by any text editor.
 Several commands exist specifically for setting default file
 name extensions in the .scrc file, although they may also
 be used from macros, ordinary spreadsheet files, or from within
@@ -297,7 +288,7 @@ be used from macros, ordinary spreadsheet files, or from within
 at the command line.
 They will not, however, be saved along with the file.
 The extensions should be quoted, and should not include
-the preceding `.' (e.g., 
+the preceding \(oq.\(cq (e.g., 
 .I scext\ "sc"
 will add the extension 
 .I .sc
@@ -462,7 +453,7 @@ environment variables, respectively.
 .PP
 The screen has two cursors:
 a cell cursor, indicated by either a highlighted cell
-or a ``<'' on the screen, and a character cursor,
+or a \(lq<\(rq on the screen, and a character cursor,
 indicated by the terminal's hardware cursor.
 .\" ----------
 .PP
@@ -507,7 +498,7 @@ causes the entire spreadsheet be recalculated.
 Normally this is not noticeable, but for very large
 spreadsheets, it may be faster to clear
 automatic recalculation mode and update the
-spreadsheet via explicit ``@'' commands.
+spreadsheet via explicit \(lq@\(rq commands.
 Default is automatic recalculation on.
 .\" ----------
 .TP
@@ -528,7 +519,7 @@ file.
 Current cell highlighting.
 If enabled, the current cell is highlighted
 (using the terminal's standout mode, if available)
-and the cell pointer ``<'' is turned off.
+and the cell pointer \(lq<\(rq is turned off.
 This is enabled by default.
 .\" ----------
 .TP
@@ -597,8 +588,8 @@ a typed digit is assumed to be
 the start of a numeric value for the current cell,
 not a repeat count, unless preceded by
 .IR ^U .
-Also, the `+' and `-' keys will enter insert mode
-and append a `+' or `-' to the existing contents
+Also, the \(oq+\(cq and \(oq\-\(cq keys will enter insert mode
+and append a \(oq+\(cq or \(oq\-\(cq to the existing contents
 of the cell, allowing the user to easily add to or
 subtract from the current numeric contents of the cell.
 The cursor controls
@@ -606,7 +597,7 @@ The cursor controls
 .IR ^N ,
 or any of the arrow keys)
 in this mode will end a numeric entry if the entry
-was started by pressing `+', `-', or a digit.
+was started by pressing \(oq+\(cq, \(oq\-\(cq, or a digit.
 Switching from insert mode to edit mode will cause the
 cursor controls to revert to their normal functions.
 .\" ----------
@@ -633,13 +624,13 @@ the name and value of the current cell is
 displayed on the top line.
 If there is an associated label string,
 the first character of the string value
-is ``|'' for a centered string, ``<'' for a
-leftstring or ``>'' for a rightstring (see below),
+is \(lq|\(rq for a centered string, \(lq<\(rq for a
+leftstring or \(lq>\(rq for a rightstring (see below),
 followed by "\fIstring\fP" for a constant string or
 .RI { expr }
 for a string expression.
-A constant string may be preceeded with a backslash (`\\').
-In this case the constant string will be used as a ``wheel''
+A constant string may be preceeded with a backslash (\(oq\\\(cq).
+In this case the constant string will be used as a \(lqwheel\(rq
 to fill a column, e.g. "\\-" for a line in a column,
 and "\\Yeh\ " for "Yeh\ Yeh\ Ye".
 If the cell has a numeric value,
@@ -682,7 +673,7 @@ key at the prompt selects no action
 the current cell).
 No action is the default unless
 .I pname
-is started with either the -R or -C option.
+is started with either the \-R or \-C option.
 This option is ignored if the cell into which data is
 being entered is not the current cell.
 .\" ----------
@@ -917,7 +908,7 @@ the current cell will be moved to the top of the next column
 if the newline action is set to move the current cell down.
 .I n
 can be
-.B -1
+.B \-1
 (default) to disable this facility.
 .\" ----------
 .TP
@@ -927,7 +918,7 @@ the current cell will be moved to the left of the next row
 if the newline action is set to move the current cell right.
 .I n
 can be
-.B -1
+.B \-1
 (default) to disable this facility.
 .\" ----------
 .TP
@@ -1045,7 +1036,7 @@ determination of word boundaries for some operations
 in edit mode.
 Note that if this option is set and the environment
 variable LC_ALL is unrecognized, unset, or set to
-either ``POSIX'' or ``C'', commas in format commands
+either \(lqPOSIX\(rq or \(lqC\(rq, commas in format commands
 will be ignored.
 .\" ----------
 .TP
@@ -1141,7 +1132,7 @@ Same as J and K above.
 If the character cursor is on the top line,
 .SM TAB
 tries to complete a range name if the character
-immediately preceding it is alphanumeric or ``_'',
+immediately preceding it is alphanumeric or \(lq_\(rq,
 and starts a range if not (see below).
 Otherwise, move the cell cursor forward one column.
 .\" ----------
@@ -1222,8 +1213,8 @@ expressions.
 .IP
 You can also search formatted numbers or expressions
 using regular expressions by preceding the opening quotes
-of the regular expression with a ``#'' (for formatted
-numbers) or a ``%'' (for expressions).
+of the regular expression with a \(lq#\(rq (for formatted
+numbers) or a \(lq%\(rq (for expressions).
 These are handy for searching for dates within a specified
 range or cells which reference a given cell, for example,
 although they are somewhat slower than searching through
@@ -1391,17 +1382,17 @@ leaving only the previously computed constant numeric value.
 Enter a numeric constant or expression into the current cell.
 .I pname
 prompts for the expression on the top line.
-The usual way to enter a number into a cell is to type ``='',
+The usual way to enter a number into a cell is to type \(lq=\(rq,
 then enter the number in response to the prompt on the top line.
 The quick numeric entry option, enabled through the
 .B \-n
 option or
 .I ^T
 command, shows the prompt when you enter the first digit of a number
-(you can skip typing ``='').
+(you can skip typing \(lq=\(rq).
 If you want to begin entering an expression in the current cell,
 but you want to start out in navigate mode (e.g. to enter cell
-addresses, or sums of ranges using ``@sum''), use the ``+''
+addresses, or sums of ranges using \(lq@sum\(rq), use the \(lq+\(rq
 command instead (see below).
 .\" ----------
 .TP
@@ -1454,7 +1445,7 @@ a standard numeric format string:
 Digit placeholder.
 If the number has fewer digits on either
 side of the decimal point than there are
-`#' characters in the format, the extra `#'
+\(oq#\(cq characters in the format, the extra \(oq#\(cq
 characters are ignored.
 The number is rounded to the number of digit
 placeholders as there are to the right
@@ -1466,12 +1457,12 @@ are displayed.
 .TP
 .BR 0
 Digit placeholder.
-Same as for `#' except that the number
+Same as for \(oq#\(cq except that the number
 is padded with zeroes on either side of the decimal point.
 The number of zeroes used in padding is determined by the
-number of digit placeholders after the `0' for digits on
+number of digit placeholders after the \(oq0\(cq for digits on
 the left side of the decimal point and by the number of
-digit placeholders before the `0' for digits on the right
+digit placeholders before the \(oq0\(cq for digits on the right
 side of the decimal point.
 .TP
 .BR .
@@ -1484,21 +1475,21 @@ is set, the decimal point for the user's current locale
 will be used when formatting a number.
 Note that numbers smaller than 1 will begin with a decimal
 point if the left side of the decimal point contains only
-a `#' digit placeholder.
-Use a `0' placeholder to get a leading zero in decimal formats.
+a \(oq#\(cq digit placeholder.
+Use a \(oq0\(cq placeholder to get a leading zero in decimal formats.
 .TP
 .BR %
 Percentage.
-For each `%' character in the format, the actual
+For each \(oq%\(cq character in the format, the actual
 number gets multiplied by 100 (only for purposes of formatting
--- the original number is left unmodified) and the `%' character
+\(em the original number is left unmodified) and the \(oq%\(cq character
 is placed in the same position as it is in the format.
 .TP
 .BR ,
 Thousands separator.
-The presence of a `,' in the format
+The presence of a \(oq,\(cq in the format
 (multiple commas are treated as one) will cause the number
-to be formatted with a `,' separating each set of three digits
+to be formatted with a \(oq,\(cq separating each set of three digits
 in the integer part of the number with numbering beginning
 from the right end of the integer.
 If
@@ -1506,7 +1497,7 @@ If
 is set, the thousands separator for the user's current
 locale will be used in place of the comma.
 If the environment variable LC_ALL is unset, unrecognized,
-or is set to ``POSIX'' or ``C'',  any commas in the format
+or is set to \(lqPOSIX\(rq or \(lqC\(rq,  any commas in the format
 string will be ignored.
 .TP
 .BR &
@@ -1514,7 +1505,7 @@ Precision.
 When this character is present in the fractional
 part of the number, it is equivalent to a number of 0's equal
 to the precision specified in the column format command.
-For example, if the precision is 3, `&' is equivalent to `000'.
+For example, if the precision is 3, \(oq&\(cq is equivalent to `000'.
 .TP
 .BR \e
 Quote.
@@ -1522,34 +1513,34 @@ This character causes the next character to be
 inserted into the formatted string directly with no
 special interpretation.
 .TP
-.BR E-\ E+\ e-\ e+
+.BR E\-\ E+\ e\-\ e+
 Scientific format.
 Causes the number to be formatted in scientific notation.
-The case of the `E' or `e' given is preserved.
-If the format uses a `+', then the sign is
+The case of the \(oqE\(cq or \(oqe\(cq given is preserved.
+If the format uses a \(oq+\(cq, then the sign is
 always given for the exponent value.
-If the format uses a `-', then the sign is
+If the format uses a \(oq\-\(cq, then the sign is
 only given when the exponent value is negative.
 Note that if there is no digit placeholder
-following the `+' or `-', then that part of the
+following the \(oq+\(cq or \(oq\-\(cq, then that part of the
 formatted number is left out.
 In general, there should be one or more digit
-placeholders after the `+' or `-'.
+placeholders after the \(oq+\(cq or \(oq\-\(cq.
 .TP
 .BR ;
 Format selector.
 Use this character to separate the format
 into two distinct formats.
-The format to the left of the `;' character
+The format to the left of the \(oq;\(cq character
 will be used if the number given is zero or positive.
-The format to the right of the `;' character is
+The format to the right of the \(oq;\(cq character is
 used if the number given is negative.
 .RE
 .IP
-Some example formats are integer (``0'' or ``#''),
-fixed (``0.00''), percentage (``0%'' or ``0.00%''),
-scientific (``0.00E+00''),
-and currency (``$#,0.00;($#,0.00)'').
+Some example formats are integer (\(lq0\(rq or \(lq#\(rq),
+fixed (\(lq0.00\(rq), percentage (\(lq0%\(rq or \(lq0.00%\(rq),
+scientific (\(lq0.00E+00\(rq),
+and currency (\(lq$#,0.00;($#,0.00)\(rq).
 .IP
 Date format strings are identified by the
 presence of a ^D in the first postition.
@@ -1572,7 +1563,7 @@ by backspacing over the opening " in the prompt.
 .TP
 .B e
 Edit the value associated with the current cell.
-This is identical to ``=''
+This is identical to \(lq=\(rq
 except that the command line starts out containing
 the old numeric value or expression associated with the cell.
 The editing in this mode is vi-like.
@@ -1597,7 +1588,7 @@ the ESCAPE key).
 .BR ^W
 Insert the expression attached to the current
 cell into the command line.
-If there is none, the result is ``?''.
+If there is none, the result is \(lq?\(rq.
 This only works while in navigate mode.
 .TP
 .BR ^A
@@ -1608,11 +1599,11 @@ beginning of the line instead.
 .TP
 .BR ^E
 Jump to the end of the line.
-Unlike ``$'' (below), this can also be used from insert mode.
+Unlike \(lq$\(rq (below), this can also be used from insert mode.
 .TP
 .BR TAB
 If the character immediately preceding the
-cursor is alphanumeric or ``_'',
+cursor is alphanumeric or \(lq_\(rq,
 .SM TAB
 tries to find a match in the list of range names,
 and if one is found, the name will be completed
@@ -1622,7 +1613,7 @@ If there are multiple matches, pressing
 repeatedly without any other intervening keys
 will cycle through all of the valid matches.
 If the character immediately preceding the cursor
-is not alphanumeric or ``_'',
+is not alphanumeric or \(lq_\(rq,
 .SM TAB
 defines a range of cells via the cursor control commands or the arrow keys.
 Pressing
@@ -1642,9 +1633,9 @@ the command line, the highlighting to be turned off,
 and the previous mode to be restored.
 This is most useful for defining ranges to functions such as
 .IR @sum ().
-Pressing ``)'' acts just like typing the
+Pressing \(lq)\(rq acts just like typing the
 .SM TAB
-key the second time and adds the closing ``)''.
+key the second time and adds the closing \(lq)\(rq.
 Note that when you give a range command,
 if the first argument to the command is a range,
 you don't need to press the first
@@ -1656,7 +1647,7 @@ Synonym for
 .SM TAB,
 when in navigate mode.
 .TP
-.BR "` '"
+.BR "\(oq \(cq"
 In navigate mode, go to marked cell.
 .TP
 .BR *
@@ -1665,7 +1656,7 @@ In navigate mode, go to note linked to current cell.
 .BR +
 Forward through history (same as j)
 .TP
-.BR - 
+.BR \- 
 Backward through history (same as k)
 .TP
 .BR ESC
@@ -1710,7 +1701,7 @@ Search backwards for a string in the history
 .RE
 .TP
 .BR ?
-Search forward for a string in the history (see ``/'' above)
+Search forward for a string in the history (see \(lq/\(rq above)
 .TP
 .BR 0
 Goto column 0
@@ -1771,23 +1762,17 @@ the current cell.
 .BR d
 Delete ...
 .RS
-\fB0\fP	delete to beginning of line\br
-.br
-\fB$\fP	delete to end of line\br
-.br
-\fBb\fP	back word\br
-.br
-\fBe\fP	delete to end of word\br
-.br
-\fBf\fP	forward (right)\br
-.br
-\fBh\fP	back char\br
-.br
-\fBl\fP	forward\br
-.br
-\fBt\fP	delete forward up to a given char (next char typed)\br
-.br
-\fBw\fP	delete next word forward\br
+.nf
+\fB0\fP	delete to beginning of line
+\fB$\fP	delete to end of line
+\fBb\fP	back word
+\fBe\fP	delete to end of word
+\fBf\fP	forward (right)
+\fBh\fP	back char
+\fBl\fP	forward
+\fBt\fP	delete forward up to a given char (next char typed)
+\fBw\fP	delete next word forward
+.fi
 .RE
 .TP
 .BR e
@@ -1815,7 +1800,7 @@ Insert before cursor; ESC revert back to edit mode
 Forward through history (same as +)
 .TP
 .BR k
-Backward through history (same as -)
+Backward through history (same as \-)
 .TP
 .BR l
 Move right a char
@@ -1861,7 +1846,7 @@ Use like d (above).
 .TP
 .B E
 Edit the string associated with the current cell.
-This is identical to ``<'', ``\\'', or ``>''
+This is identical to \(lq<\(rq, \(lq\\\(rq, or \(lq>\(rq
 except that the command line starts out containing
 the old string value or expression associated with the cell.
 SEE
@@ -1869,16 +1854,17 @@ SEE
 ABOVE.
 .\" ----------
 .PP
-To enter and edit a cell's number part, use the ``='', ``+'', and
+To enter and edit a cell's number part, use the \(lq=\(rq, \(lq+\(rq, and
 .I e
 commands.
-To enter and edit a cell's string part, use the ``<'', ``\\'', ``>'', and
+To enter and edit a cell's string part, use the
+\(lq<\(rq, \(lq\\\(rq, \(lq>\(rq, and
 .I E
 commands.
 See the sections below on numeric and string
 expressions for more information.
 
-Note that the descriptions of the ``+'' and ``-'' commands below
+Note that the descriptions of the \(lq+\(rq and \(lq\-\(rq commands below
 may seem very confusing at first, but once they're understood,
 they can facilitate the rapid entry of expressions which add and
 subtract large numbers of cells and sums of ranges of cells, so read
@@ -1889,23 +1875,23 @@ Specify a named buffer for the next
 yank/delete/pull command.
 Buffers are named with a single character.
 Buffers
-.RI `` a ''
+.RI \(lq a \(rq
 through
-.RI `` z ''
+.RI \(lq z \(rq
 are general purpose buffers,
 buffers
-.RI `` 1 ''
+.RI \(lq 1 \(rq
 through
-.RI `` 9 ''
+.RI \(lq 9 \(rq
 hold the last nine deletions,
 with buffer
-.RI `` 1 ''
+.RI \(lq 1 \(rq
 being the most recent,
 and buffer
-.RI `` 0 ''
+.RI \(lq 0 \(rq
 holds the last cell or range yanked.
 Buffer
-.RI `` """" ''
+.RI \(lq """" \(rq
 is the default buffer, which holds the last
 cell or range that was deleted or yanked.
 .\" ----------
@@ -1948,12 +1934,12 @@ be a lowercase letter specified previously with the
 command, a digit 1-9 to reference one of the last nine edited
 cells (0 will reference the last cell in which an edit was
 begun, regardless of whether the edit was completed or not), or
-.RI `` . ''
+.RI \(lq . \(rq
 to reference the current cell, which, as a special case, is to
 be used as a source rather than a destination, and is to be
 copied into a range which includes the current cell.
 When
-.RI `` . ''
+.RI \(lq . \(rq
 is specified, the current cell is set as the default source
 range for the range copy
 .RI ( rc )
@@ -1975,7 +1961,7 @@ If not in numeric mode, add the current numeric argument
 The current value of the cell must not be an expression.
 In numeric mode,
 .I +
-switches to insert mode and appends a ``+'' to the current
+switches to insert mode and appends a \(lq+\(rq to the current
 expression or value, if any, which makes it easy to add to
 existing data.
 
@@ -1988,16 +1974,16 @@ and
 .I pname
 remains in navigate mode, unless a range is highlighted.
 If a range is highlighted and the character immediately
-preceding the cursor is a ``+'' or ``-'',
-or the cursor is at the beginning of an empty ``let''
-expression, the string ``@sum('' will be
+preceding the cursor is a \(lq+\(rq or \(lq\-\(rq,
+or the cursor is at the beginning of an empty \(lqlet\(rq
+expression, the string \(lq@sum(\(rq will be
 inserted, followed by the highlighted range, followed
-by ``)+''.
+by \(lq)+\(rq.
 If a range is highlighted and the character immediately
-preceding the cursor is not a ``+'' or ``-'', and the
-cursor is not at the beginning of an empty ``let''
+preceding the cursor is not a \(lq+\(rq or \(lq\-\(rq, and the
+cursor is not at the beginning of an empty \(lqlet\(rq
 expression, the highlighted range will be inserted,
-followed by  ``)+''.
+followed by  \(lq)+\(rq.
 .\" ----------
 .TP
 .B -
@@ -2006,7 +1992,7 @@ argument (default 1) from the value of the current cell.
 The current value of the cell must not be an expression.
 In numeric mode,
 .I -
-switches to insert mode and appends a ``-'' to the current
+switches to insert mode and appends a \(lq\-\(rq to the current
 expression or value, if any, which makes it easy to subtract
 from existing data.
 
@@ -2014,21 +2000,21 @@ In navigate mode,
 .I -
 inserts the current cell address into the line, followed
 by another
-.IR - ,
+.IR \- ,
 and
 .I pname
 remains in navigate mode, unless a range is highlighted.
 If a range if highlighted and the character immediately
-preceding the cursor is a ``+'' or ``-'',
-or the cursor is at the beginning of an empty ``let''
-expression, the string ``@sum('' will be
+preceding the cursor is a \(lq+\(rq or \(lq\-\(rq,
+or the cursor is at the beginning of an empty \(lqlet\(rq
+expression, the string \(lq@sum(\(rq will be
 inserted, followed by the highlighted range, followed
-by ``)-''.
+by \(lq)\-\(rq.
 If a range is highlighted and the character immediately
-preceding the cursor is not a ``+'' or ``-'', and the
-cursor is not at the beginning of an empty ``let''
+preceding the cursor is not a \(lq+\(rq or \(lq\-\(rq, and the
+cursor is not at the beginning of an empty \(lqlet\(rq
 expression, the highlighted range will be inserted,
-followed by  ``)-''.
+followed by  \(lq)\-\(rq.
 .\" ----------
 .TP
 .B RETURN
@@ -2140,11 +2126,11 @@ and
 .IR Table ,
 can pipe their (unencrypted only) output to a program.
 To use this feature,
-enter ``| program'' to the prompt asking for a filename.
+enter \(lq| program\(rq to the prompt asking for a filename.
 For example, to redirect the output of the
 .I Write
 command to the printer,
-you might enter ``| lpr -p''.
+you might enter \(lq| lpr \-p\(rq.
 .\" ----------
 .TP
 .B M
@@ -2239,7 +2225,7 @@ In this case, delete the leading " with the backspace key
 and enter a cell name such as
 .I a22
 instead.
-If the resulting string starts with ``|'',
+If the resulting string starts with \(lq|\(rq,
 the rest of the string is interpreted as a
 .SM UNIX
 command, as above.
@@ -2436,7 +2422,7 @@ only affects the contents of the current cell.
 .\" ----------
 .TP
 .B "Zr, Zc, ZZ"
-Hide (``zap'') the current row (column).
+Hide (\(lqzap\(rq) the current row (column).
 This keeps a row (column) from being displayed
 but keeps it in the data base.
 The status of the rows and columns is saved with
@@ -2480,7 +2466,7 @@ Likewise, you may change the precision (the
 number of digits to follow decimal points)
 by pressing the
 .IR j ,
-.IR - ,
+.IR \- ,
 or cursor down key to reduce it, or the
 .IR k ,
 .IR + ,
@@ -2564,9 +2550,9 @@ whole spreadsheet.
 .\" ----------
 Range operations affect a rectangular region on the screen
 defined by the upper left and lower right cells in the region.
-All of the commands in this class begin with ``r'';
+All of the commands in this class begin with \(lqr\(rq;
 the second letter of the command indicates which command.
-A small menu lists the choices for the second letter when you type ``r''.
+A small menu lists the choices for the second letter when you type \(lqr\(rq.
 .I pname
 prompts for needed parameters for each command.
 Phrases surrounded by square brackets in the prompt are
@@ -2692,7 +2678,7 @@ Each criterion has three parts, all of which are mandatory.
 The first part is a single character, which must be either
 .I +
 or
-.IR - ,
+.IR \- ,
 which specifies whether the sort should be done in ascending
 or descending order, respectively.
 The second part, which is also a single character, must be either
@@ -2800,7 +2786,7 @@ Use this command to undefine a previously defined range name.
 .TP
 .B rF
 Use this command to assign a value format string (see
-the ``F'' cell entry command) to a range of cells.
+the \(lqF\(rq cell entry command) to a range of cells.
 .\" ----------
 .TP
 .B rr
@@ -2850,7 +2836,7 @@ If you choose
 you will be prompted for an outer range and an inner range,
 in which case the inner range will scroll within the outer
 range, and any rows or columns outside of the inner range,
-but inside the outer range will be part of the ``frame''
+but inside the outer range will be part of the \(lqframe\(rq
 that is to remain onscreen.
 The outer range may be omitted if the cell cursor is
 in a previously defined framed range, in which case
@@ -2899,18 +2885,18 @@ contents of the cell containing the link,
 similar to a footnote, or it may simply be
 another part of the spreadsheet that is
 related to the cell in some way.
-When you press the `n' key, you will get a
+When you press the \(oqn\(cq key, you will get a
 short prompt asking you whether you want
-to add or delete a note, or to ``show''
+to add or delete a note, or to \(lqshow\(rq
 (by highlighting) which cells on the
 screen have attached notes.
 .PP
 If a cell with an attached note contains
-numeric data, it will be preceded with an ``*''.
-If color is available and turned on, the ``*''
+numeric data, it will be preceded with an \(lq*\(rq.
+If color is available and turned on, the \(lq*\(rq
 will be displayed with color 4.
 Also, the note address will be displayed
-in curly braces on the top line, preceded by an ``*'',
+in curly braces on the top line, preceded by an \(lq*\(rq,
 when the cell is current (e.g.
 .I {*AC30:AE43}
 or
@@ -2966,7 +2952,7 @@ by pressing ` twice.
 .SS "Color Commands"
 .\" ----------
 Color may be enabled by setting the color option
-(``set color''), or by toggling it with ^TC
+(\(lqset color\(rq), or by toggling it with ^TC
 (control-T followed by an uppercase C).
 If color is enabled, you may define up to eight
 color pairs, each consisting of a foreground
@@ -2996,16 +2982,16 @@ are used for prompts, input, error messages, etc.
 Color 2, while not explicitly used for all negative
 numbers, will be used for negative numbers in cells
 which have no other color defined when colorneg is
-turned on (``set colorneg'' or ^TN).
+turned on (\(lqset colorneg\(rq or ^TN).
 This is because colorneg causes all cells with
 negative numbers to have their color number incremented
 by one (cycling back to color 1 if the cell is defined
 as using color 8).
 Color 3 is used for all cells with errors (ERROR or
-INVALID), if colorerr is set (``set colorerr'' or ^TE),
+INVALID), if colorerr is set (\(lqset colorerr\(rq or ^TE),
 regardless of which color they have been defined to use,
 or whether they have been defined to use any color at all.
-Color 4 is used to highlight the ``*'' which signifies
+Color 4 is used to highlight the \(lq*\(rq which signifies
 that a cell has a note attached.
 .PP
 If two color ranges are nested or overlapping, any
@@ -3214,7 +3200,7 @@ If the environment variable
 is defined, that shell is run.
 If not, /bin/sh is used.
 Giving a null command line starts the shell in interactive mode.
-A second ``!'' repeats the previous command.
+A second \(lq!\(rq repeats the previous command.
 .\" ----------
 .TP
 .B ~
@@ -3230,19 +3216,19 @@ text.
 
 There are three types of abbreviations available in sc.
 In the first type, all characters must be either alphanumeric
-or ``_''.
+or \(lq_\(rq.
 In the second type, the last character must be alphanumeric
-or ``_'', but all other characters must not be alphanumeric
-or ``_''.
+or \(lq_\(rq, but all other characters must not be alphanumeric
+or \(lq_\(rq.
 Neither type may contain spaces.
 The third type of abbreviation is a single character, and
-must be alphanumeric or ``_''.
+must be alphanumeric or \(lq_\(rq.
 
 When using abbreviations, the first type must be at the beginning
 of the line, or must be preceded by any character which is not
-alphanumeric or ``_''.
+alphanumeric or \(lq_\(rq.
 The second type must be at the beginning of the line, or must
-be preceded either by an alphanumeric character, ``_'', or a
+be preceded either by an alphanumeric character, \(lq_\(rq, or a
 space.
 Single character abbreviations must be at the beginning of the
 line or preceded by a space.
@@ -3380,7 +3366,7 @@ B1 \(** @fixed C3.
 .\" ==========
 .SS "Numeric Expressions"
 .\" ----------
-Numeric expressions used with the ``=''
+Numeric expressions used with the \(lq=\(rq
 and
 .I e
 commands have a fairly conventional syntax.
@@ -3439,8 +3425,8 @@ Exponentiation.
 Relationals:
 true (1) if and only if the indicated relation holds,
 else false (0).
-Note that ``<='', ``!='', and ``>=''
-are converted to their ``!()'' equivalents.
+Note that \(lq<=\(rq, \(lq!=\(rq, and \(lq>=\(rq
+are converted to their \(lq!()\(rq equivalents.
 .PD
 .\" ----------
 .TP
@@ -3892,7 +3878,7 @@ to assure meaningful results.
 .BI @asin( e )
 Return the arc sine of
 .I e
-in the range -pi/2 to pi/2.
+in the range \-pi/2 to pi/2.
 .\" ----------
 .TP 18
 .BI @acos( e )
@@ -3904,13 +3890,13 @@ in the range 0 to pi.
 .BI @atan( e )
 Return the arc tangent of
 .I e
-in the range -pi/2 to pi/2.
+in the range \-pi/2 to pi/2.
 .\" ----------
 .TP 18
 .BI @atan2( e1 , e2 )
 Returns the arc tangent of
 .IR e1 / e2
-in the range -pi to pi.
+in the range \-pi to pi.
 .\" ----------
 .TP 18
 .BI @max( e1 , e2 , ... )
@@ -3947,7 +3933,7 @@ has the same value as string expression
 Return the numeric value of a cell selected by name.
 String expression
 .I se
-must evaluate to a column name (``A''-``AE'') and
+must evaluate to a column name (\(lqA\(rq-\(lqAE\(rq) and
 .I e
 must evaluate to a row number (0-199). 
 If
@@ -3987,9 +3973,9 @@ For example, the string expression
 .IP ""
 	A0 # "zy dog"
 .IP ""
-displays the string ``the lazy dog'' in the cell if the value of
+displays the string \(lqthe lazy dog\(rq in the cell if the value of
 .IR A0 's
-string is ``the la''.
+string is \(lqthe la\(rq.
 .\" ==========
 .SS "Built-in String Functions"
 .\" ----------
@@ -4012,7 +3998,7 @@ or in the last
 or
 .I Put
 command will be returned.
-If the path begins with ``~'', it will be expanded to
+If the path begins with \(lq~\(rq, it will be expanded to
 the appropriate users home directory.
 .PD
 .\" ----------
@@ -4036,7 +4022,7 @@ For example,
 .IP ""
 	@substr ("Nice jacket", 4, 8)
 .IP ""
-returns the string ``e jac''.
+returns the string \(lqe jac\(rq.
 .\" ----------
 .TP 18
 .BI @fmt( se , e )
@@ -4052,17 +4038,17 @@ For example, the expression
 .IP ""
 	@fmt ("\(**\(**%6.3f\(**\(**", 10.5)
 .IP ""
-yields the string ``\(**\(**10.500\(**\(**''.
+yields the string \(lq\(**\(**10.500\(**\(**\(rq.
 .I e
 is a double, so applicable formats are e, E, f, g, and G.
-Try ``%g'' as a starting point.
+Try \(lq%g\(rq as a starting point.
 .\" ----------
 .TP 18
 .BI @sval( se , e )
 Return the string value of a cell selected by name.
 String expression
 .I se
-must evaluate to a column name (``A''-``AE'') and
+must evaluate to a column name (\(lqA\(rq-\(lqAE\(rq) and
 .I e
 must evaluate to a row number (0-199). 
 If
@@ -4136,15 +4122,15 @@ For example:
 Note that you can build a command line (including more argument values)
 from a string expression with concatenation.
 You can also "hide" the second argument by ending the command line
-(first argument) with `` #'' (shell comment).
+(first argument) with \(lq #\(rq (shell comment).
 .\" ----------
 .TP 18
 .BI @coltoa( e )
 Returns a string name for a column from the numeric argument.
 For example:
 .IP ""
-	@coltoa(@mycol-1)
-	@nval(coltoa(@mycol-1), @myrow+1)
+	@coltoa(@mycol\-1)
+	@nval(coltoa(@mycol\-1), @myrow+1)
 .IP ""
 .\" ==========
 .SS "Built-in Financial Functions"
@@ -4312,7 +4298,7 @@ a warning is printed.
 This is usually due to a long series of forward references,
 or to unstable cyclic references (for example, set
 .IR A0 's
-expression to ``A0+1'').
+expression to \(lqA0+1\(rq).
 .TP 18
 .B @numiter 
 Returns the number of iterations performed so far.
@@ -4361,7 +4347,7 @@ when the F2 key is pressed.
 Note that embedded quotes must be escaped by a backslash.
 If you want to include the cell address of the
 current cell in the command line,
-you may do so by entering ``$$'' in its place
+you may do so by entering \(lq$$\(rq in its place
 in the command.
 For example,
 .IP
@@ -4554,3 +4540,4 @@ Petri Wessman,
 and
 Tim Wilson.
 .\" end of man page
+.\" vim:set syntax=groff:
