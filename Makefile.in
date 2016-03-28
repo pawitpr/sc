@@ -349,7 +349,7 @@ OBJS=abbrev.o cmds.o color.o crypt.o format.o frame.o gram.o help.o interp.o \
 # The documents in the Archive
 DOCS=CHANGES README sc.doc psc.doc tutorial.sc VMS_NOTES torev build.com
 
-all:	$(name) p$(name) $(name)qref
+all:	$(name) p$(name) $(name)qref $(name).1 p$(name).1
 
 $(name):$(PAR)  $(OBJS)
 	$(CC) ${LDFLAGS} ${OBJS} ${LIB} -o $(name)
@@ -458,10 +458,8 @@ clean:
 	rm -f *.o *res.h $(YTAB).h debug core gram.c $(name).1 p$(name).1 \
 	y.output pxmalloc.c pvmtbl.c qhelp.c tags
 
-distclean:
-	rm -f *.o *res.h $(YTAB).h $(name) p$(name) debug core gram.c \
-	$(name).1 $(name).man p$(name).man p$(name).1 y.output $(name)qref \
-	pxmalloc.c pvmtbl.c qhelp.c tags Makefile config.log
+distclean: clean
+	rm -f $(name) p$(name) $(name)qref Makefile config.log
 
 shar: ${SRC} ${DOCS}
 	shar -c -m 64000 -f shar ${DOCS} ${SRC}
@@ -491,14 +489,8 @@ lintpsc: psc.c vmtbl.c
 $(name).1:	sc.doc torev
 	name=$(name) NAME=$(NAME) LIBDIR=$(LIBDIR) sh torev sc.doc > $(name).1
 
-$(name).man:	$(name).1
-	nroff -man $(name).1 > $(name).man
-
 p$(name).1:	psc.doc torev
 	name=$(name) NAME=$(NAME) LIBDIR=$(LIBDIR) sh torev psc.doc > p$(name).1
-
-p$(name).man:	p$(name).1
-	nroff -man p$(name).1 > p$(name).man
 
 install: $(EXDIR)/$(name) $(EXDIR)/$(name)qref $(EXDIR)/p$(name) \
 	 $(LIBDIR)/tutorial $(MANDIR)/$(name).$(MANEXT) \

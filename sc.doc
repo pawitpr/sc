@@ -131,7 +131,8 @@ The spreadsheet will be recalculated only when the \(lq@\(rq command is used.
 .\" ----------
 .TP
 .B \-n
-Start the program in quick numeric entry mode (see below).
+Start the program in quick numeric entry mode
+(\TQuickNumericEntryModesee below\T).
 .\" ----------
 .TP
 .B \-o
@@ -153,7 +154,7 @@ Start the program with the recalculation being done in row
 order (default option).
 .\" ----------
 .TP
-.B \-v
+.B \AFl-v\-v
 When piping data out using the
 .I \-P
 option (below), change all expressions to values.
@@ -171,17 +172,17 @@ option for each instance of the
 option.
 .\" ----------
 .TP
-.B \-x
+.B \AFl-x\-x
 Cause the
-.I Get
+.I \TGetGet\T
 and
-.I Put
+.I \TPutPut\T
 commands (see below) to encrypt and decrypt data files.
 .\" ----------
 .TP
 .B \-C
 Start the program with automatic newline action set to increment the column
-(see below).
+(\TNewlineActionsee below\T).
 .\" ----------
 .TP
 .BI \-P " range[/address]"
@@ -191,7 +192,7 @@ Start the program with automatic newline action set to increment the column
 .PD
 Pipe a range to standard output.
 The output is similar to that of the
-.I Put
+.I \TPutPut\T
 command (below), except that only cell data and
 formatting information for cells in the range are
 output, without all of the colors, range definitions,
@@ -202,7 +203,7 @@ is used to adjust all addresses
 in the range to a new starting point.
 This is useful for copying data from one file to
 another, especially when used in conjunction with the 
-.I \-v
+.I \TFl-v\-v\T
 option (above), using something like
 .I "merge ""|sc \-v \-Prange/address filename"""
 (note the pipe symbol).
@@ -238,13 +239,13 @@ outputting any data.
 .TP
 .B \-R
 Start the program with automatic newline action set to increment the row
-(see below).
+(\TNewlineActionsee below\T).
 .\" ----------
 .TP
 .B \-W
 Pipe a range to standard output.
 The output is identical to that of the
-.I Write
+.I \TWriteWrite\T
 command (below).
 This option may be used more than once to specify multiple ranges.
 A range of
@@ -253,9 +254,9 @@ may be used to refer to the entire spreadsheet.
 .\" ----------
 .PP
 All of these options can be changed with the
-.I ^T
+.I \TToggleOptions^T\T
 and 
-.I S
+.I \TSetOptionsS\T
 commands (see below) while
 .I pname
 is running.  Options specified when
@@ -458,8 +459,8 @@ indicated by the terminal's hardware cursor.
 .\" ----------
 .PP
 If a cell's numeric value is wider than the column width (see the
-.I f
-command), the cell is filled with asterisks.
+.I \TFCmdf
+command\T), the cell is filled with asterisks.
 If a cell's label string is wider than the column width,
 it is truncated at the start of the next non-blank cell in the row, if any.
 .\" ----------
@@ -476,7 +477,7 @@ before a repeat count if quick numeric entry mode is enabled.
 \0 \" exactly one blank line (hard to get)
 .PD 0
 .TP
-.BI ^T o
+.BI \AToggleOptions^T o
 Toggle options.
 This command allows you to switch the state of one option selected by
 .IR o .
@@ -504,7 +505,7 @@ Default is automatic recalculation on.
 .TP
 .B b
 Braille enhancement mode.
-See the braille section under the
+See the \Tbraillebraille section\T under the
 .I Set
 command below for a complete description of
 how to use this mode.
@@ -526,7 +527,7 @@ This is enabled by default.
 .B e
 External function execution.
 When disabled, external functions (see
-.IR @ext ()
+.IR \T@ext@ext ()\T
 below) are not called.
 This saves a lot of time at each screen update.
 External functions are disabled by default.
@@ -581,7 +582,7 @@ This is only done if the cell to the left is empty.
 Default is enabled.
 .\" ----------
 .TP
-.B n
+.B \AQuickNumericEntryModen
 Quick numeric entry.
 If enabled,
 a typed digit is assumed to be
@@ -624,8 +625,10 @@ the name and value of the current cell is
 displayed on the top line.
 If there is an associated label string,
 the first character of the string value
-is \(lq|\(rq for a centered string, \(lq<\(rq for a
-leftstring or \(lq>\(rq for a rightstring (see below),
+is \(lq|\(rq for a \TEnterCenterStringcentered string\T,
+\(lq<\(rq for a
+\TEnterLeftStringleftstring\T or \(lq>\(rq for a
+\TEnterRightStringrightstring\T (see below),
 followed by "\fIstring\fP" for a constant string or
 .RI { expr }
 for a string expression.
@@ -649,7 +652,7 @@ if you enter lots of dollar figures.
 .\" ----------
 .TP
 .B r
-Newline action.
+\ANewlineActionNewline action.
 This is a 3-way toggle which determines which direction to
 move after pressing the
 .SM RETURN
@@ -698,7 +701,7 @@ Cslop is disabled by default.
 .B x
 Encryption.
 See the
-.B \-x
+.B \TFl-x\-x\T
 option.
 .\" ----------
 .TP
@@ -753,7 +756,8 @@ right after each entry and setting the newline action limits on the last
 column on which data should be entered will allow the data to entered
 quickly.
 An alternative to setting newline action limits is to
-enclose the range for entry in a frame (see "Framed Ranges"
+enclose the range for entry in a frame (see
+\(lq\TFramedRangesFramed Ranges\T\(rq
 below), and setting the autowrap option.
 Setting autoinsert will insert new rows as needed if the
 frame includes data at the bottom.
@@ -768,7 +772,7 @@ in each column.
 \0 \" exactly one blank line (hard to get)
 .PD 0
 .TP
-.B S
+.B \ASetOptionsS
 Set options.  This command allows you to set various options.
 A small menu lists the options that cannot be changed through
 .I ^T
@@ -781,7 +785,7 @@ above.
 Specify the order cell evaluation when updating.
 These options also affect the order in which
 cells are filled (see 
-.IR rf )
+.IR \TrfCmdrf\T )
 and whether a row or column is cleared by an 
 .I x
 command.
@@ -969,7 +973,7 @@ saved when saving a file, but are instead intended
 for use in a user's .scrc file.
 .\" ----------
 .TP
-.BR braille / !braille
+.BR \Abraillebraille / !braille
 Set/clear braille enhancement mode.
 When braille enhancement mode is set, the cursor
 behaves in a manner that makes the use of
@@ -1396,16 +1400,17 @@ addresses, or sums of ranges using \(lq@sum\(rq), use the \(lq+\(rq
 command instead (see below).
 .\" ----------
 .TP
-.B <
+.B \AEnterLeftString<
 Enter a label string into the current cell
 to be flushed left against the left edge of the cell.
 .\" ----------
-.IP \fB\\\\\fP
+.TP
+.B \AEnterCenterString\(rs
 Enter a label string into the current cell
 to be centered in the column.
 .\" ----------
 .TP
-.B >
+.B \AEnterRightString>
 Enter a label string into the current cell
 to be flushed right against the right edge of the cell.
 .\" ----------
@@ -2033,14 +2038,14 @@ once to edit.
 \0 \" exactly one blank line (hard to get)
 .PD 0
 .TP
-.B G
+.B \AGetG
 Get a new database from a file.
 If encryption is enabled,
 the file is decrypted before it is loaded into the spreadsheet.
 .PD
 .\" ----------
 .TP
-.B P
+.B \APutP
 Put the current database into a file.
 If encryption is enabled,
 the file is encrypted before it is saved.
@@ -2061,7 +2066,7 @@ will be displayed, and no action taken.
 .\" ----------
 .TP
 .B W
-Write a listing of the current database into a file
+\AWriteWrite a listing of the current database into a file
 in a form that matches its appearance on the screen.
 This differs from the
 .I Put
@@ -2451,7 +2456,7 @@ The default is the first range of rows (columns) currently hidden.
 This command ignores the repeat count, if any.
 .\" ----------
 .TP
-.B f
+.B \AFCmdf
 Set the output format to be used for printing the
 numeric values in each cell in the current column.
 This command has only a column version (no second letter).
@@ -2705,7 +2710,7 @@ are replaced by the name of the leftmost
 column of the range being sorted.
 .\" ----------
 .TP
-.B rf
+.B \ArfCmdrf
 Fill a range with constant values
 starting with a given value and increasing by a given increment.
 Each row is filled before moving on to the
@@ -2789,7 +2794,7 @@ Use this command to assign a value format string (see
 the \(lqF\(rq cell entry command) to a range of cells.
 .\" ----------
 .TP
-.B rr
+.B \AFramedRangesrr
 This command is used for creating, modifying,
 and deleting framed ranges.
 A framed range, is one which has a number of rows
@@ -4075,7 +4080,7 @@ into upper case and other letters to lower case
 (the latter if all letters of the string are upper case).
 .\" ----------
 .TP 18
-.BI @ext( se , e )
+.BI \A@ext@ext( se , e )
 Call an external function (program or script).
 The purpose is to allow arbitrary functions on values,
 e.g. table lookups and interpolations.
