@@ -34,10 +34,10 @@ For better navigation a
 and
 [PDF](http://n-t-roff.github.io/sc.1.pdf)
 version with a table of contents and hyperlinks had been
-created using the
+created (using the
 [-man](http://n-t-roff.github.io/heirloom/doctools/man.7.html)
 macros of
-[Heirloom troff](http://n-t-roff.github.io/heirloom/doctools.html).
+[Heirloom troff](http://n-t-roff.github.io/heirloom/doctools.html)).
 #### Getting the source
 The source can be cloned with
 ```sh
