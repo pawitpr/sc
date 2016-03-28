@@ -27,13 +27,13 @@ had been made:
 #### Documentation
 Documentation is provided in short form integrated in `sc`
 accessible with the `?` key.
-A complete documentation is available in form of a
+A complete documentation is available as a
 [manual page](https://github.com/n-t-roff/sc/blob/master/sc.doc).
-For better navigation a
+For better navigation
 [HTML](http://n-t-roff.github.io/sc.1.html)
 and
 [PDF](http://n-t-roff.github.io/sc.1.pdf)
-version with a table of contents and hyperlinks had been
+versions with table of contents and hyperlinks had been
 created (using the
 [-man](http://n-t-roff.github.io/heirloom/doctools/man.7.html)
 macros of
