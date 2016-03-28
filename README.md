@@ -13,7 +13,8 @@ The following
 [changes](https://github.com/n-t-roff/sc/blob/master/CHANGES-git)
 had been made:
 
-* Found bugs are fixed
+* Found bugs are fixed (for reporting bugs please use the
+  [issue list](https://github.com/n-t-roff/sc/issues))
 * All `gcc` and most `clang` `-Wall` compiler warnings fixed
 * Most uses of `sprintf`, `strcpy`, and `strcat` replaced
   with `snprintf`, `strlcpy`, and `strlcat`
