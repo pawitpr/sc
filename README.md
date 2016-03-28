@@ -24,6 +24,20 @@ had been made:
   This could only be changed at compile time.
   There are now options `backup` and `!backup` to control this.
 
+#### Documentation
+Documentation is provided in short form integrated in `sc`
+accessible with the `?` key.
+A complete documentation is available in form of a
+[manual page](https://github.com/n-t-roff/sc/blob/master/sc.doc).
+For better navigation a
+[HTML](http://n-t-roff.github.io/sc.1.html)
+and
+[PDF](http://n-t-roff.github.io/sc.1.pdf)
+version with a table of contents and hyperlinks had been
+created using the
+[-man](http://n-t-roff.github.io/heirloom/doctools/man.7.html)
+macros of
+[Heirloom troff](http://n-t-roff.github.io/heirloom/doctools.html).
 #### Getting the source
 The source can be cloned with
 ```sh
