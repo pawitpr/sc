@@ -1083,7 +1083,7 @@ to do backups.
 .B ^A
 Go to cell
 .B A0
-(same as HOME).
+(same as <HOME>).
 .PD
 .\" ----------
 .TP
@@ -1124,30 +1124,30 @@ is nonzero, up/down paging will be by
 rows, instead.
 .\" ----------
 .TP
-.B "^F, ^B"
+.BR ^F ", " ^B
 Same as J and K above.
 .\" ----------
 .TP
-.B PAGE-DOWN PAGE-UP
+<PAGE-DOWN>, <PAGE-UP>
 Same as J and K above.
 .\" ----------
 .TP
-.B TAB
+<TAB>
 If the character cursor is on the top line,
-.SM TAB
+<TAB>
 tries to complete a range name if the character
 immediately preceding it is alphanumeric or \(lq_\(rq,
 and starts a range if not (see below).
 Otherwise, move the cell cursor forward one column.
 .\" ----------
 .TP
-.B HOME
+<HOME>
 Go to cell
 .BR A0 .
 .\" ----------
 .TP
-.B END
-Same as ^E (see below).
+<END>
+Same as \TCTRL-E^E\T (see below).
 .\" ----------
 .TP
 .B "Arrow Keys"
@@ -1254,7 +1254,7 @@ which allows you to position the destination cell where
 you want it on the screen.
 .\" ----------
 .TP
-.BI ^E d
+.BI \ACTRL-E^E d
 Go to end of range.
 Follow
 .B ^E
@@ -1606,50 +1606,50 @@ beginning of the line instead.
 Jump to the end of the line.
 Unlike \(lq$\(rq (below), this can also be used from insert mode.
 .TP
-.BR TAB
+<TAB>
 If the character immediately preceding the
 cursor is alphanumeric or \(lq_\(rq,
-.SM TAB
+<TAB>
 tries to find a match in the list of range names,
 and if one is found, the name will be completed
 on the command line.
 If there are multiple matches, pressing
-.SM TAB
+<TAB>
 repeatedly without any other intervening keys
 will cycle through all of the valid matches.
 If the character immediately preceding the cursor
 is not alphanumeric or \(lq_\(rq,
-.SM TAB
+<TAB>
 defines a range of cells via the cursor control commands or the arrow keys.
 Pressing
-.SM TAB
+<TAB>
 automatically switches
 .B pname
 to navigate mode if you haven't already done so using the
 .B ^V
 command, and the range is highlighted,
 starting at the cell where you typed
-.SM TAB,
+<TAB>,
 and continuing through the current cell.
 Pressing
-.SM TAB
+<TAB>
 again causes the highlighted range to be inserted into
 the command line, the highlighting to be turned off,
 and the previous mode to be restored.
 This is most useful for defining ranges to functions such as
 .BR @sum ().
 Pressing \(lq)\(rq acts just like typing the
-.SM TAB
+<TAB>
 key the second time and adds the closing \(lq)\(rq.
 Note that when you give a range command,
 if the first argument to the command is a range,
 you don't need to press the first
-.SM TAB
+<TAB>
 to begin defining a range starting with the current cell.
 .TP
 .B :
 Synonym for
-.SM TAB,
+<TAB>,
 when in navigate mode.
 .TP
 .B "\(oq \(cq"
@@ -1780,70 +1780,70 @@ Delete ...
 .fi
 .RE
 .TP
-.BR e
+.B e
 Forward to next end-of-word
 .TP
-.BR f
+.B f
 Find the next char typed.
 In navigate mode, insert the outer frame range which
 includes the current cell.
 .TP
-.BR g
+.B g
 In navigate mode, allows you to `goto' a cell or range,
 just like the regular
 .B goto
 command.
 Ignored in edit, insert or replace modes.
 .TP
-.BR h
+.B h
 Move left a char
 .TP
-.BR i
+.B i
 Insert before cursor; <ESC> revert back to edit mode
 .TP
-.BR j
+.B j
 Forward through history (same as +)
 .TP
-.BR k
+.B k
 Backward through history (same as \-)
 .TP
-.BR l
+.B l
 Move right a char
 .TP
-.BR n
+.B n
 Repeat the last search (find the next match)
 .TP
-.BR o
+.B o
 When highlighting a range in navigate mode, move
 to the opposite corner of the highlighted range.
 .TP
-.BR p
+.B p
 Insert the most recently deleted text after the cursor
 .TP
-.BR q
+.B q
 Stop editing
 .TP
-.BR r
+.B r
 Replace char.
 In navigate mode, insert the inner frame range which
 includes the current cell.
 .TP
-.BR s
+.B s
 Delete current char and enter insert mode (stands for substitute)
 .TP
-.BR t
+.B t
 Goto a char
 .TP
-.BR u
+.B u
 Undo
 .TP
-.BR w
+.B w
 Forward a word
 .TP
-.BR x
+.B x
 Delete the current char (moving to the right)
 .TP
-.BR y
+.B y
 Copies to the delete buffer without deleting.
 Use like d (above).
 .RE
@@ -1854,9 +1854,9 @@ Edit the string associated with the current cell.
 This is identical to \(lq<\(rq, \(lq\\\(rq, or \(lq>\(rq
 except that the command line starts out containing
 the old string value or expression associated with the cell.
-SEE
+See
 .B e
-ABOVE.
+above.
 .\" ----------
 .PP
 To enter and edit a cell's number part, use the \(lq=\(rq, \(lq+\(rq, and
@@ -2577,7 +2577,7 @@ or a range name previously defined with a
 command.
 A default range shown in the second line
 is used if you omit the range from the command or press the
-.SM TAB
+<TAB>
 key (see below).
 The default range can be changed by moving the cell cursor
 via the control commands
