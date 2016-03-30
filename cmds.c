@@ -13,14 +13,12 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <string.h>
-#include <curses.h>
 #include <time.h>
 #include <utime.h>
 #include <sys/file.h>
 #include <fcntl.h>
 #include <stdbool.h>
 #include <sys/stat.h>
-#include "sc.h"
 #include <signal.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -28,6 +26,7 @@
 #include <unistd.h>
 #endif
 #include "compat.h"
+#include "sc.h"
 
 void	syncref(register struct enode *e);
 void	unspecial(FILE *f, char *str, int delim);

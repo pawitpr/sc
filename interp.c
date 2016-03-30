@@ -27,10 +27,7 @@
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
-#include <curses.h>
 #include <stdbool.h>
-#include "sc.h"
-#include "compat.h"
 
 #ifndef MSDOS
 #include <unistd.h>
@@ -39,6 +36,8 @@
 #ifdef REGCOMP
 #include <regex.h>
 #endif
+#include "compat.h"
+#include "sc.h"
 #ifdef RE_COMP
 extern char *re_comp(char *s);
 extern char *re_exec(char *s);

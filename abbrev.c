@@ -14,9 +14,8 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include <curses.h>
-#include "sc.h"
 #include "compat.h"
+#include "sc.h"
 
 static int are_abbrevs(void);
 

@@ -15,11 +15,8 @@
 
 
 %{
-#include <curses.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "sc.h"
-#include "compat.h"
 
 #ifdef USELOCALE
 #include <locale.h>
@@ -28,6 +25,9 @@
 #ifndef MSDOS
 #include <unistd.h>
 #endif
+
+#include "compat.h"
+#include "sc.h"
 
 #define ENULL (struct enode *)0
 %}

@@ -24,7 +24,7 @@ check_for () {
 	[ -e $LOG ] && echo >>$LOG
 	A="Checking for $1 ... "
 	echo "$A" >>$LOG
-	[ -z $SFLAG ] && printf "$A"
+	[ -z "$SFLAG" ] && printf "$A"
 }
 
 compile () {
@@ -33,18 +33,22 @@ compile () {
 }
 
 test_result () {
-	if [ $? -eq 0 ]; then
+	RESULT=$?
+	NO_FAIL_TEXT=$1
+	if [ $RESULT -eq 0 ]; then
 		echo success >>$LOG
-		[ -z $SFLAG ] && echo yes
+		[ -z "$SFLAG" ] && echo $PASS_TEXT
 		[ -e $TMPC ] && rm -f $TMPC
+		PASS_TEXT=yes
 		true
 	else
-		[ -z $SFLAG ] && echo no
+		[ -z "$SFLAG" -a -z "$NO_FAIL_TEXT" ] && echo no
 		if [ -e $TMPC ]; then
 			echo "Failed program:" >>$LOG
 			pr -n -t $TMPC >>$LOG
 			rm -f $TMPC
 		fi
+		PASS_TEXT=yes
 		false
 	fi
 }
@@ -53,6 +57,10 @@ gen_mk () {
 	rm -f $OUTMK
 	[ -n "$FLOAT_STORE" ] && echo "FLOAT_STORE=$FLOAT_STORE" >> $OUTMK
 	[ -n "$DEFS" ] && echo "DEFINES=$DEFS" >> $OUTMK
+	[ -n "$INCDIR_CURSES" ] && echo "INCDIR_CURSES=$INCDIR_CURSES" >> $OUTMK
+	[ -n "$RPATH_CURSES" ] && echo "RPATH_CURSES=$RPATH_CURSES" >> $OUTMK
+	[ -n "$LIBDIR_CURSES" ] && echo "LIBDIR_CURSES=$LIBDIR_CURSES" \
+	    >> $OUTMK
 	[ -n "$LIB_CURSES" ] && echo "LIB_CURSES=$LIB_CURSES" >> $OUTMK
 	cat $INMK >> $OUTMK || exit 1
 }
@@ -155,49 +163,64 @@ EOT
 	test_result && DEFS="$DEFS -DHAVE_WCSLCPY"
 }
 
+compile_curses () {
+	cat <<EOT >$TMPC
+#include "compat.h"
+int
+main (int argc, char **argv) {
+	return 0;
+}
+EOT
+	gen_mk
+	cat <<EOT >>$OUTMK
+$TMPNAM: ${TMPNAM}.o
+	\$(CC) $RPATH_CURSES -o \$@ ${TMPNAM}.o $LIBDIR_CURSES $LIB_CURSES
+EOT
+	compile
+	test_result 1
+}
+
+test_curses () {
+	check_for $LIB_CURSES
+
+	compile_curses && return
+	[ $# -gt 0 ] && for i in $*; do
+		compile_curses $i && return
+	done
+}
+
+check_ncursesw () {
+	ODEFS=$DEFS
+	LIB_CURSES="-lncursesw"
+	DEFS="$DEFS -DHAVE_NCURSESW_CURSES_H"
+	INCDIR_CURSES="-I/usr/pkg/include"
+	RPATH_CURSES="-Wl,-rpath,/usr/pkg/lib"
+	LIBDIR_CURSES="-L/usr/pkg/lib"
+	PASS_TEXT="in /usr/pkg/lib"
+	test_curses && return
+	echo no
+	DEFS=$ODEFS
+	INCDIR_CURSES=
+	RPATH_CURSES=
+	LIBDIR_CURSES=
+	false
+}
+
 check_lib_curses () {
+	check_ncursesw && return
 	LIB_CURSES="-lcurses"
-	check_for $LIB_CURSES
-
-	cat <<EOT >$TMPC
-#include <curses.h>
-int
-main (int argc, char **argv) {
-	return 0;
-}
-EOT
-	gen_mk
-	cat <<EOT >$OUTMK
-$TMPNAM: ${TMPNAM}.o
-	\$(CC) -o \$@ ${TMPNAM}.o $LIB_CURSES
-EOT
-	compile
-	test_result && return
-
+	test_curses && return
+	echo no
 	LIB_CURSES="-lncurses"
-	check_for $LIB_CURSES
-
-	cat <<EOT >$TMPC
-#include <curses.h>
-int
-main (int argc, char **argv) {
-	return 0;
-}
-EOT
-	gen_mk
-	cat <<EOT >$OUTMK
-$TMPNAM: ${TMPNAM}.o
-	\$(CC) -o \$@ ${TMPNAM}.o $LIB_CURSES
-EOT
-	compile
-	test_result
+	test_curses && return
+	echo no
 }
 
 check_fixterm () {
 	check_for fixterm
 
 	cat <<EOT >$TMPC
-#include <curses.h>
+#include "compat.h"
 int
 main (int argc, char **argv) {
 	fixterm();
@@ -205,9 +228,9 @@ main (int argc, char **argv) {
 }
 EOT
 	gen_mk
-	cat <<EOT >$OUTMK
+	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) -o \$@ ${TMPNAM}.o $LIB_CURSES
+	\$(CC) -o \$@ ${TMPNAM}.o $LIBDIR_CURSES $LIB_CURSES
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_FIXTERM"
@@ -217,7 +240,7 @@ check_resetterm () {
 	check_for resetterm
 
 	cat <<EOT >$TMPC
-#include <curses.h>
+#include "compat.h"
 int
 main (int argc, char **argv) {
 	resetterm();
@@ -225,9 +248,9 @@ main (int argc, char **argv) {
 }
 EOT
 	gen_mk
-	cat <<EOT >$OUTMK
+	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) -o \$@ ${TMPNAM}.o $LIB_CURSES
+	\$(CC) -o \$@ ${TMPNAM}.o $LIBDIR_CURSES $LIB_CURSES
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_RESETTERM"

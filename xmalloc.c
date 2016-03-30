@@ -4,8 +4,8 @@
  */
 
 #include <stdlib.h>
-#include <curses.h>
 #include <stdbool.h>
+#include "compat.h"
 #include "sc.h"
 
 static void fatal(char *);

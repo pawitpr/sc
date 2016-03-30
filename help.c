@@ -11,8 +11,8 @@
 char	*header = " Quick Reference";
 char	*revision = "$Revision: 7.16 $";
 #else
-#include <curses.h>
 #include <stdbool.h>
+#include "compat.h"
 #include "sc.h"
 #endif /* QREF */
 

@@ -333,7 +333,7 @@ LN=ln
 # people who don't understand them.
 #CFLAGS=-DSYSV3 -O2 -Wall -pipe
 #CFLAGS=-DSYSV3 -O2 -pipe
-_CFLAGS=-Wall
+_CFLAGS= $(INCDIR_CURSES) $(DEFINES) -Wall
 LIB=-lm $(LIB_CURSES)
 
 # All of the source files
@@ -352,7 +352,8 @@ DOCS=CHANGES README sc.doc psc.doc tutorial.sc VMS_NOTES torev build.com
 all:	$(name) p$(name) $(name)qref $(name).1 p$(name).1
 
 $(name):$(PAR)  $(OBJS)
-	$(CC) ${LDFLAGS} ${OBJS} ${LIB} -o $(name)
+	$(CC) ${LDFLAGS} ${OBJS} $(RPATH_CURSES) -o $(name) $(LIBDIR_CURSES) \
+	    ${LIB}
 
 # Alternative link for MS-DOS
 #$(name):	$(OBJS)
@@ -365,7 +366,7 @@ gram.c:	gram.y
 $(YTAB).h:	gram.y
 
 p$(name):	psc.c pvmtbl.o pxmalloc.o
-	$(CC) $(CFLAGS) $(_CFLAGS) $(DEFINES) ${LDFLAGS} -o p$(name) psc.c \
+	$(CC) $(CFLAGS) $(_CFLAGS) ${LDFLAGS} -o p$(name) psc.c \
 	    pvmtbl.o pxmalloc.o ${PSCLIB}
 
 # Alternative link for MS-DOS (NB: MSC 5.1 has no getopt.c)
@@ -377,7 +378,7 @@ qhelp.c: help.c
 	${LN} help.c qhelp.c
 
 $(name)qref:	qhelp.c sc.h
-	$(CC) $(CFLAGS) $(_CFLAGS) $(DEFINES) $(LDFLAGS) -DQREF $(QREF_FMT) \
+	$(CC) $(CFLAGS) $(_CFLAGS) $(LDFLAGS) -DQREF $(QREF_FMT) \
 	    -DSCNAME=\"$(NAME)\" -o $(name)qref qhelp.c
 
 # Alternative link for MS-DOS
@@ -390,7 +391,7 @@ pvmtbl.c: vmtbl.c
 	${LN} vmtbl.c pvmtbl.c
 
 pvmtbl.o: sc.h pvmtbl.c
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) -c -DPSC pvmtbl.c
+	$(CC) ${CFLAGS} $(_CFLAGS) -c -DPSC pvmtbl.c
 
 pxmalloc.c: xmalloc.c
 	-rm -f pxmalloc.c
@@ -399,58 +400,58 @@ pxmalloc.c: xmalloc.c
 # Objects
 
 abbrev.o: abbrev.c sc.h
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${DFLT_PAGER} -c abbrev.c
+	$(CC) ${CFLAGS} $(_CFLAGS) ${DFLT_PAGER} -c abbrev.c
 
 cmds.o: cmds.c sc.h
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${CRYPT} -c cmds.c
+	$(CC) ${CFLAGS} $(_CFLAGS) ${CRYPT} -c cmds.c
 
 color.o: color.c sc.h
 
 crypt.o: crypt.c sc.h
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${CRYPT} -c crypt.c
+	$(CC) ${CFLAGS} $(_CFLAGS) ${CRYPT} -c crypt.c
 
 format.o: format.c
 
 frame.o: frame.c sc.h
 
 gram.o:	sc.h $(YTAB).h gram.c
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${USELOCALE} -c gram.c
+	$(CC) ${CFLAGS} $(_CFLAGS) ${USELOCALE} -c gram.c
 	sed < gram.y > experres.h -f eres.sed
 	sed < gram.y > statres.h -f sres.sed
 
 help.o: help.c sc.h
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${CRYPT} -c help.c
+	$(CC) ${CFLAGS} $(_CFLAGS) ${CRYPT} -c help.c
 
 interp.o:	interp.c sc.h
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${FLOAT_STORE} ${IEEE_MATH} \
+	$(CC) ${CFLAGS} $(_CFLAGS) ${FLOAT_STORE} ${IEEE_MATH} \
 	    ${SIGVOID} ${RINT} ${REGEX} ${FMOD} -c interp.c
 
 lex.o:	sc.h $(YTAB).h gram.o lex.c
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${SIMPLE} ${IEEE_MATH} \
+	$(CC) ${CFLAGS} $(_CFLAGS) ${SIMPLE} ${IEEE_MATH} \
 	    ${LIBRARY} ${SIGVOID} ${NO_NOTIMEOUT} -c lex.c
 
 pipe.o: pipe.c sc.h
 
 pxmalloc.o: sc.h pxmalloc.c
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) -c -DPSC pxmalloc.c
+	$(CC) ${CFLAGS} $(_CFLAGS) -c -DPSC pxmalloc.c
 
 qhelp.o: qhelp.c sc.h
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${CRYPT} -c qhelp.c
+	$(CC) ${CFLAGS} $(_CFLAGS) ${CRYPT} -c qhelp.c
 
 range.o: range.c sc.h
 
 sc.o:	sc.h sc.c
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${DFLT_PAGER} ${SIGVOID} \
+	$(CC) ${CFLAGS} $(_CFLAGS) ${DFLT_PAGER} ${SIGVOID} \
 	    ${SAVE} -c sc.c
 
 screen.o:	sc.h screen.c
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${BROKENCURSES} ${IDLOKISBAD} \
+	$(CC) ${CFLAGS} $(_CFLAGS) ${BROKENCURSES} ${IDLOKISBAD} \
 	    ${RIGHTBUG} ${SIGVOID} ${NO_IDLOK} -c screen.c
 
 sort.o: sort.c sc.h
 
 vi.o: vi.c sc.h
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) ${REGEX} ${HISTORY_FILE} -c vi.c
+	$(CC) ${CFLAGS} $(_CFLAGS) ${REGEX} ${HISTORY_FILE} -c vi.c
 
 # other stuff
 
@@ -469,22 +470,22 @@ sshar: ${SRC}
 
 lint: sc.h sc.c lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
 	range.c help.c vi.c version.c xmalloc.c format.c vmtbl.c
-	lint ${LINTFLAGS} ${CFLAGS} $(_CFLAGS) $(DEFINES) ${SIMPLE} sc.c \
+	lint ${LINTFLAGS} ${CFLAGS} $(_CFLAGS) ${SIMPLE} sc.c \
 	    lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
 	    range.c help.c vi.c version.c xmalloc.c format.c vmtbl.c \
 	    $(LIB_CURSES) -lm 
 	make lintqref
 
 lintqref: help.c
-	lint ${LINTFLAGS} ${CFLAGS} $(_CFLAGS) $(DEFINES) ${SIMPLE} -DQREF \
+	lint ${LINTFLAGS} ${CFLAGS} $(_CFLAGS) ${SIMPLE} -DQREF \
 	    help.c
 
 lintpsc: psc.c vmtbl.c
-	lint ${LINTFLAGS} ${CFLAGS} $(_CFLAGS) $(DEFINES) ${SIMPLE} -DPSC \
+	lint ${LINTFLAGS} ${CFLAGS} $(_CFLAGS) ${SIMPLE} -DPSC \
 	    psc.c vmtbl.c
 
 .c.o:
-	$(CC) ${CFLAGS} $(_CFLAGS) $(DEFINES) -c $<
+	$(CC) ${CFLAGS} $(_CFLAGS) -c $<
 
 $(name).1:	sc.doc torev
 	name=$(name) NAME=$(NAME) LIBDIR=$(LIBDIR) sh torev sc.doc > $(name).1

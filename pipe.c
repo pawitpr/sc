@@ -7,13 +7,12 @@
  *		$Revision: 7.16 $
  */
 
-#include <curses.h>
 #include <unistd.h>
 #include <stdbool.h>
-#include "sc.h"
-#include "compat.h"
 #include <time.h>
 #include <string.h>
+#include "compat.h"
+#include "sc.h"
 
 void
 getnum(int r0, int c0, int rn, int cn, int fd)

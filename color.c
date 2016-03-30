@@ -10,10 +10,10 @@
 
 #include <sys/types.h>
 #include <string.h>
-#include <curses.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include "compat.h"
 #include "sc.h"
 
 /* a linked list of free [struct ent]'s, uses .next as the pointer */

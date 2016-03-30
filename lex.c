@@ -25,16 +25,14 @@
 #endif /* IEEE_MATH */
 
 #include <stdlib.h>
-#include <curses.h>
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include <curses.h>
-#include <term.h>
-#include "sc.h"
+//#include <term.h>
 #include "compat.h"
+#include "sc.h"
 
 #ifdef NONOTIMEOUT
 #define	notimeout(a1, a2)

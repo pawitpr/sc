@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include <curses.h>
+#include "compat.h"
 #include "sc.h"
 
 int compare(const void *row1, const void *row2);

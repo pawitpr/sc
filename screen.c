@@ -12,15 +12,15 @@
  */
 
 
-#include <curses.h>
 #include <time.h>
 #include <stdbool.h>
-#include "sc.h"
-#include "compat.h"
 
 #ifndef MSDOS
 #include <unistd.h>
 #endif
+
+#include "compat.h"
+#include "sc.h"
 
 #ifdef VMS
 extern int VMS_read_raw;   /*sigh*/
@@ -818,7 +818,10 @@ update(int anychanged)		/* did any cell really change in value? */
 				    attr_t attr;
 				    short curcolor = 0;
 				    if (!i && color && has_colors()) {
-					attr_get(&attr, &curcolor, NULL);
+					/* silence warning */
+					attr_t *attrp = &attr;
+					short *curcolorp = &curcolor;
+					attr_get(attrp, curcolorp, NULL);
 					color_set(4, NULL);
 				    }
 				    (void)addch('*');
@@ -838,7 +841,10 @@ update(int anychanged)		/* did any cell really change in value? */
 				attr_t attr;
 				short curcolor = 0;
 				if (color && has_colors()) {
-				    attr_get(&attr, &curcolor, NULL);
+				    /* silence warning */
+				    attr_t *attrp = &attr;
+				    short *curcolorp = &curcolor;
+				    attr_get(attrp, curcolorp, NULL);
 				    color_set(4, NULL);
 				}
 				(void)addch('*');

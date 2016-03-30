@@ -13,7 +13,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include <curses.h>
+#include "compat.h"
 #include "sc.h"
 
 static struct frange *frame_base;

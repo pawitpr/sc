@@ -14,7 +14,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include <curses.h>
 #include <ctype.h>
 #include <string.h>
 #include <sys/file.h>
@@ -25,8 +24,8 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include "sc.h"
 #include "compat.h"
+#include "sc.h"
 
 #ifndef SAVENAME
 #define	SAVENAME "SC.SAVE" /* file name to use for emergency saves */

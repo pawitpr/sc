@@ -7,12 +7,12 @@
 
 #if !defined(VMS) && !defined(MSDOS) && defined(CRYPT_PATH)
 
-#include <curses.h>
 #include <sys/types.h>
 #include <sys/file.h>
 #include <fcntl.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include "compat.h"
 #include "sc.h"
 
 int         Crypt = 0;

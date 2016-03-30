@@ -12,12 +12,11 @@
  */
 #ifdef PSC
 # include <stdio.h>
-#else /* PSC */
-# include <curses.h>
 #endif /* PSC */
 
 #include <stdbool.h>
 #include <unistd.h>
+#include "compat.h"
 #include "sc.h"
 
 /*

@@ -8,17 +8,16 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <signal.h>
-#include <curses.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include "sc.h"
-#include "compat.h"
 
 #if defined(REGCOMP)
 #include <regex.h>
 #endif
+#include "compat.h"
+#include "sc.h"
 #if defined(RE_COMP)
 extern char *re_comp(char *s);
 extern char *re_exec(char *s);

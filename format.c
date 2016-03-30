@@ -94,8 +94,8 @@
 #include <sys/types.h>
 #include <time.h>
 #include <stdbool.h>
-#include "sc.h"
 #include "compat.h"
+#include "sc.h"
 
 #define EOS	'\0'
 #define MAXBUF	256
