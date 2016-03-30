@@ -37,9 +37,9 @@ test_result () {
 	NO_FAIL_TEXT=$1
 	if [ $RESULT -eq 0 ]; then
 		echo success >>$LOG
-		[ -z "$SFLAG" ] && echo $PASS_TEXT
+		[ -z "$SFLAG" ] && echo "yes$PASS_TEXT"
+		PASS_TEXT=
 		[ -e $TMPC ] && rm -f $TMPC
-		PASS_TEXT=yes
 		true
 	else
 		[ -z "$SFLAG" -a -z "$NO_FAIL_TEXT" ] && echo no
@@ -48,7 +48,6 @@ test_result () {
 			pr -n -t $TMPC >>$LOG
 			rm -f $TMPC
 		fi
-		PASS_TEXT=yes
 		false
 	fi
 }
@@ -193,10 +192,13 @@ check_ncursesw () {
 	ODEFS=$DEFS
 	LIB_CURSES="-lncursesw"
 	DEFS="$DEFS -DHAVE_NCURSESW_CURSES_H"
+	PASS_TEXT=" (#include <ncursesw/curses.h>)"
+	test_curses && return
 	INCDIR_CURSES="-I/usr/pkg/include"
 	RPATH_CURSES="-Wl,-rpath,/usr/pkg/lib"
 	LIBDIR_CURSES="-L/usr/pkg/lib"
-	PASS_TEXT="in /usr/pkg/lib"
+	PASS_TEXT=" (#include <ncursesw/curses.h>, -I/usr/pkg/include, \
+-L/usr/pkg/lib)"
 	test_curses && return
 	echo no
 	DEFS=$ODEFS
