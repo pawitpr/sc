@@ -241,7 +241,8 @@ write_line(int c)
 	case (ctl('v')):	toggle_navigate_mode();			break;
 	case KEY_LEFT:
 	case (ctl('b')):	if (numeric_field) {
-				    if (linelim == strlen(line) &&
+				    if (linelim > 0 &&
+				            (size_t)linelim == strlen(line) &&
 					    (line[linelim - 1] == '+' ||
 					     line[linelim - 1] == '-')) {
 					toggle_navigate_mode();
@@ -259,7 +260,8 @@ write_line(int c)
 				}   break;
 	case KEY_RIGHT:
 	case (ctl('f')):	if (numeric_field) {
-				    if (linelim == strlen(line) &&
+				    if (linelim > 0 &&
+				            (size_t)linelim == strlen(line) &&
 					    (line[linelim - 1] == '+' ||
 					     line[linelim - 1] == '-')) {
 					toggle_navigate_mode();
@@ -277,7 +279,8 @@ write_line(int c)
 				}   break;
 	case KEY_DOWN:
 	case (ctl('n')):	if (numeric_field) {
-				    if (linelim == strlen(line) &&
+				    if (linelim > 0 &&
+				            (size_t)linelim == strlen(line) &&
 					    (line[linelim - 1] == '+' ||
 					     line[linelim - 1] == '-')) {
 					toggle_navigate_mode();
@@ -295,7 +298,8 @@ write_line(int c)
 				}   break;
 	case KEY_UP:
 	case (ctl('p')):	if (numeric_field) {
-				    if (linelim == strlen(line) &&
+				    if (linelim > 0 &&
+				            (size_t)linelim == strlen(line) &&
 					    (line[linelim - 1] == '+' ||
 					     line[linelim - 1] == '-')) {
 					toggle_navigate_mode();
@@ -340,7 +344,8 @@ write_line(int c)
 	savedot(c);
 	switch (c) {
 	case KEY_BACKSPACE:
-	case (ctl('h')):	if (linelim > strlen(undo_line))
+	case (ctl('h')):	if (linelim >= 0 &&
+				  (size_t)linelim > strlen(undo_line))
 				    back_space();
 				else {
 				    linelim = back_line(1);
@@ -357,7 +362,7 @@ write_line(int c)
 	case (ctl('i')):	if (!showrange) {
 				    toggle_navigate_mode();
 				    startshow();
-				} else if (linelim == strlen(line) &&
+				} else if ((size_t)linelim == strlen(line) &&
 					(line[linelim - 1] == '+' ||
 					line[linelim - 1] == '-' ||
 					(line[linelim - 1] == ' ' &&
@@ -380,7 +385,7 @@ write_line(int c)
 	case '-':		if (!showrange) {
 				    ins_string(v_name(currow, curcol));
 				    ins_in_line(c);
-				} else if (linelim == strlen(line) &&
+				} else if ((size_t)linelim == strlen(line) &&
 					(line[linelim - 1] == '+' ||
 					line[linelim - 1] == '-' ||
 					(line[linelim - 1] == ' ' &&
@@ -870,16 +875,16 @@ stop_edit(void) {
 static int
 for_line(int arg, int stop_null)
 {
-    int cpos = linelim;
+    ssize_t cpos = linelim;
 
     if (linelim < 0)
 	return (linelim);
-    else if (linelim + arg <= strlen(line))
+    else if (arg >= 0 && (size_t)(linelim + arg) <= strlen(line))
 	cpos += arg;
     else
 	cpos = strlen(line);
 
-    if (cpos == strlen(line) && cpos > 0 && !stop_null)
+    if (cpos > 0 && (size_t)cpos == strlen(line) && !stop_null)
 	return (cpos - 1);
     else
 	return (cpos);
@@ -893,11 +898,11 @@ static int
 for_word(int arg, int end_word, int big_word, int stop_null)
 {
     register int c;
-    register int cpos;
+    ssize_t cpos;
 
     cpos = linelim;
 
-    while (cpos < strlen(line) && arg--) {
+    while (cpos >= 0 && (size_t)cpos < strlen(line) && arg--) {
 	if (end_word)
 	    cpos++;
 
@@ -1098,8 +1103,7 @@ append_line(void) {
 }
 
 static void
-change_case(arg)
-{
+change_case(int arg) {
     if (linelim < 0) {
     	linelim = 0;
 	*line = '\0';
@@ -1732,7 +1736,7 @@ to_char(int arg, int n)
     register int i;
     int tmp = linelim;
 
-    if (linelim + n >= 0 && linelim + n < strlen(line))
+    if (linelim + n >= 0 && (size_t)(linelim + n) < strlen(line))
 	linelim += n;
     i = find_char(arg, n);
     if (i != linelim)

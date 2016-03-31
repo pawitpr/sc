@@ -58,7 +58,6 @@ bool	frTooLarge = 0;	/* If set, either too many rows or too many columns
 int	framerows;	/* Rows in current frame */
 int	framecols;	/* Columns in current frame */
 int	rescol = 4;	/* Columns reserved for row numbers */
-extern	int *fwidth;
 extern	int showneed;	/* Causes cells needing values to be highlighted */
 extern	int showexpr;	/* Causes cell exprs to be displayed, highlighted */
 extern	int shownote;	/* Causes cells with attached notes to be highlighted */
@@ -812,7 +811,7 @@ update(int anychanged)		/* did any cell really change in value? */
 				    precision[col], (*pp)->v, 
 				    field, sizeof(field));
 			}
-			if (strlen(field) > fwidth[col]) {
+			if ((ssize_t)strlen(field) > fwidth[col]) {
 			    for (i = 0; i < fwidth[col]; i++) {
 				if (note) {
 				    attr_t attr;
@@ -834,7 +833,8 @@ update(int anychanged)		/* did any cell really change in value? */
 			} else {
 			    if (cfmt && *cfmt != ctl('d'))
 				for (i = 0;
-					i < fwidth[col] - strlen(field) - note;
+					i < fwidth[col] -
+					  (ssize_t)strlen(field) - note;
 					i++)
 				    (void)addch(' ');
 			    if (note) {
@@ -854,7 +854,8 @@ update(int anychanged)		/* did any cell really change in value? */
 			    (void)addstr(field);
 			    if (cfmt && *cfmt == ctl('d'))
 				for (i = 0;
-					i < fwidth[col] - strlen(field) - note;
+					i < fwidth[col] -
+					  (ssize_t)strlen(field) - note;
 					i++)
 				    (void)addch(' ');
 			}
@@ -1101,7 +1102,7 @@ yyerror(char *err)
 	(void) clrtoeol();
 	(void) printw("%s: %.*s<=%s", err, linelim, line, line + linelim);
     } else
-	(void) fprintf(stderr, "%s: %.*s<=%s\n", err, linelim, line,
+	(void) fprintf(stderr, "%s: %.*s<=%s\n", err, (int)linelim, line,
 		       line + linelim);
 }
 

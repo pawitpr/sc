@@ -1456,8 +1456,7 @@ doformat(int c1, int c2, int w, int p, int r)
 }
 
 void
-formatcol(arg)
-{
+formatcol(int arg) {
     int c, i;
     int mf = modflg;
     int *oldformat;
@@ -1758,7 +1757,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
     static unsigned fbufs_allocated = 0;
     int plinelim;
     int pid;
-    int fieldlen, nextcol;
+    unsigned int fieldlen, nextcol;
     long namelen;
     int row, col;
     register struct ent **pp;
@@ -1822,7 +1821,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
     }
 
     for (row = r0; row <= rn; row++) {
-	int c = 0;
+	unsigned int c = 0;
 
 	if (row_hidden[row])
 	    continue;
@@ -1852,11 +1851,11 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 			return;
 		    }
 		}		  
-		while (plinelim<c) pline[plinelim++] = ' ';
+		while (plinelim < (int)c) pline[plinelim++] = ' ';
 		plinelim = c;
 		if ((*pp)->flags&IS_VALID) {
 		    while(plinelim + fwidth[col] > 
-			  (fbufs_allocated * FBUFLEN)) {
+			  (int)(fbufs_allocated * FBUFLEN)) {
 		      if((pline = ((char *)scxrealloc
 				   ((char *)pline, 
 				    (unsigned)(FBUFLEN * ++fbufs_allocated))))
@@ -1903,7 +1902,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		    plinelim += strlen(pline+plinelim);
 		}
 		if ((s = (*pp)->label)) {
-		    int slen;
+		    size_t slen;
 		    char *start, *last;
 		    register char *fp;
 		    struct ent *nc;
@@ -1916,7 +1915,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		    slen = strlen(s);
 		    if (*s == '\\' && *(s+1) != '\0')
 			slen = fwidth[col];
-		    while (slen > fieldlen && nextcol <= cn &&
+		    while (slen > fieldlen && (int)nextcol <= cn &&
 			    !((nc = lookat(row,nextcol))->flags & IS_VALID) &&
 			    !(nc->label)) {
 			
@@ -1942,9 +1941,10 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		    start = (*pp)->flags & IS_LEFTFLUSH ? pline + c
 					: pline + c + fieldlen - slen;
 		    if( (*pp)->flags & IS_LABEL )
-			start = pline + (c + ((fwidth[col]>slen)?(fwidth[col]-slen)/2:0));
+			start = pline + (c + ((fwidth[col] > (ssize_t)slen) ?
+			  (fwidth[col] - slen) / 2 : 0));
 		    last = pline + c + fieldlen;
-		    fp = plinelim < c ? pline + plinelim : pline + c;
+		    fp = plinelim < (int)c ? pline + plinelim : pline + c;
 		    while (fp < start)
 			*fp++ = ' ';
 		    if( *s == '\\' && *(s+1)!= '\0' ) {
@@ -1969,7 +1969,8 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 			}
 		    }
 
-		    if (!((*pp)->flags & IS_VALID) || fieldlen != fwidth[col])
+		    if (!((*pp)->flags & IS_VALID) ||
+		      (int)fieldlen != fwidth[col])
 			while(fp < last)
 			    *fp++ = ' ';
 		    if (plinelim < fp - pline)

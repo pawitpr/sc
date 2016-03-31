@@ -90,6 +90,7 @@ growtbl(int rowcol, int toprow, int topcol)
 
     newrows = maxrows;
 #endif /* !PSC */
+    (void)toprow; /* unused */
     newcols = maxcols;
     if (rowcol == GROWNEW) {
 #ifndef PSC

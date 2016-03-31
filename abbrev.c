@@ -153,7 +153,7 @@ find_abbr(char *abbrev, int len, struct abbrev **prev)
 	    return (NULL);
 	*prev = a;
 	if (cmp == 0)
-	    if (!exact || strlen(a->abbr) == len)
+	    if (!exact || strlen(a->abbr) == (unsigned int)len)
 		return (a);
     }
     return NULL;

@@ -365,7 +365,7 @@ extern	char *colformat[10];
 extern	char *col_hidden;
 extern	char *row_hidden;
 extern	char line[FBUFLEN];
-extern	int linelim;
+extern	ssize_t linelim;
 extern	int changed;
 extern	struct ent *delbuf[DELBUFSIZE];
 extern	char *delbuffmt[DELBUFSIZE];
@@ -404,7 +404,7 @@ extern	int etype(register struct enode *e);
 extern	int find_range(char *name, int len, struct ent *lmatch,
 	struct ent *rmatch, struct range **rng);
 extern	bool format(char *fmt, int lprecision, double val, char *buf,
-	int buflen);
+	size_t buflen);
 extern	int get_rcqual(int ch);
 extern	int growtbl(int rowcol, int toprow, int topcol);
 extern	int locked_cell(int r, int c);

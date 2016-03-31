@@ -82,7 +82,7 @@ char    revmsg[80];
 char	dpoint = '.';	/* decimal point */
 char	thsep = ',';	/* thousands separator */
 
-int  linelim = -1;
+ssize_t  linelim = -1;
 
 int  showtop   = 1;	/* Causes current cell value display in top line  */
 int  showcell  = 1;	/* Causes current cell to be highlighted	  */
@@ -2123,6 +2123,7 @@ int
 #endif
 nopipe(int i)
 {
+    (void)i;
     brokenpipe = TRUE;
 }
 
@@ -2133,6 +2134,7 @@ int
 #endif
 winchg(int i)
 {
+    (void)i;
     stopdisp();
     startdisp();
     /*
@@ -2157,6 +2159,7 @@ int
 #endif
 doquit(int i)
 {
+    (void)i;
     if (usecurses) {
 	diesave();
 	stopdisp();
@@ -2172,6 +2175,7 @@ int
 #endif
 dump_me(int i)
 {
+    (void)i;
     if (usecurses)
 	diesave();
     deraw(1);

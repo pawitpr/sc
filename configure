@@ -180,8 +180,6 @@ EOT
 }
 
 test_curses () {
-	check_for $LIB_CURSES
-
 	compile_curses && return
 	[ $# -gt 0 ] && for i in $*; do
 		compile_curses $i && return
@@ -189,8 +187,9 @@ test_curses () {
 }
 
 check_ncursesw () {
-	ODEFS=$DEFS
 	LIB_CURSES="-lncursesw"
+	check_for $LIB_CURSES
+	ODEFS=$DEFS
 	DEFS="$DEFS -DHAVE_NCURSESW_CURSES_H"
 	PASS_TEXT=" (#include <ncursesw/curses.h>)"
 	test_curses && return
@@ -205,15 +204,18 @@ check_ncursesw () {
 	INCDIR_CURSES=
 	RPATH_CURSES=
 	LIBDIR_CURSES=
+	PASS_TEXT=
 	false
 }
 
 check_lib_curses () {
 	check_ncursesw && return
 	LIB_CURSES="-lcurses"
+	check_for $LIB_CURSES
 	test_curses && return
 	echo no
 	LIB_CURSES="-lncurses"
+	check_for $LIB_CURSES
 	test_curses && return
 	echo no
 }

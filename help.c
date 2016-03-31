@@ -600,26 +600,25 @@ main(int argc, char **argv) {
     char	***pagep = pages;
 #ifdef TROFF
     int	pageno = 0;
-#endif
 
-#ifdef TROFF
-puts(".nr PS 12");
-puts(".nr VS 14");
-puts(".nr HM 1i");
-puts(".nr FM 1i");
-puts(".nr PO 0.5i");
-printf(".EH '%s%s''%s'\n", SCNAME, header, revision);
-printf(".OH '%s%s''%s'\n", SCNAME, header, revision);
-puts(".EF ''%''");
-puts(".OF ''%''");
-puts(".de Lp");
-puts(".LP");
-puts(".ft CW");
-puts(".na");
-puts(".nf");
-puts("..");
-puts(".P1");
-puts(".LP");
+    (void)argc; (void)argv; /* unused */
+    puts(".nr PS 12");
+    puts(".nr VS 14");
+    puts(".nr HM 1i");
+    puts(".nr FM 1i");
+    puts(".nr PO 0.5i");
+    printf(".EH '%s%s''%s'\n", SCNAME, header, revision);
+    printf(".OH '%s%s''%s'\n", SCNAME, header, revision);
+    puts(".EF ''%''");
+    puts(".OF ''%''");
+    puts(".de Lp");
+    puts(".LP");
+    puts(".ft CW");
+    puts(".na");
+    puts(".nf");
+    puts("..");
+    puts(".P1");
+    puts(".LP");
 #endif
 
     while (*pagep)
@@ -643,6 +642,6 @@ puts(".LP");
 	if (!(pageno%2)) puts(".bp");
 #endif
     }
-    (void) exit(0);
+    return 0;
 }
 #endif /* QREF */

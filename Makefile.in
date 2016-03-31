@@ -333,7 +333,7 @@ LN=ln
 # people who don't understand them.
 #CFLAGS=-DSYSV3 -O2 -Wall -pipe
 #CFLAGS=-DSYSV3 -O2 -pipe
-_CFLAGS= $(INCDIR_CURSES) $(DEFINES) -Wall
+_CFLAGS= $(INCDIR_CURSES) $(DEFINES) -Wall -Wextra
 LIB=-lm $(LIB_CURSES)
 
 # All of the source files

@@ -111,7 +111,7 @@ char *colformat[COLFORMATS];
 /*****************************************************************************/
 
 bool
-format(char *fmt, int lprecision, double val, char *buf, int buflen)
+format(char *fmt, int lprecision, double val, char *buf, size_t buflen)
 {
     register char *cp;
     char *tmp, *tp;
@@ -283,7 +283,7 @@ format(char *fmt, int lprecision, double val, char *buf, int buflen)
     static	char *citmp = NULL, *cftmp = NULL;
     static	unsigned cilen = 0, cflen = 0;
     char *ci, *cf, *ce;
-    int len_ci, len_cf, len_ce;
+    unsigned int len_ci, len_cf, len_ce;
     bool ret = false;
     
     ci = fmt_int(integer, fmt, comma, negative);
@@ -348,7 +348,7 @@ fmt_int(char *val,	/* integer part of the value to be formatted */
  * format the value
  */
     f = strlen(fmt) - 1;
-    v = (digit >= 0) ? strlen(val) - 1 : -1;
+    v = (digit >= 0) ? (ssize_t)strlen(val) - 1 : -1;
     while (f >= 0 || v >= 0) {
 	if (f > 0 && fmt[f-1] == '\\') {
 	    *bufptr++ = fmt[f--];

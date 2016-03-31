@@ -72,6 +72,7 @@ void
 #endif
 fpe_trap(int signo)
 {
+    (void)signo;
 #if defined(i386) && !defined(M_XENIX)
     asm("	fnclex");
     asm("	fwait");
@@ -707,5 +708,6 @@ int
 #endif
 time_out(int signo)
 {
+    (void)signo;
     longjmp(wakeup, 1);
 }

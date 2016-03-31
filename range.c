@@ -178,7 +178,7 @@ find_range(char *name, int len, struct ent *lmatch, struct ent *rmatch,
 		return (cmp);
 	    *rng = r;
 	    if (cmp == 0)
-		if (!exact || strlen(r->r_name) == len)
+		if (!exact || strlen(r->r_name) == (size_t)len)
 		    return (cmp);
 	}
 	return (-1);

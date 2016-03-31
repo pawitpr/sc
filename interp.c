@@ -967,6 +967,7 @@ int
 #endif
 eval_fpe(int i) /* Trap for FPE errors in eval */
 {
+    (void)i;
 #if defined(i386) && !defined(M_XENIX)
     asm("	fnclex");
     asm("	fwait");
@@ -1190,7 +1191,7 @@ dosubstr(char *s, register int v1, register int v2)
     if (!s)
 	return ((char *)0);
 
-    if (v2 >= strlen(s))		/* past end */
+    if (v2 >= (ssize_t)strlen(s))		/* past end */
 	v2 =  strlen(s) - 1;		/* to end   */
 
     if (v1 < 0 || v1 > v2) {		/* out of range, return null string */
