@@ -12,10 +12,10 @@ static void fatal(char *);
 
 #define	MAGIC	(double)1234567890.12344
 
-char *
-scxmalloc(unsigned n)
+void *
+scxmalloc(size_t n)
 {
-	register char *ptr;
+	void *ptr;
 
 	if ((ptr = malloc(n + sizeof(double))) == NULL)
 		fatal("scxmalloc: no memory");
@@ -24,8 +24,8 @@ scxmalloc(unsigned n)
 }
 
 /* we make sure realloc will do a malloc if needed */
-char *
-scxrealloc(char *ptr, unsigned n)
+void *
+scxrealloc(void *ptr, size_t n)
 {
 	if (ptr == NULL)
 		return(scxmalloc(n));
@@ -41,7 +41,7 @@ scxrealloc(char *ptr, unsigned n)
 }
 
 void
-scxfree(char *p)
+scxfree(void *p)
 {
 	if (p == NULL)
 		fatal("scxfree: NULL");

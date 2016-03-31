@@ -92,7 +92,7 @@ add_range(char *name, struct ent_ptr left, struct ent_ptr right, int is_range)
 		label(rcp, name, 0);
     }
 
-    r = (struct range *)scxmalloc((unsigned)sizeof(struct range));
+    r = scxmalloc(sizeof(struct range));
     r->r_name = name;
     r->r_left = left;
     r->r_right = right;

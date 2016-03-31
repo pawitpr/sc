@@ -109,7 +109,7 @@ add_frange(struct ent *or_left, struct ent *or_right, struct ent *ir_left,
     }
 
     if (ir_left != or_left || ir_right != or_right) {
-	r = (struct frange *)scxmalloc((unsigned)sizeof(struct frange));
+	r = scxmalloc(sizeof(struct frange));
 	r->or_left = or_left;
 	r->or_right = or_right;
 

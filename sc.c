@@ -153,7 +153,7 @@ lookat(int row, int col)
 	    (*pp)->flags |= MAY_SYNC;
 	    freeents = freeents->next;
 	} else
-	    *pp = (struct ent *) scxmalloc((unsigned)sizeof(struct ent));
+	    *pp = scxmalloc(sizeof(struct ent));
 	if (row > maxrow) maxrow = row;
 	if (col > maxcol) maxcol = col;
 	(*pp)->label = (char *)0;

@@ -53,8 +53,8 @@ checkbounds(int *rowp, int *colp)
 	
 /* scxrealloc will just scxmalloc if oldptr is == NULL */
 #define GROWALLOC(newptr, oldptr, nelem, type, msg) \
-    newptr = (type *)scxrealloc((char *)oldptr, \
-	    (unsigned)(nelem * sizeof(type))); \
+    newptr = scxrealloc(oldptr, \
+	    nelem * sizeof(type)); \
     if (newptr == (type *)NULL) { \
 	error(msg); \
 	return (FALSE); \
@@ -172,8 +172,8 @@ growtbl(int rowcol, int toprow, int topcol)
 
 	/* [re]alloc the space for each row */
 	for (i = 0; i < maxrows; i++) {
-	    if ((tbl[i] = (struct ent **)scxrealloc((char *)tbl[i],
-		(unsigned)(newcols * sizeof(struct ent **)))) == (struct ent **)0) {
+	    if ((tbl[i] = scxrealloc(tbl[i],
+		newcols * sizeof(struct ent **))) == (struct ent **)0) {
 	    error(nowider);
 	    return(FALSE);
 	    }
@@ -190,8 +190,8 @@ growtbl(int rowcol, int toprow, int topcol)
 
     /* fill in the bottom of the table */
     for (; i < newrows; i++) {
-	if ((tbl[i] = (struct ent **)scxmalloc((unsigned)(newcols *
-		sizeof(struct ent **)))) == (struct ent **)0) {
+	if ((tbl[i] = scxmalloc((newcols *
+		sizeof(struct ent **)))) == NULL) {
 	    error(nowider);
 	    return(FALSE);
 	}

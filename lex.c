@@ -183,7 +183,7 @@ yylex(void)
 		        ret = RANGE;
 		    else
 			ret = VAR;
-		} else if ((path = scxmalloc((unsigned)PATHLEN)) &&
+		} else if ((path = scxmalloc(PATHLEN)) &&
 			plugin_exists(tokenst, tokenl, path)) {
 		    strlcat(path, p, PATHLEN);
 		    yylval.sval = path;
@@ -283,7 +283,7 @@ yylex(void)
         ptr = p+1;	/* "string" or "string\"quoted\"" */
         while (*ptr && ((*ptr != '"') || (*(ptr-1) == '\\')))
 	    ptr++;
-        ptr = scxmalloc((unsigned)(ptr-p));
+        ptr = scxmalloc(ptr-p);
 	yylval.sval = ptr;
 	p++;
 	while (*p && ((*p != '"') ||

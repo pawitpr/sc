@@ -1092,7 +1092,7 @@ doext(struct enode *se)
     cellerror = CELLERROR;	/* not sure if this should be a cellerror */
     if (command)
 	scxfree(command);
-    return (strcpy(scxmalloc((size_t) 1), "\0"));
+    return (strcpy(scxmalloc(1), "\0"));
 }
 
 #else /* if defined(VMS) || defined(MSDOS) */
@@ -1151,9 +1151,9 @@ doext(struct enode *se)
 	} /* else */
     } /* else */
     if (se->e.o.s)
-	return (strcpy(scxmalloc((size_t) (strlen(se->e.o.s)+1)), se->e.o.s));
+	return (strcpy(scxmalloc(strlen(se->e.o.s)+1), se->e.o.s));
     else
-	return (strcpy(scxmalloc((size_t)1), ""));
+	return (strcpy(scxmalloc(1), ""));
 }
 
 #endif  /* if !(defined(VMS) || defined(MSDOS)) */
@@ -1173,7 +1173,7 @@ dosval(char *colstr, double rowdoub)
     char *llabel;
 
     llabel = (ep = getent(colstr, rowdoub)) ? (ep -> label) : "";
-    return (strcpy(scxmalloc((size_t) (strlen(llabel) + 1)), llabel));
+    return (strcpy(scxmalloc(strlen(llabel) + 1), llabel));
 }
 
 
@@ -1196,11 +1196,11 @@ dosubstr(char *s, register int v1, register int v2)
 
     if (v1 < 0 || v1 > v2) {		/* out of range, return null string */
 	scxfree(s);
-	p = scxmalloc((size_t)1);
+	p = scxmalloc(1);
 	p[0] = '\0';
 	return (p);
     }
-    s2 = p = scxmalloc((size_t)(v2-v1+2));
+    s2 = p = scxmalloc(v2-v1+2);
     s1 = &s[v1];
     for (; v1 <= v2; s1++, s2++, v1++)
 	*s2 = *s1;
@@ -1341,7 +1341,7 @@ seval(register struct enode *se)
 	case SUBSTR: return (dosubstr(seval(se->e.o.left),
 			    (int)eval(se->e.o.right->e.o.left) - 1,
 			    (int)eval(se->e.o.right->e.o.right) - 1));
-	case COLTOA: return (strcpy(scxmalloc((size_t)10),
+	case COLTOA: return (strcpy(scxmalloc(10),
 				   coltoa((int)eval(se->e.o.left))));
 	case FILENAME: {
 		     int n = eval(se->e.o.left);
@@ -1506,7 +1506,7 @@ new(int op, struct enode *a1, struct enode *a2)
     	p = freeenodes;
 	freeenodes = p->e.o.left;
     } else
-	p = (struct enode *) scxmalloc((size_t)sizeof(struct enode));
+	p = scxmalloc(sizeof(struct enode));
     p->op = op;
     p->e.o.left = a1;
     p->e.o.right = a2;
@@ -1522,7 +1522,7 @@ new_var(int op, struct ent_ptr a1)
     	p = freeenodes;
 	freeenodes = p->e.o.left;
     } else
-	p = (struct enode *) scxmalloc((size_t)sizeof(struct enode));
+	p = scxmalloc(sizeof(struct enode));
     p->op = op;
     p->e.v = a1;
     return p;
@@ -1537,7 +1537,7 @@ new_range(int op, struct range_s a1)
 	freeenodes = p->e.o.left;
     }
     else
-	p = (struct enode *) scxmalloc((size_t)sizeof(struct enode));
+	p = scxmalloc(sizeof(struct enode));
     p->op = op;
     p->e.r = a1;
     return p;
@@ -1551,7 +1551,7 @@ new_const(int op, double a1)
 	p = freeenodes;
 	freeenodes = p->e.o.left;
     } else
-	p = (struct enode *) scxmalloc((size_t)sizeof(struct enode));
+	p = scxmalloc(sizeof(struct enode));
     p->op = op;
     p->e.k = a1;
     return p;
@@ -1566,7 +1566,7 @@ new_str(char *s)
     	p = freeenodes;
 	freeenodes = p->e.o.left;
     } else
-	p = (struct enode *) scxmalloc((size_t)sizeof(struct enode));
+	p = scxmalloc(sizeof(struct enode));
     p->op = O_SCONST;
     p->e.s = s;
     return (p);
@@ -1986,7 +1986,7 @@ str_search(char *s, int firstrow, int firstcol, int lastrow, int lastcol,
 #if defined(REGCOMP)
     if ((errcode = regcomp(&preg, s, REG_EXTENDED))) {
 	scxfree(s);
-	tmp = scxmalloc((size_t)160);
+	tmp = scxmalloc(160);
 	regerror(errcode, &preg, tmp, sizeof(tmp));
 	error(tmp);
 	scxfree(tmp);
@@ -2411,7 +2411,7 @@ format_cell(struct ent *v1, struct ent *v2, char *s)
 		scxfree(n->format);
 	    n->format = 0;
 	    if (s && *s != '\0')
-		n->format = strcpy(scxmalloc((unsigned)(strlen(s)+1)), s);
+		n->format = strcpy(scxmalloc(strlen(s)+1), s);
 	    n->flags |= IS_CHANGED;
 	}
 }

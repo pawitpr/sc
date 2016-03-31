@@ -1502,7 +1502,7 @@ search_hist(void) {
     else
 	last_search = &preg;
     if ((errcode = regcomp(last_search, line, REG_EXTENDED))) {
-	char *tmp = scxmalloc((size_t)160);
+	char *tmp = scxmalloc(160);
 	regerror(errcode, last_search, tmp, sizeof(tmp));
 	error(tmp);
 	scxfree(tmp);

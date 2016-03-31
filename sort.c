@@ -38,8 +38,8 @@ sortrange(struct ent *left, struct ent *right, char *criteria)
     maxr = left->row > right->row ? left->row : right->row;
     maxc = left->col > right->col ? left->col : right->col;
 
-    sort = (struct sortcrit *)scxmalloc((2 * sizeof(struct sortcrit)));
-    rows = (int *)scxmalloc((maxr - minr + 1) * sizeof(int));
+    sort = scxmalloc((2 * sizeof(struct sortcrit)));
+    rows = scxmalloc((maxr - minr + 1) * sizeof(int));
     for (r = minr, c = 0; r <= maxr; r++, c++)
 	rows[c] = r;
 
@@ -54,7 +54,7 @@ sortrange(struct ent *left, struct ent *right, char *criteria)
     } else
 	for (howmany = 0; criteria[cp]; howmany++) {
 	    if (howmany > 1)
-		sort = (struct sortcrit *)scxrealloc((char *)sort,
+		sort = scxrealloc(sort,
 			(howmany + 1) * (sizeof(struct sortcrit)));
 	    switch (criteria[cp++]) {
 		case '+':

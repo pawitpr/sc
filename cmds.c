@@ -597,7 +597,7 @@ erase_area(int sr, int sc, int er, int ec, int ignorelock)
     (void) lookat(sr, sc);
     (void) lookat(er, ec);
 
-    delbuffmt[++dbidx] = (char*)scxmalloc((4*(ec-sc+1)+(er-sr+1))*sizeof(char));
+    delbuffmt[++dbidx] = scxmalloc((4*(ec-sc+1)+(er-sr+1))*sizeof(char));
     for (c = sc; c <= ec; c++) {
 	delbuffmt[dbidx][4*(c-sc)] = (char)fwidth[c];
 	delbuffmt[dbidx][4*(c-sc)+1] = (char)precision[c];
@@ -1465,7 +1465,7 @@ formatcol(int arg) {
 	    fwidth[curcol], precision[curcol],
 	    realfmt[curcol]);
     refresh();
-    oldformat = (int *)scxmalloc(arg*3*sizeof(int));
+    oldformat = scxmalloc(arg*3*sizeof(int));
     for (i = 0; i < arg; i++) {
 	oldformat[i * 3 + 0] = fwidth[i + curcol];
 	oldformat[i * 3 + 1] = precision[i + curcol];
@@ -1814,8 +1814,8 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
     } else
 	f = stdout;
 
-    if (!pline && (pline = scxmalloc((unsigned)(FBUFLEN *
-	    ++fbufs_allocated))) == (char *)NULL) {
+    if (!pline && (pline = scxmalloc(FBUFLEN *
+	    ++fbufs_allocated)) == (char *)NULL) {
 	error("Malloc failed in printfile()");
 	return;
     }
@@ -1845,8 +1845,8 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		 * attempting to write 'out of bounds'.
 		 */
 		while (c > (fbufs_allocated * FBUFLEN)) {
-		    if ((pline = scxrealloc ((char *)pline, 
-			    (unsigned)(FBUFLEN * ++fbufs_allocated))) == NULL) {
+		    if ((pline = scxrealloc (pline, 
+			    FBUFLEN * ++fbufs_allocated)) == NULL) {
 			error ("Realloc failed in printfile()");
 			return;
 		    }
@@ -1856,10 +1856,8 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		if ((*pp)->flags&IS_VALID) {
 		    while(plinelim + fwidth[col] > 
 			  (int)(fbufs_allocated * FBUFLEN)) {
-		      if((pline = ((char *)scxrealloc
-				   ((char *)pline, 
-				    (unsigned)(FBUFLEN * ++fbufs_allocated))))
-			 == NULL) {
+		      if((pline = scxrealloc(pline, FBUFLEN *
+		       ++fbufs_allocated)) == NULL) {
 			error("Realloc failed in printfile()");
 			return;
 		      }
@@ -1928,10 +1926,8 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 			slen = fieldlen;
 		    
 		    while(c + fieldlen + 2 > (fbufs_allocated * FBUFLEN)) {
-		      if((pline = ((char *)scxrealloc
-				   ((char *)pline, 
-				    (unsigned)(FBUFLEN * ++fbufs_allocated))))
-			 == NULL) {
+		      if((pline = scxrealloc(pline, FBUFLEN *
+		       ++fbufs_allocated)) == NULL) {
 			error ("scxrealloc failed in printfile()");
 			return;
 		      }
@@ -2245,7 +2241,7 @@ copye(register struct enode *e, int Rdelta, int Cdelta, int r1, int c1,
 	    ret = freeenodes;
 	    freeenodes = ret->e.o.left;
 	} else
-	    ret = (struct enode *) scxmalloc((unsigned) sizeof (struct enode));
+	    ret = scxmalloc(sizeof (struct enode));
 	ret->op = e->op;
 	newrow = e->e.r.left.vf & FIX_ROW ||
 		 e->e.r.left.vp->row < r1 || e->e.r.left.vp->row > r2 ||
@@ -2283,7 +2279,7 @@ copye(register struct enode *e, int Rdelta, int Cdelta, int r1, int c1,
 	    ret = freeenodes;
 	    freeenodes = ret->e.o.left;
 	} else
-	    ret = (struct enode *) scxmalloc((unsigned) sizeof (struct enode));
+	    ret = scxmalloc(sizeof (struct enode));
 	ret->op = e->op;
 	switch (ret->op) {
 	    case SUM:
@@ -2696,13 +2692,13 @@ addplugin(char *ext, char *plugin, char type)
 	return;
     }
     if (filt == NULL) {
-	filt = (struct impexfilt *) scxmalloc((unsigned)sizeof(struct impexfilt));
+	filt = scxmalloc(sizeof(struct impexfilt));
 	fp = filt;
     } else {
 	fp = filt;
 	while (fp->next != NULL)
 	    fp = fp->next;
-	fp->next = (struct impexfilt *)scxmalloc((unsigned)sizeof(struct impexfilt));
+	fp->next = scxmalloc(sizeof(struct impexfilt));
 	fp = fp->next;
     }
     strcpy(fp->plugin, plugin);

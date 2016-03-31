@@ -98,7 +98,7 @@ add_abbr(char *string)
     if (find_abbr(string, strlen(string), &prev))
 	del_abbr(string);
 
-    a = (struct abbrev *)scxmalloc((unsigned)sizeof(struct abbrev));
+    a = scxmalloc(sizeof(struct abbrev));
     a->abbr = string;
     a->exp = expansion;
 

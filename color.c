@@ -29,7 +29,7 @@ initcolor(int colornum)
 	int i;
 
 	for (i = 0; i < 8; i++)	cpairs[i] =
-	    (struct colorpair *)scxmalloc((unsigned)sizeof(struct colorpair));
+	    scxmalloc(sizeof(struct colorpair));
     }
 
 /* default colors */
@@ -110,7 +110,7 @@ change_color(int pair, struct enode *e)
 
     if (!cpairs[pair])
 	cpairs[pair] =
-	    (struct colorpair *)scxmalloc((unsigned)sizeof(struct colorpair));
+	    scxmalloc(sizeof(struct colorpair));
     cpairs[pair]->fg = v & 7;
     cpairs[pair]->bg = (v >> 3) & 7;
     cpairs[pair]->expr = e;
@@ -154,7 +154,7 @@ add_crange(struct ent *r_left, struct ent *r_right, int pair)
 	return;
     }
 
-    r = (struct crange *)scxmalloc((unsigned)sizeof(struct crange));
+    r = scxmalloc(sizeof(struct crange));
     r->r_left = lookat(minr, minc);
     r->r_right = lookat(maxr, maxc);
     r->r_color = pair;
