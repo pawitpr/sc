@@ -1087,12 +1087,15 @@ doext(struct enode *se)
 {
     char *command = seval(se->e.o.left);
     double value = eval(se->e.o.right);
+    char *buf;
 
     error("Warning: External functions unavailable on VMS");
     cellerror = CELLERROR;	/* not sure if this should be a cellerror */
     if (command)
 	scxfree(command);
-    return (strcpy(scxmalloc(1), "\0"));
+    buf = scxmalloc(1);
+    strlcpy(buf, "\0", 1);
+    return buf;
 }
 
 #else /* if defined(VMS) || defined(MSDOS) */
@@ -1103,6 +1106,8 @@ doext(struct enode *se)
     char buff[FBUFLEN];		/* command line/return, not permanently alloc */
     char *command;
     double value;
+    char *buf;
+    size_t l;
 
     command = seval(se->e.o.left);
     value = eval(se->e.o.right);
@@ -1140,9 +1145,10 @@ doext(struct enode *se)
 		    if ((cp = strchr(buff, '\n')))	/* contains newline */
 			*cp = '\0';			/* end string there */
 
-		    if (!se->e.o.s || strlen(buff) != strlen(se->e.o.s))
-			se->e.o.s = scxrealloc(se->e.o.s, strlen(buff));
-		    (void) strcpy (se->e.o.s, buff);
+		    l = strlen(buff);
+		    if (!se->e.o.s || l != strlen(se->e.o.s))
+			se->e.o.s = scxrealloc(se->e.o.s, l);
+		    strlcpy(se->e.o.s, buff, l);
 			 /* save alloc'd copy */
 		}
 		(void) pclose(pp);
@@ -1150,10 +1156,15 @@ doext(struct enode *se)
 	    } /* else */
 	} /* else */
     } /* else */
-    if (se->e.o.s)
-	return (strcpy(scxmalloc(strlen(se->e.o.s)+1), se->e.o.s));
-    else
-	return (strcpy(scxmalloc(1), ""));
+    if (se->e.o.s) {
+	l = strlen(se->e.o.s) + 1;
+	buf = scxmalloc(l);
+	strlcpy(buf, se->e.o.s, l);
+    } else {
+	buf = scxmalloc(1);
+	strlcpy(buf, "", 1);
+    }
+    return buf;
 }
 
 #endif  /* if !(defined(VMS) || defined(MSDOS)) */
@@ -1171,9 +1182,14 @@ dosval(char *colstr, double rowdoub)
 {
     struct ent *ep;
     char *llabel;
+    char *buf;
+    size_t l;
 
     llabel = (ep = getent(colstr, rowdoub)) ? (ep -> label) : "";
-    return (strcpy(scxmalloc(strlen(llabel) + 1), llabel));
+    l = strlen(llabel) + 1;
+    buf = scxmalloc(l);
+    strlcpy(buf, llabel, l);
+    return buf;
 }
 
 
@@ -1277,6 +1293,7 @@ seval(register struct enode *se)
 {
     register char *p;
     size_t l;
+    char *buf;
 
     if (se == (struct enode *)0) return (char *)0;
     switch (se->op) {
@@ -1341,8 +1358,10 @@ seval(register struct enode *se)
 	case SUBSTR: return (dosubstr(seval(se->e.o.left),
 			    (int)eval(se->e.o.right->e.o.left) - 1,
 			    (int)eval(se->e.o.right->e.o.right) - 1));
-	case COLTOA: return (strcpy(scxmalloc(10),
-				   coltoa((int)eval(se->e.o.left))));
+	case COLTOA:
+	    buf = scxmalloc(10);
+	    strlcpy(buf, coltoa((int)eval(se->e.o.left)), 10);
+	    return buf;
 	case FILENAME: {
 		     int n = eval(se->e.o.left);
 		     char *s = strrchr(curfile, '/');
@@ -2388,6 +2407,7 @@ format_cell(struct ent *v1, struct ent *v2, char *s)
     register struct ent *n;
     int maxr, maxc;
     int minr, minc;
+    size_t l;
 
     maxr = v2->row;
     maxc = v2->col;
@@ -2410,8 +2430,11 @@ format_cell(struct ent *v1, struct ent *v2, char *s)
 	    if (n->format)
 		scxfree(n->format);
 	    n->format = 0;
-	    if (s && *s != '\0')
-		n->format = strcpy(scxmalloc(strlen(s)+1), s);
+	    if (s && *s != '\0') {
+		l = strlen(s) + 1;
+		n->format = scxmalloc(l);
+		strlcpy(n->format, s, l);
+	    }
 	    n->flags |= IS_CHANGED;
 	}
 }

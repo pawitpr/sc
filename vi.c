@@ -107,6 +107,7 @@ static char	*last_search = NULL;
 #endif
 #endif
 static char	*undo_line = NULL;
+static unsigned	undolen = 0;
 static int	undo_lim;
 static char	dotb[DOTLEN];
 static int	doti = 0;
@@ -808,8 +809,6 @@ vigetch(void) {
 static void
 u_save(int c)
 {
-    static unsigned	undolen = 0;
-
     if (strlen(line)+1 > undolen) {
     	undolen = strlen(line)+40;
 
@@ -846,7 +845,7 @@ restore_it(void) {
     tempi = linelim;
     strlcpy(line, undo_line, sizeof line);
     linelim = undo_lim;
-    strcpy(undo_line, tempc);
+    strlcpy(undo_line, tempc, undolen);
     undo_lim = tempi;
 }
 

@@ -1798,7 +1798,8 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		file[namelen - 4] = '\0';
 	    else
 		file[namelen - strlen(ascext) - 1] = '\0';
-	    sprintf(tpp, "%s.%s", file, ascext == NULL ? "asc" : ascext);
+	    snprintf(tpp, sizeof(path) - (tpp - path), "%s.%s", file,
+	      ascext == NULL ? "asc" : ascext);
 	    fname = path;
 	}
 
@@ -1863,9 +1864,10 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		      }
 		    }
 		    if ((*pp)->cellerror)
-			(void) sprintf(pline+plinelim, "%*s",
-				fwidth[col], ((*pp)->cellerror == CELLERROR ?
-				"ERROR " : "INVALID "));
+			snprintf(pline + plinelim,
+			  FBUFLEN * fbufs_allocated - plinelim,
+			  "%*s", fwidth[col], ((*pp)->cellerror == CELLERROR ?
+			  "ERROR " : "INVALID "));
 		    else {
 		      char *cfmt;
 
@@ -1880,21 +1882,24 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 			    time_t v = (time_t) ((*pp)->v);
 			    strftime(field, sizeof(field), cfmt + 1,
 				    localtime(&v));
-			    sprintf(pline+plinelim, "%-*s", fwidth[col],
-				    field);
+			    snprintf(pline + plinelim,
+			      FBUFLEN * fbufs_allocated - plinelim,
+			      "%-*s", fwidth[col], field);
 			} else {
 			    format(cfmt, precision[col], (*pp)->v, field,
 				    sizeof(field));
-			    (void) sprintf(pline+plinelim, "%*s", fwidth[col],
-				    field);
+			    snprintf(pline+plinelim,
+			      FBUFLEN * fbufs_allocated - plinelim,
+			      "%*s", fwidth[col], field);
 			}
 		      } else {
 	   	        char field[FBUFLEN];
-			(void) engformat(realfmt[col], fwidth[col],
+			engformat(realfmt[col], fwidth[col],
                                              precision[col], (*pp) -> v,
                                              field, sizeof(field));
-			(void) sprintf(pline+plinelim, "%*s", fwidth[col],
-				       field);
+			snprintf(pline+plinelim,
+			  FBUFLEN * fbufs_allocated - plinelim,
+			  "%*s", fwidth[col], field);
 		      }
 		    }
 		    plinelim += strlen(pline+plinelim);
@@ -2028,35 +2033,40 @@ tblprintfile(char *fname, int r0, int c0, int rn, int cn)
 		file[namelen - 4] = '\0';
 	    else
 		file[namelen - strlen(tbl0ext) - 1] = '\0';
-	    sprintf(tpp, "%s.%s", file, tbl0ext == NULL ? "cln" : tbl0ext);
+	    snprintf(tpp, sizeof(path) - (tpp - path), "%s.%s", file,
+	      tbl0ext == NULL ? "cln" : tbl0ext);
 	}
 	else if (tbl_style == TBL) {
 	    if (tblext == NULL)
 		file[namelen - 4] = '\0';
 	    else
 		file[namelen - strlen(tblext) - 1] = '\0';
-	    sprintf(tpp, "%s.%s", file, tblext == NULL ? "tbl" : tblext);
+	    snprintf(tpp, sizeof(path) - (tpp - path), "%s.%s", file,
+	      tblext == NULL ? "tbl" : tblext);
 	}
 	else if (tbl_style == LATEX) {
 	    if (latexext == NULL)
 		file[namelen - 4] = '\0';
 	    else
 		file[namelen - strlen(latexext) - 1] = '\0';
-	    sprintf(tpp, "%s.%s", file, latexext == NULL ? "lat" : latexext);
+	    snprintf(tpp, sizeof(path) - (tpp - path), "%s.%s", file,
+	      latexext == NULL ? "lat" : latexext);
 	}
 	else if (tbl_style == SLATEX) {
 	    if (slatexext == NULL)
 		file[namelen - 4] = '\0';
 	    else
 		file[namelen - strlen(slatexext) - 1] = '\0';
-	    sprintf(tpp, "%s.%s", file, slatexext == NULL ? "stx" : slatexext);
+	    snprintf(tpp, sizeof(path) - (tpp - path), "%s.%s", file,
+	      slatexext == NULL ? "stx" : slatexext);
 	}
 	else if (tbl_style == TEX) {
 	    if (texext == NULL)
 		file[namelen - 4] = '\0';
 	    else
 		file[namelen - strlen(texext) - 1] = '\0';
-	    sprintf(tpp, "%s.%s", file, texext == NULL ? "tex" : texext);
+	    snprintf(tpp, sizeof(path) - (tpp - path), "%s.%s", file,
+	      texext == NULL ? "tex" : texext);
 	}
 	fname = path;
     }
@@ -2701,8 +2711,8 @@ addplugin(char *ext, char *plugin, char type)
 	fp->next = scxmalloc(sizeof(struct impexfilt));
 	fp = fp->next;
     }
-    strcpy(fp->plugin, plugin);
-    strcpy(fp->ext, ext);
+    strlcpy(fp->plugin, plugin, PATHLEN);
+    strlcpy(fp->ext, ext, PATHLEN);
     fp->type = type;
     fp->next = NULL;
 }
@@ -3520,7 +3530,7 @@ findhome(char *path)
 		    *(namep++) = *(pathptr++);
 	    *namep = '\0';
 	    if ((pwent = getpwnam(name)) == NULL) {
-	    	(void) sprintf(path, "Can't find user %s", name);
+	    	sprintf(path, "Can't find user %s", name);
 		return (NULL);
 	    }
 	    strlcpy(tmppath, pwent->pw_dir, sizeof tmppath);
@@ -3562,7 +3572,7 @@ backup_file(char *path)
     else
 	tpp++;
     strlcpy(fname, tpp, sizeof fname);
-    (void) sprintf(tpp, "%s~", fname);
+    snprintf(tpp, sizeof(tpath) - (tpp - tpath), "%s~", fname);
 
     if (stat(path, &statbuf) == 0) {
 #ifdef sequent
