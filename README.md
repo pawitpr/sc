@@ -1,12 +1,13 @@
 ### Fork of the sc Spreadsheet Calculator version 7.16
+
 `sc` is a free curses-based spreadsheet program that uses key bindings similar to vi and less.
 For more information on `sc` please see the
 [`README`](https://github.com/n-t-roff/sc/blob/master/README)
 file.
-This is a mirror of the latest source code version 7.16 from September 2002
+This is a fork of the latest source code version 7.16 from September 2002
 which can be found at
 [http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz](http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz).
-By intention no functional modifications (e.g. new features)
+No major modifications
 are planned to be done in this repository
 except when necessary.
 The following
@@ -15,16 +16,25 @@ had been made:
 
 * Found bugs are fixed (for reporting bugs please use the
   [issue list](https://github.com/n-t-roff/sc/issues))
-* All `gcc` and most `clang` `-Wall` compiler warnings fixed
-* Most uses of `sprintf`, `strcpy`, and `strcat` replaced
+* All `gcc` and most `clang` `-Wall` and `-Werror` compiler warnings fixed
+* `sprintf`, `strcpy`, and `strcat` replaced
   with `snprintf`, `strlcpy`, and `strlcat`
 * `./configure` script added and tested on NetBSD, OpenBSD, FreeBSD, and Linux
-* Functional change: By default `sc` made a backup of the database file
+
+Functional changes:
+
+* By default `sc` made a backup of the database file
   before overwriting it.
   This could only be changed at compile time.
   There are now options `backup` and `!backup` to control this.
+* Configured at compile time, `sc` always did update the history
+  file `~/.sc_history`.
+  It is now possible to change this filename with the `.scrc`
+  command `histfile` or save no history at all with an empty
+  command argument.
 
 #### Documentation
+
 Documentation is provided in short form integrated in `sc`
 accessible with the `?` key.
 A complete documentation is available as a
@@ -38,7 +48,9 @@ created (using the
 [-man](http://n-t-roff.github.io/heirloom/doctools/man.7.html)
 macros of
 [Heirloom troff](http://n-t-roff.github.io/heirloom/doctools.html)).
+
 #### Getting the source
+
 The source can be cloned with
 ```sh
 git clone https://github.com/n-t-roff/sc.git
@@ -48,6 +60,7 @@ and updated later with
 git pull
 ```
 #### Compiling and Installation
+
 Defaults for compiling and installation are set in the
 [`Makefile.in`](https://github.com/n-t-roff/sc/blob/master/Makefile.in).
 A system dependent makefile is generated with
