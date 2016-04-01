@@ -1,3 +1,9 @@
+....0....|....1....|....2....|....3....|....4....|....5....|....6....|....7....|       
+2016-04-01       
+     If the history had been saved and which filename was used for this      
+     had been configured in the Makefile.  It is now possible to use         
+     the command "histfile" in .scrc to set this filename or to disable      
+     saving the history.   
 2016-03-24       
      * Saving an existing database into a backup file before overwriting     
        had been controlled by the Makefile definition DOBACKUPS.  This is    

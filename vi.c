@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
-
+#include <limits.h>
 #if defined(REGCOMP)
 #include <regex.h>
 #endif
@@ -73,6 +73,7 @@ extern char search_ind;		/* Search indicator */
 extern int lcols;		/* Spreadsheet Column the cursor was in last */
 char	*completethis = NULL;
 int	search_dir;		/* Search direction:  forward = 0; back = 1 */
+char histfile[PATHLEN] = "~/.sc_history";
 
 /* values for mode below */
 
@@ -1627,14 +1628,15 @@ search_again(bool reverse)
     linelim = strlen(line) - 1;
 }
 
-#if !defined(MSDOS) && defined HISTORY_FILE
+#if !defined(MSDOS)
 void
 write_hist(void)
 {
     int i;
     FILE *fp, *tmpfp = NULL;
-    char histfile[PATHLEN];
 
+    if (!*histfile)
+	return;
     if (histsessionnew < HISTLEN) {
 	/* write the new history for this session to a tmp file */
 	tmpfp = tmpfile();
@@ -1654,8 +1656,8 @@ write_hist(void)
     }
 
     /* now write to whole lot out to the proper save file */
-    strlcpy(histfile, HISTORY_FILE, sizeof histfile);
-    if (findhome(histfile) && (fp = fopen(histfile, "w")) != NULL) {
+    if (findhome(histfile, sizeof histfile) && (fp = fopen(histfile, "w"))
+      != NULL) {
 	for (i = 1; i <= endhist; i++) {
 	    lasthist = lasthist % endhist + 1;
 	    if (history[lasthist].len > 40)
@@ -1668,6 +1670,8 @@ write_hist(void)
 static void
 readhistfile(FILE *fp)
 {
+    if (!*histfile)
+	return;
     while (fgets(line, FBUFLEN, fp)) {
 	line[strlen(line)-1] = '\0'; /* chop the \n */
 	save_hist();
@@ -1679,10 +1683,11 @@ void
 read_hist(void)
 {
     FILE *fp;
-    char histfile[PATHLEN];
 
-    strlcpy(histfile, HISTORY_FILE, sizeof histfile);
-    if (findhome(histfile) && (fp = fopen(histfile, "r")) != NULL)
+    if (!*histfile)
+	return;
+    if (findhome(histfile, sizeof histfile) && (fp = fopen(histfile, "r"))
+      != NULL)
 	readhistfile(fp);
     histsessionstart = lasthist;
     histsessionnew = 0;

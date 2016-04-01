@@ -17,6 +17,7 @@
 %{
 #include <stdlib.h>
 #include <stdbool.h>
+#include <limits.h>
 
 #ifdef USELOCALE
 #include <locale.h>
@@ -112,6 +113,7 @@
 %token S_MDIR
 %token S_AUTORUN
 %token S_FKEY
+%token S_HISTFILE
 %token S_SCEXT
 %token S_ASCEXT
 %token S_TBL0EXT
@@ -417,6 +419,8 @@ command:	S_LET var_or_range '=' e
 				    error("Invalid function key");
 				}
 	|	S_SCEXT strarg	{ if (scext) scxfree(scext); scext = $2; }
+	|	S_HISTFILE strarg { strlcpy(histfile, $2, sizeof histfile);
+				    scxfree($2); }
 	|	S_ASCEXT strarg	{ if (ascext) scxfree(ascext); ascext = $2; }
 	|	S_TBL0EXT strarg
 				{ if (tbl0ext) scxfree(tbl0ext); tbl0ext = $2; }

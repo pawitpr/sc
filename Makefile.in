@@ -94,10 +94,6 @@ REGEX=-DREGCOMP
 #DFLT_PAGER=-DDFLT_PAGER=\"more\"	# generic && reno
 DFLT_PAGER=-DDFLT_PAGER=\"less\"
 
-# This is the name of the history file.  If undefined, the history will
-# not be saved.
-HISTORY_FILE=-DHISTORY_FILE=\"~/.sc_history\"
-
 # this is the name to save back ups in
 SAVE=-DSAVENAME=\"$(NAME).SAVE\"
 

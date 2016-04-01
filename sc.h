@@ -46,7 +46,7 @@
 # define error if (isatty(fileno(stdout)) && !move(1,0) && !clrtoeol()) printw
 #endif
 #define	FBUFLEN	1024	/* buffer size for a single field */
-#define	PATHLEN	1024	/* maximum path length */
+#define PATHLEN (PATH_MAX < 8192 ? 8192 : PATH_MAX) /* maximum path length */
 
 #ifndef DFLT_PAGER
 #define	DFLT_PAGER "more"	/* more is probably more widespread than less */
@@ -380,11 +380,12 @@ extern	int usecurses;
 extern	int brokenpipe;		/* Set to true if SIGPIPE is received */
 extern  char dpoint;	/* country-dependent decimal point from locale */
 extern  char thsep;	/* country-dependent thousands separator from locale */
+extern	char histfile[PATHLEN];
 
-extern	FILE *openfile(char *fname, int *rpid, int *rfd);
+extern	FILE *openfile(char *, size_t, int *, int *);
 extern	char *coltoa(int col);
 extern	char *findplugin(char *ext, char type);
-extern	char *findhome(char *path);
+extern	char *findhome(char *, size_t);
 extern	char *r_name(int r1, int c1, int r2, int c2);
 extern	void *scxmalloc(size_t n);
 extern	void *scxrealloc(void *ptr, size_t n);

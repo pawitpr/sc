@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <string.h>
+#include <limits.h>
 #include "compat.h"
 #include "sc.h"
 

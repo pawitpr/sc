@@ -25,6 +25,7 @@
 #ifndef MSDOS
 #include <unistd.h>
 #endif
+#include <limits.h>
 #include "compat.h"
 #include "sc.h"
 
@@ -1808,7 +1809,8 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 	    return;
 	}
 
-	if ((f = openfile(fname, &pid, NULL)) == (FILE *)0) {
+	if ((f = openfile(fname, PATHLEN, /* TODO: insecure */
+	  &pid, NULL)) == (FILE *)0) {
 	    error("Can't create file \"%s\"", fname);
 	    return;
 	}
@@ -2075,7 +2077,8 @@ tblprintfile(char *fname, int r0, int c0, int rn, int cn)
 	!yn_ask("Confirm that you want to destroy the data base: (y,n)"))
 	    return;
 
-    if ((f = openfile(fname, &pid, NULL)) == (FILE *)0) {
+    if ((f = openfile(fname, PATHLEN, /* TODO: insecure */
+      &pid, NULL)) == (FILE *)0) {
 	error ("Can't create file \"%s\"", fname);
 	return;
     }
@@ -2517,22 +2520,24 @@ showcol(int c1, int c2)
 
 /* Open the input or output file, setting up a pipe if needed */
 FILE *
-openfile(char *fname, int *rpid, int *rfd)
+openfile(char *fname, size_t fnamesiz, int *rpid, int *rfd)
 {
     int pipefd[4];
     int pid;
     FILE *f;
     char *efname;
 
-    while (*fname && (*fname == ' '))	/* Skip leading blanks */
+    while (*fname && (*fname == ' ')) {	/* Skip leading blanks */
 	fname++;
+	fnamesiz--;
+    }
 
     if (*fname != '|') {		/* Open file if not pipe */
 	*rpid = 0;
 	if (rfd != NULL)
 	    *rfd = 1;			/* Set to stdout just in case */
 	
-	efname = findhome(fname);
+	efname = findhome(fname, fnamesiz);
 	if (dobackups && rfd == NULL && !backup_file(efname) &&
 	    (yn_ask("Could not create backup copy.  Save anyway?: (y,n)") != 1))
 		return (0);
@@ -2544,7 +2549,8 @@ openfile(char *fname, int *rpid, int *rfd)
     return (0);
 #else
     fname++;				/* Skip | */
-    efname = findhome(fname);
+    fnamesiz--;
+    efname = findhome(fname, fnamesiz);
     if (pipe(pipefd) < 0 || (rfd != NULL && pipe(pipefd+2) < 0)) {
 	error("Can't make pipe to child");
 	*rpid = 0;
@@ -2940,7 +2946,7 @@ writefile(char *fname, int r0, int c0, int rn, int cn)
 	    *tpp++ = '\\';
 	}
 
-    if ((f = openfile(tfname, &pid, NULL)) == NULL) {
+    if ((f = openfile(tfname, sizeof tfname, &pid, NULL)) == NULL) {
 	error("Can't create file \"%s\"", save);
 	return (-1);
     }
@@ -3043,7 +3049,7 @@ readfile(char *fname, int eraseflg)
 	*save = '\0';
     } else {
 #endif /* MSDOS */
-	if ((f = openfile(save, &pid, &rfd)) == NULL) {
+	if ((f = openfile(save, sizeof save, &pid, &rfd)) == NULL) {
 	    error("Can't read file \"%s\"", save);
 	    autolabel = tempautolabel;
 	    return 0;
@@ -3503,7 +3509,7 @@ yn_ask(char *msg)
 #include <pwd.h>
 #endif
 char *
-findhome(char *path)
+findhome(char *path, size_t pathsiz)
 {
     static	char	*HomeDir = NULL;
 
@@ -3530,14 +3536,14 @@ findhome(char *path)
 		    *(namep++) = *(pathptr++);
 	    *namep = '\0';
 	    if ((pwent = getpwnam(name)) == NULL) {
-	    	sprintf(path, "Can't find user %s", name);
+	    	error("Can't find user %s", name);
 		return (NULL);
 	    }
 	    strlcpy(tmppath, pwent->pw_dir, sizeof tmppath);
 	}
 #endif
 	strlcat(tmppath, pathptr, sizeof tmppath);
-	strcpy(path, tmppath);
+	strlcpy(path, tmppath, pathsiz);
     }
     return (path);
 }

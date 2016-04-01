@@ -423,6 +423,24 @@ If this option is not set,
 a default of
 .B .tex
 will be used.
+.TP
+.BI "histfile \(dq" filename \(dq
+Set history filename or disable saving the history.
+The default filename is
+.RB \(lq ~/.sc_history \(rq.
+If the filename begins with
+.RB \(oq ~/ \(cq
+the tilde is expanded with the contents of the environment variable
+.BR $HOME .
+If it begins with
+.RB \(oq ~ \(cq
+followed by a user name, this sequence is expanded with the home
+directory of that user found in the password database.
+The command
+.RB \(lq "histfile \(dq\(dq" \(rq
+(empty
+.IR filename )
+disables using a history file.
 .\" ==========
 .SS "General Information"
 .\" ----------

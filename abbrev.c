@@ -14,6 +14,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <limits.h>
 #include "compat.h"
 #include "sc.h"
 
@@ -45,7 +46,7 @@ add_abbr(char *string)
 	    if (!(pager = getenv("PAGER")))
 		pager = DFLT_PAGER;
 	    strlcat(px, pager, sizeof px);
-	    f = openfile(px, &pid, NULL);
+	    f = openfile(px, sizeof px, &pid, NULL);
 	    if (!f) {
 		error("Can't open pipe to %s", pager);
 		return;

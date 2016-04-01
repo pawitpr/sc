@@ -14,6 +14,7 @@
 
 #include <time.h>
 #include <stdbool.h>
+#include <limits.h>
 
 #ifndef MSDOS
 #include <unistd.h>
