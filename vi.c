@@ -1005,7 +1005,7 @@ del_in_line(int arg, int back_null)
 	    arg = len - linelim;
 	if (linelim == len && linelim > 0)
 	    linelim--;
-	strncpy(putbuf, line + linelim, arg);
+	strlcpy(putbuf, line + linelim, arg);
 	putbuf[arg] = '\0';
 	for (i = linelim; i < len; i++)
 	    line[i] = line[i+arg];
@@ -1239,7 +1239,7 @@ yank_chars(register int first, register int last, int delete)
     }
 
     linelim = first;
-    strncpy(putbuf, line + first, last - first);
+    strlcpy(putbuf, line + first, last - first);
     putbuf[last - first] = '\0';
     if (delete)
 	memmove(line + first, line + last, strlen(line + last) + 1);
@@ -1970,7 +1970,7 @@ dogoto(void) {
     query("goto where?", NULL);
     if (linelim >= 0) {
 	memmove(line + 5, line, strlen(line) + 1);
-	strncpy(line, "goto ", 5);
+	strlcpy(line, "goto ", 5);
 	linelim = 0;
 	yyparse();
     }

@@ -410,7 +410,7 @@ extern	int growtbl(int rowcol, int toprow, int topcol);
 extern	int locked_cell(int r, int c);
 extern	int modcheck(char *endstr);
 extern	int nmgetch(void);
-extern	int plugin_exists(char *name, int len, char *path);
+extern	int plugin_exists(char *name, size_t len, char *path);
 extern	int readfile(char *fname, int eraseflg);
 extern	int writefile(char *fname, int r0, int c0, int rn, int cn);
 extern	int yn_ask(char *msg);

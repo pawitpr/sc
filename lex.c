@@ -13,6 +13,7 @@
 
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <string.h>
 #include <math.h>
 
@@ -112,7 +113,7 @@ yylex(void)
     static bool colstate = 0;
     static int dateflag;
     static char *tokenst = NULL;
-    static int tokenl;
+    static size_t tokenl;
 
     while (isspace((int)*p)) p++;
     if (*p == '\0') {
@@ -157,7 +158,7 @@ yylex(void)
 		for (tblp = linelim ? experres : statres; tblp->key; tblp++)
 		    if (((tblp->key[0]^tokenst[0])&0137)==0
 			    && tblp->key[tokenl]==0) {
-			int i = 1;
+			unsigned int i = 1;
 			while (i<tokenl && ((tokenst[i]^tblp->key[i])&0137)==0)
 			    i++;
 			if (i >= tokenl) {
@@ -175,8 +176,7 @@ yylex(void)
 	    if (ret == WORD) {
 		struct range *r;
 		char *path;
-		if (!find_range(tokenst, tokenl,
-			(struct ent *)0, (struct ent *)0, &r)) {
+		if (!find_range(tokenst, tokenl, NULL, NULL, &r)) {
 		    yylval.rval.left = r->r_left;
 		    yylval.rval.right = r->r_right;
 		    if (r->r_is_range)
@@ -315,28 +315,24 @@ yylex(void)
 */
 
 int
-plugin_exists(char *name, int len, char *path)
+plugin_exists(char *name, size_t len, char *path)
 {
 #ifndef MSDOS
-    FILE *fp;
-    static char *HomeDir;
+    struct stat sb;
+    static char *homedir;
 
-    if ((HomeDir = getenv("HOME"))) {
-	strcpy((char *)path, HomeDir);
-	strcat((char *)path, "/.sc/plugins/");
-	strncat((char *)path, name, len);
-	if ((fp = fopen((char *)path, "r"))) {
-	    fclose(fp);
+    if ((homedir = getenv("HOME"))) {
+	strlcpy(path, homedir, len);
+	strlcat(path, "/.sc/plugins/", len);
+	strlcat(path, name, len);
+	if (!lstat(path, &sb))
 	    return 1;
-	}
     }
-    strcpy((char *)path, LIBDIR);
-    strcat((char *)path, "/plugins/");
-    strncat((char *)path, name, len);
-    if ((fp = fopen((char *)path, "r"))) {
-	fclose(fp);
+    strlcpy(path, LIBDIR, len);
+    strlcat(path, "/plugins/", len);
+    strlcat(path, name, len);
+    if (!lstat(path, &sb))
 	return 1;
-    }
 #endif
     return 0;
 }
