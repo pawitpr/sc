@@ -14,6 +14,7 @@
 #include <stdio.h>
 #endif
 
+#define CLEAR_LINE error("")
 #define	ATBL(tbl, row, col)	(*(tbl + row) + (col))
 
 #define MINROWS 100 	/* minimum size at startup */

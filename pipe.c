@@ -301,7 +301,7 @@ doquery(char *s, char *data, int fd)
 
     line[0] = '\0';
     linelim = -1;
-    error(" ");
+    CLEAR_LINE;
     update(0);
 
     if (s) scxfree(s);

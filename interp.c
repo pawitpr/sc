@@ -1139,7 +1139,7 @@ doext(struct enode *se)
 		} else {
 		    char *cp;
 
-		    error(" ");				/* erase notice */
+		    CLEAR_LINE;				/* erase notice */
 		    buff[sizeof(buff)-1] = '\0';
 
 		    if ((cp = strchr(buff, '\n')))	/* contains newline */

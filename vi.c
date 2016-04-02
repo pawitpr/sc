@@ -126,7 +126,7 @@ write_line(int c)
     struct frange *fr;
     struct crange *cr;
 
-    error(" ");
+    CLEAR_LINE;
     if (c != ctl('i')) completethis = NULL;
     if (mode == EDIT_MODE) {
 	nosavedot = 0;
@@ -1448,7 +1448,7 @@ for_hist(void) {
     if (histp) {
 	error("History line %d", endhist - lasthist + histp);
     } else {
-	error(" ");
+	CLEAR_LINE;
     }
 }
 
@@ -1477,7 +1477,7 @@ back_hist(void) {
     if (histp) {
 	error("History line %d", endhist - lasthist + histp);
     } else {
-	error(" ");
+	CLEAR_LINE;
     }
 }
 
@@ -1496,7 +1496,7 @@ search_hist(void) {
 	return;
     }
 
-#ifdef REGCOMP
+#if defined REGCOMP
     if (last_search)
 	regfree(last_search);
     else
@@ -1508,14 +1508,12 @@ search_hist(void) {
 	scxfree(tmp);
 	return;
     }
-#else
-#ifdef RE_COMP
+#elif defined RE_COMP
     if ((tmp = re_comp(line)) != NULL) {
 	error(tmp);
 	return;
     }
-#else
-#ifdef REGCMP
+#elif defined REGCMP
     free(last_search);
     if ((last_search = regcmp(line, NULL)) == NULL) {
 	error("Invalid search string");
@@ -1527,8 +1525,6 @@ search_hist(void) {
 	last_search = scxrealloc(last_search, lastsrchlen);
     }
     strlcpy(last_search, line, lastsrchlen);
-#endif
-#endif
 #endif
     strlcpy(line, history[0].histline, sizeof line);
     search_again(false);
@@ -1546,17 +1542,15 @@ search_again(bool reverse)
     int do_next;
 #endif
 
-#ifdef REGCOMP
+#if defined REGCOMP
     if (last_search == NULL)
 	return;
-#else
-#ifndef RE_COMP
+#elif !defined(RE_COMP)
     if (last_search == NULL || *last_search == '\0')
 	return;
 #endif
-#endif
     prev_match = histp > 0 ? histp : 0;
-    error(" ");
+    CLEAR_LINE;
 
     do {
 	if (lasthist > 0) {
@@ -1589,15 +1583,13 @@ search_again(bool reverse)
 		strlcpy(line, history[histp].histline, sizeof line);
 	}
 	found_it = 0;
-#ifdef REGCOMP
+#if defined REGCOMP
 	if (regexec(last_search, line, 0, NULL, 0) == 0)
 	    found_it++;
-#else
-#ifdef RE_COMP
+#elif defined RE_COMP
 	if (re_exec(line) != 0)
 	    found_it++;
-#else
-#ifdef REGCMP
+#elif defined REGCMP
 	if (regex(last_search, line) != NULL)
 	    found_it++;
 #else
@@ -1613,8 +1605,6 @@ search_again(bool reverse)
 	    else
 		do_next++;
 	}
-#endif
-#endif
 #endif
 	if (histp == prev_match)
 	    break;
@@ -2011,12 +2001,12 @@ query(const char *s, char *data)
 	update(0);
 	switch (c = nmgetch()) {
 	    case ctl('m'):
-		error(" ");
+		CLEAR_LINE;
 		return;
 	    case ctl('g'):
 		line[0] = '\0';
 		linelim = -1;
-		error(" ");
+		CLEAR_LINE;
 		update(0);
 		return;
 	    case ctl('l'):

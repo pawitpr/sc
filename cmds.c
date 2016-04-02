@@ -1380,7 +1380,7 @@ doend(int rowinc, int colinc)
 	if (!loading)
 	    remember(1);
 
-	error(" ");	/* clear line */
+	CLEAR_LINE;	/* clear line */
 	return;
     }
 
@@ -1555,7 +1555,7 @@ formatcol(int arg) {
 			    insert_mode();
 			    linelim = strlen(line);
 			}
-			error(" ");
+			CLEAR_LINE;
 		    } else {
 			error("Invalid format type");
 			c = -1;
@@ -1588,7 +1588,7 @@ formatcol(int arg) {
     }
     scxfree((char *)oldformat);
     if (c >= 0)
-	error(" ");
+	CLEAR_LINE;
 }
 
 void
@@ -3276,14 +3276,14 @@ markcell(void)
 
     error("Mark cell:");
     if ((c=nmgetch()) == ESC || c == ctl('g')) {
-	error(" ");
+	CLEAR_LINE;
 	return;
     }
     if ((c -= ('a' - 1)) < 1 || c > 26) {
 	error("Invalid mark (must be a-z)");
 	return;
     }
-    error(" ");
+    CLEAR_LINE;
     savedrow[c] = currow;
     savedcol[c] = curcol;
     savedstrow[c] = strow;
@@ -3299,7 +3299,7 @@ dotick(int tick)
 
     error("Go to marked cell:");
     if ((c = nmgetch()) == ESC || c == ctl('g')) {
-	error(" ");
+	CLEAR_LINE;
 	return;
     }
     if (c == '`' || c == '\'')
@@ -3313,7 +3313,7 @@ dotick(int tick)
 	error("Mark not set");
 	return;
     }
-    error(" ");
+    CLEAR_LINE;
     currow = savedrow[c];
     curcol = savedcol[c];
     rowsinrange = 1;
