@@ -1099,12 +1099,12 @@ yyerror(char *err)
     if (usecurses) {
 	if (seenerr) return;
 	seenerr++;
-	(void) move(1, 0);
-	(void) clrtoeol();
-	(void) printw("%s: %.*s<=%s", err, linelim, line, line + linelim);
+	move(1, 0);
+	clrtoeol();
+	printw("%s: %.*s<=%s", err, (int)linelim, line, line + linelim);
     } else
-	(void) fprintf(stderr, "%s: %.*s<=%s\n", err, (int)linelim, line,
-		       line + linelim);
+	fprintf(stderr, "%s: %.*s<=%s\n", err, (int)linelim, line,
+	  line + linelim);
 }
 
 #ifdef XENIX2_3

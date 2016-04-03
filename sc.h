@@ -14,7 +14,7 @@
 #include <stdio.h>
 #endif
 
-#define CLEAR_LINE error("")
+#define CLEAR_LINE error("%s", "") /* suppress warning on NetBSD curses */
 #define	ATBL(tbl, row, col)	(*(tbl + row) + (col))
 
 #define MINROWS 100 	/* minimum size at startup */

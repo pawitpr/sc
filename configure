@@ -209,16 +209,39 @@ check_ncursesw () {
 	false
 }
 
-check_lib_curses () {
-	check_ncursesw && return
+check_ncurses () {
+	LIB_CURSES="-lncurses"
+	check_for $LIB_CURSES
+	ODEFS=$DEFS
+	DEFS="$DEFS -DHAVE_NCURSES_CURSES_H"
+	INCDIR_CURSES="-I/usr/pkg/include"
+	RPATH_CURSES="-Wl,-rpath,/usr/pkg/lib"
+	LIBDIR_CURSES="-L/usr/pkg/lib"
+	PASS_TEXT=" (#include <ncurses/curses.h>, -I/usr/pkg/include, \
+-L/usr/pkg/lib)"
+	test_curses && return # NetBSD
+	DEFS=$ODEFS
+	INCDIR_CURSES=
+	RPATH_CURSES=
+	LIBDIR_CURSES=
+	PASS_TEXT=
+	test_curses && return
+	[ -z "$SFLAG" ] && echo no
+	false
+}
+
+check_curses () {
 	LIB_CURSES="-lcurses"
 	check_for $LIB_CURSES
 	test_curses && return
 	[ -z "$SFLAG" ] && echo no
-	LIB_CURSES="-lncurses"
-	check_for $LIB_CURSES
-	test_curses && return
-	[ -z "$SFLAG" ] && echo no
+	false
+}
+
+check_lib_curses () {
+	check_ncursesw && return
+	check_curses && return
+	check_ncurses && return
 }
 
 check_fixterm () {
