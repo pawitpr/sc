@@ -95,8 +95,8 @@ check_float_store () {
 	check_for "$FLOAT_STORE"
 	cat <<EOT >$TMPC
 int
-main (int argc, char **argv) {
-return 0;
+main() {
+	return 0;
 }
 EOT
 	gen_mk
@@ -107,7 +107,19 @@ EOT
 	rm -f ${TMPNAM}.o
 	$MAKE -f $OUTMK ${TMPNAM}.o >> $LOG 2> $TMPNAM
 	cat $TMPNAM >> $LOG
-	if [ -s $TMPNAM ]; then false; else true; fi
+	if [ -s $TMPNAM ]; then
+		if grep -e $FLOAT_STORE $TMPNAM | grep -q 'not supported'
+		then
+			false
+		elif grep -e $FLOAT_STORE $TMPNAM | grep -q 'argument unused'
+		then
+			false
+		else
+			true
+		fi
+	else
+		true
+	fi
 	test_result || FLOAT_STORE=
 }
 
@@ -117,8 +129,9 @@ check_strlcpy () {
 	cat <<EOT >$TMPC
 #include <string.h>
 int
-main (int argc, char **argv) {
+main(int argc, char **argv) {
 	char a[10];
+	(void)argc;
 	strlcpy(a, *argv, sizeof a);
 	return 0;
 }
@@ -133,8 +146,9 @@ check_strlcat () {
 	cat <<EOT >$TMPC
 #include <string.h>
 int
-main (int argc, char **argv) {
+main(int argc, char **argv) {
 	char a[10];
+	(void)argc;
 	*a = 0;
 	strlcat(a, *argv, sizeof a);
 	return 0;
@@ -151,7 +165,7 @@ check_wcslcpy () {
 #include <stdio.h>
 #include <wchar.h>
 int
-main (int argc, char **argv) {
+main() {
 	wchar_t a, b;
 	a = getwchar();
 	wcslcpy(&b, &a, 1);
@@ -166,14 +180,14 @@ compile_curses () {
 	cat <<EOT >$TMPC
 #include "compat.h"
 int
-main (int argc, char **argv) {
+main() {
 	return 0;
 }
 EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) $RPATH_CURSES -o \$@ ${TMPNAM}.o $LIBDIR_CURSES $LIB_CURSES
+	\$(CC) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
 EOT
 	compile
 	test_result 1
@@ -250,7 +264,7 @@ check_fixterm () {
 	cat <<EOT >$TMPC
 #include "compat.h"
 int
-main (int argc, char **argv) {
+main() {
 	fixterm();
 	return 0;
 }
@@ -258,7 +272,7 @@ EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) -o \$@ ${TMPNAM}.o $LIBDIR_CURSES $LIB_CURSES
+	\$(CC) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_FIXTERM"
@@ -270,7 +284,7 @@ check_resetterm () {
 	cat <<EOT >$TMPC
 #include "compat.h"
 int
-main (int argc, char **argv) {
+main() {
 	resetterm();
 	return 0;
 }
@@ -278,7 +292,7 @@ EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) -o \$@ ${TMPNAM}.o $LIBDIR_CURSES $LIB_CURSES
+	\$(CC) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_RESETTERM"

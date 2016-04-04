@@ -596,13 +596,12 @@ char	** pages[] = { intro, toggleoptions, setoptions, cursor, cell, vi,
 			finf, timef, NULL};
 
 int
-main(int argc, char **argv) {
+main() {
     int	lineno;
     char	***pagep = pages;
 #ifdef TROFF
     int	pageno = 0;
 
-    (void)argc; (void)argv; /* unused */
     puts(".nr PS 12");
     puts(".nr VS 14");
     puts(".nr HM 1i");

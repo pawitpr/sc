@@ -322,15 +322,13 @@ LN=ln
 #LIB=-lm -lpdcurses
 
 #########################################
-# Use this for Linux
-#CC=gcc
-# Only use -Wall for testing, since it produces warnings that are of no
-# real effect on the reliability of the program, but may concern some
-# people who don't understand them.
-#CFLAGS=-DSYSV3 -O2 -Wall -pipe
-#CFLAGS=-DSYSV3 -O2 -pipe
+# UBSAN: -fsanitize=undefined -fsanitize=integer
+# ASAN:  -fsanitize=address
 _CFLAGS= $(INCDIR_CURSES) $(DEFINES) -Wall -Wextra
-LIB=-lm $(LIB_CURSES)
+#	-O0 -g -fno-omit-frame-pointer -fno-optimize-sibling-calls \
+#	-fsanitize=undefined -fsanitize=integer
+#	-fsanitize=address
+LIB=-lm $(LIBDIR_CURSES) $(LIB_CURSES)
 
 # All of the source files
 SRC=Makefile abbrev.c cmds.c color.c crypt.c eres.sed frame.c format.c gram.y \
@@ -348,7 +346,7 @@ DOCS=CHANGES README sc.doc psc.doc tutorial.sc VMS_NOTES torev build.com
 all:	$(name) p$(name) $(name)qref $(name).1 p$(name).1
 
 $(name):$(PAR)  $(OBJS)
-	$(CC) ${LDFLAGS} ${OBJS} $(RPATH_CURSES) -o $(name) $(LIBDIR_CURSES) \
+	$(CC) $(_CFLAGS) ${LDFLAGS} ${OBJS} $(RPATH_CURSES) -o $(name) \
 	    ${LIB}
 
 # Alternative link for MS-DOS
@@ -469,7 +467,7 @@ lint: sc.h sc.c lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
 	lint ${LINTFLAGS} ${CFLAGS} $(_CFLAGS) ${SIMPLE} sc.c \
 	    lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
 	    range.c help.c vi.c version.c xmalloc.c format.c vmtbl.c \
-	    $(LIB_CURSES) -lm 
+	    $(LIB)
 	make lintqref
 
 lintqref: help.c
