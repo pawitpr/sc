@@ -142,6 +142,10 @@ extern	char	*rev;
 int VMS_read_raw = 0;
 #endif
 
+#if NCURSES_MOUSE_VERSION >= 2
+static MEVENT mevent;
+#endif
+
 /* return a pointer to a cell's [struct ent *], creating if needed */
 struct ent *
 lookat(int row, int col)
@@ -2064,6 +2068,31 @@ main (int argc, char  **argv)
 #endif
 		    break;
 #endif
+#if NCURSES_MOUSE_VERSION >= 2
+		case KEY_MOUSE:
+		    if (getmouse(&mevent) != OK)
+			break;
+		    if (mevent.bstate & BUTTON4_PRESSED) {
+			strow++;
+			while (strow && row_hidden[strow])
+			    strow++;
+			if (currow < strow)
+			    currow = strow;
+			FullUpdate++;
+			update(0);
+		    } else if (mevent.bstate & BUTTON5_PRESSED) {
+			strow--;
+			while (row_hidden[strow])
+			    strow--;
+			forwrow(1);
+			if (currow >= lastendrow)
+			    backrow(1);
+			backrow(1);
+			FullUpdate++;
+			update(0);
+		    }
+		    break;
+#endif
 		default:
 		    if ((toascii(c)) != c) {
 			error ("Weird character, decimal %d\n",
@@ -2286,4 +2315,18 @@ settcattr(void) {
 		return;
 	}
 #endif /* VDSUSP */
+}
+
+void
+mouseon(void) {
+#if NCURSES_MOUSE_VERSION >= 2
+	mousemask(BUTTON4_PRESSED | BUTTON5_PRESSED, NULL);
+#endif
+}
+
+void
+mouseoff(void) {
+#if NCURSES_MOUSE_VERSION >= 2
+	mousemask(0, NULL);
+#endif
 }

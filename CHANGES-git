@@ -1,7 +1,9 @@
 2016-04-05       
-       On some terminals ^Y did suspend sc instead of scrolling the
+     * On some terminals ^Y did suspend sc instead of scrolling the
        screen down.  This "delayed suspend" is now disabled (like in vi)     
        to make ^Y's scroll down function work an any terminal.     
+     * Vertical scrolling using the mouse wheel possible after .scrc         
+       command "set mouse"           
 2016-04-01       
        If the history had been saved and which filename was used for this    
        had been configured in the Makefile.  It is now possible to use       

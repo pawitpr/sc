@@ -1091,6 +1091,12 @@ This is enabled/disabled by this option.
 The default is
 .B not
 to do backups.
+.TP
+.BR mouse / !mouse
+Process mouse events.
+By default mouse support is disabled for compatibility reasons
+with traditional
+.BR sc .
 .RE
 .\" ==========
 .SS "Cursor Control Commands"

@@ -254,8 +254,9 @@ check_curses () {
 
 check_lib_curses () {
 	check_ncursesw && return
-	check_curses && return
 	check_ncurses && return
+	# If mouse support is not required, NetBSD curses works perfectly.
+	check_curses && return
 }
 
 check_fixterm () {

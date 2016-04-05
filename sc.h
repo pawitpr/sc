@@ -653,6 +653,8 @@ void leftlimit(void);
 void rightlimit(void);
 void gototop(void);
 void gotobottom(void);
+void mouseon(void);
+void mouseoff(void);
 
 #if BSD42 || SYSIII
 

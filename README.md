@@ -7,9 +7,6 @@ file.
 This is a fork of the latest source code version 7.16 from September 2002
 which can be found at
 [http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz](http://www.ibiblio.org/pub/Linux/apps/financial/spreadsheet/sc-7.16.tar.gz).
-No major modifications
-are planned to be done in this repository
-except when necessary.
 The following
 [changes](https://github.com/n-t-roff/sc/blob/master/CHANGES-git)
 had been made:
@@ -21,7 +18,7 @@ had been made:
   with `snprintf`, `strlcpy`, and `strlcat`
 * `./configure` script added and tested on NetBSD, OpenBSD, FreeBSD, and Linux
 
-Functional changes:
+Functional extensions:
 
 * By default `sc` made a backup of the database file
   before overwriting it.
@@ -32,6 +29,8 @@ Functional changes:
   It is now possible to change this filename with the `.scrc`
   command `histfile` or save no history at all with an empty
   command argument.
+* Command `set mouse` (e.g. in `.scrc`) enables vertical scrolling
+  with the mouse wheel.
 
 #### Documentation
 
