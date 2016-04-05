@@ -1762,6 +1762,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
     long namelen;
     int row, col;
     register struct ent **pp;
+    size_t fnamesiz;
     char file[256];
     char path[1024];
     char *tpp;
@@ -1802,14 +1803,18 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 	    snprintf(tpp, sizeof(path) - (tpp - path), "%s.%s", file,
 	      ascext == NULL ? "asc" : ascext);
 	    fname = path;
-	}
+	    fnamesiz = sizeof path;
+	} else
+	    /* strarg in gram.y, always size of \0 terminated string. */
+	    /* TODO: Possible problem if ~ needs to be expanded. */
+	    fnamesiz = strlen(fname) + 1;
 
 	if ((strcmp(fname, curfile) == 0) &&
 	    !yn_ask("Confirm that you want to destroy the data base: (y,n)")) {
 	    return;
 	}
 
-	if ((f = openfile(fname, PATHLEN, /* TODO: insecure */
+	if ((f = openfile(fname, fnamesiz,
 	  &pid, NULL)) == (FILE *)0) {
 	    error("Can't create file \"%s\"", fname);
 	    return;
@@ -1997,6 +2002,7 @@ tblprintfile(char *fname, int r0, int c0, int rn, int cn)
     long namelen;
     int row, col;
     register struct ent **pp;
+    size_t fnamesiz;
     char coldelim = DEFCOLDELIM;
     char file[256];
     char path[1024];
@@ -2071,13 +2077,16 @@ tblprintfile(char *fname, int r0, int c0, int rn, int cn)
 	      texext == NULL ? "tex" : texext);
 	}
 	fname = path;
-    }
+	fnamesiz = sizeof path;
+    } else
+	/* TODO: Possible problem if ~ needs to be expanded. */
+	fnamesiz = strlen(fname) + 1;
 
     if ((strcmp(fname, curfile) == 0) &&
 	!yn_ask("Confirm that you want to destroy the data base: (y,n)"))
 	    return;
 
-    if ((f = openfile(fname, PATHLEN, /* TODO: insecure */
+    if ((f = openfile(fname, fnamesiz,
       &pid, NULL)) == (FILE *)0) {
 	error ("Can't create file \"%s\"", fname);
 	return;

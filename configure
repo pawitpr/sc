@@ -187,7 +187,7 @@ EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
+	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
 EOT
 	compile
 	test_result 1
@@ -272,7 +272,7 @@ EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
+	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_FIXTERM"
@@ -292,7 +292,7 @@ EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
+	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_RESETTERM"
