@@ -21,7 +21,8 @@
 #ifndef MSDOS
 #include <unistd.h>
 #endif
-
+#include <termios.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <limits.h>
@@ -31,6 +32,8 @@
 #ifndef SAVENAME
 #define	SAVENAME "SC.SAVE" /* file name to use for emergency saves */
 #endif /* SAVENAME */
+
+static void settcattr(void);
 
 /* Globals defined in sc.h */
 
@@ -315,6 +318,7 @@ main (int argc, char  **argv)
     if (!isatty(STDOUT_FILENO) || popt || qopt) usecurses = FALSE;
     startdisp();
     signals();
+    settcattr();
     read_hist();
 
     /* setup the spreadsheet arrays, initscr() will get the screen size */
@@ -2252,4 +2256,34 @@ any_locked_cells(int r1, int c1, int r2, int c2)
 		return(1);
 	}
     return(0);
+}
+
+static void
+settcattr(void) {
+#ifdef VDSUSP
+	static struct termios tty;
+# ifdef _PC_VDISABLE
+	static long vdis;
+
+	if ((vdis = fpathconf(STDIN_FILENO, _PC_VDISABLE)) == -1) {
+		fprintf(stderr,
+		    "fpathconf(STDIN, _PC_VDISABLE) failed: %s\n",
+		    strerror(errno));
+		vdis = 255;
+	}
+# else
+#  define vdis 255
+# endif
+	if (tcgetattr(STDIN_FILENO, &tty) == -1) {
+		fprintf(stderr, "tcgetattr STDIN failed: %s\n",
+		    strerror(errno));
+		return;
+	}
+	tty.c_cc[VDSUSP] = vdis;
+	if (tcsetattr(STDIN_FILENO, TCSADRAIN, &tty) == -1) {
+		fprintf(stderr, "tcsetattr STDIN failed: %s\n",
+		    strerror(errno));
+		return;
+	}
+#endif /* VDSUSP */
 }

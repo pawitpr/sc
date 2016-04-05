@@ -1,8 +1,12 @@
+2016-04-05       
+       On some terminals ^Y did suspend sc instead of scrolling the
+       screen down.  This "delayed suspend" is now disabled (like in vi)     
+       to make ^Y's scroll down function work an any terminal.     
 2016-04-01       
-     If the history had been saved and which filename was used for this      
-     had been configured in the Makefile.  It is now possible to use         
-     the command "histfile" in .scrc to set this filename or to disable      
-     saving the history.   
+       If the history had been saved and which filename was used for this    
+       had been configured in the Makefile.  It is now possible to use       
+       the command "histfile" in .scrc to set this filename or to disable    
+       saving the history. 
 2016-03-24       
      * Saving an existing database into a backup file before overwriting     
        had been controlled by the Makefile definition DOBACKUPS.  This is    
