@@ -2324,11 +2324,14 @@ mouseoff(void) {
 void
 mouse_sel_cell(void) {
 	int i;
+	/* 3 rows above table, 4 characters before table */
 	if (mevent.y < 3 || mevent.x < 4)
 		return;
-	for (currow = strow, i = mevent.y - 3; i > 0; currow++, i--) {
-	    if (row_hidden[currow])
-		currow++;
+	for (currow = strow, i = mevent.y - 3; ; currow++) {
+		if (row_hidden[currow])
+			continue;
+		if (--i < 0)
+			break;
 	}
 	for (curcol = stcol, i = mevent.x - 4; ; curcol++) {
 		if (col_hidden[curcol])
@@ -2342,19 +2345,20 @@ mouse_sel_cell(void) {
 static void
 scroll_down(void) {
 	strow++;
-	while (strow && row_hidden[strow])
-	    strow++;
+	while (row_hidden[strow])
+		strow++;
 	if (currow < strow)
-	    currow = strow;
+		currow = strow;
 }
 
 static void
 scroll_up(int x) {
-	strow--;
-	while (strow >= 0 && row_hidden[strow])
-	    strow--;
+	if (strow)
+		strow--;
+	while (strow && row_hidden[strow])
+		strow--;
 	forwrow(x);
 	if (currow >= lastendrow)
-	    backrow(1);
+		backrow(1);
 	backrow(x);
 }

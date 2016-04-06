@@ -1,5 +1,8 @@
 2016-04-06       
-       Selecting cells with the left mouse button added. 
+     * Selecting cells with the left mouse button added. 
+     * Bugfix: Scrolling upwards with ^Y did not check if top row is         
+       already zero and decremented further.  This led to unpredictable      
+       effects.  
 2016-04-05       
      * On some terminals ^Y did suspend sc instead of scrolling the
        screen down.  This "delayed suspend" is now disabled (like in vi)     
