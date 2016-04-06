@@ -2059,9 +2059,9 @@ main (int argc, char  **argv)
 		    if (mevent.bstate & BUTTON1_CLICKED) {
 			mouse_sel_cell();
 			update(0);
-		    } else
+		    }
 # if NCURSES_MOUSE_VERSION >= 2
-		    if (mevent.bstate & BUTTON4_PRESSED) {
+		    else if (mevent.bstate & BUTTON4_PRESSED) {
 			scroll_down();
 			FullUpdate++;
 			update(0);
