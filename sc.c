@@ -34,6 +34,8 @@
 #endif /* SAVENAME */
 
 static void settcattr(void);
+static void scroll_down(void);
+static void scroll_up(int);
 
 /* Globals defined in sc.h */
 
@@ -142,7 +144,9 @@ extern	char	*rev;
 int VMS_read_raw = 0;
 #endif
 
-#if NCURSES_MOUSE_VERSION >= 2
+#ifdef NCURSES_MOUSE_VERSION
+void mouse_sel_cell(void);
+
 static MEVENT mevent;
 #endif
 
@@ -633,19 +637,9 @@ main (int argc, char  **argv)
 
 				    while (arg) {
 					if (c == ctl('e')) {
-					    strow++;
-					    while (strow && row_hidden[strow])
-						strow++;
-					    if (currow < strow)
-						currow = strow;
+					    scroll_down();
 					} else {
-					    strow--;
-					    while (row_hidden[strow])
-						strow--;
-					    forwrow(x);
-					    if (currow >= lastendrow)
-						backrow(1);
-					    backrow(x);
+					    scroll_up(x);
 					}
 					arg--;
 				    }
@@ -675,19 +669,9 @@ main (int argc, char  **argv)
 
 			while (arg) {
 			    if (c == ctl('e')) {
-				strow++;
-				while (strow && row_hidden[strow])
-				    strow++;
-				if (currow < strow)
-				    currow = strow;
+				scroll_down();
 			    } else {
-				strow--;
-				while (row_hidden[strow])
-				    strow--;
-				forwrow(x);
-				if (currow >= lastendrow)
-				    backrow(1);
-				backrow(x);
+				scroll_up(x);
 			    }
 			    arg--;
 			}
@@ -2068,29 +2052,25 @@ main (int argc, char  **argv)
 #endif
 		    break;
 #endif
-#if NCURSES_MOUSE_VERSION >= 2
+#ifdef NCURSES_MOUSE_VERSION
 		case KEY_MOUSE:
 		    if (getmouse(&mevent) != OK)
 			break;
+		    if (mevent.bstate & BUTTON1_CLICKED) {
+			mouse_sel_cell();
+			update(0);
+		    } else
+# if NCURSES_MOUSE_VERSION >= 2
 		    if (mevent.bstate & BUTTON4_PRESSED) {
-			strow++;
-			while (strow && row_hidden[strow])
-			    strow++;
-			if (currow < strow)
-			    currow = strow;
+			scroll_down();
 			FullUpdate++;
 			update(0);
 		    } else if (mevent.bstate & BUTTON5_PRESSED) {
-			strow--;
-			while (row_hidden[strow])
-			    strow--;
-			forwrow(1);
-			if (currow >= lastendrow)
-			    backrow(1);
-			backrow(1);
+			scroll_up(1);
 			FullUpdate++;
 			update(0);
 		    }
+# endif
 		    break;
 #endif
 		default:
@@ -2319,8 +2299,17 @@ settcattr(void) {
 
 void
 mouseon(void) {
-#if NCURSES_MOUSE_VERSION >= 2
-	mousemask(BUTTON4_PRESSED | BUTTON5_PRESSED, NULL);
+#ifdef NCURSES_MOUSE_VERSION
+	mousemask(BUTTON1_CLICKED
+# if NCURSES_MOUSE_VERSION >= 2
+	    | BUTTON4_PRESSED | BUTTON5_PRESSED
+# endif
+	    , NULL);
+# if NCURSES_MOUSE_VERSION < 2
+	error("Warning: NCURSES_MOUSE_VERSION < 2");
+# endif
+#else
+	error("Error: NCURSES_MOUSE_VERSION undefined");
 #endif
 }
 
@@ -2329,4 +2318,43 @@ mouseoff(void) {
 #if NCURSES_MOUSE_VERSION >= 2
 	mousemask(0, NULL);
 #endif
+}
+
+#ifdef NCURSES_MOUSE_VERSION
+void
+mouse_sel_cell(void) {
+	int i;
+	if (mevent.y < 3 || mevent.x < 4)
+		return;
+	for (currow = strow, i = mevent.y - 3; i > 0; currow++, i--) {
+	    if (row_hidden[currow])
+		currow++;
+	}
+	for (curcol = stcol, i = mevent.x - 4; ; curcol++) {
+		if (col_hidden[curcol])
+			continue;
+		if ((i -= fwidth[curcol]) < 0)
+			break;
+	}
+}
+#endif
+
+static void
+scroll_down(void) {
+	strow++;
+	while (strow && row_hidden[strow])
+	    strow++;
+	if (currow < strow)
+	    currow = strow;
+}
+
+static void
+scroll_up(int x) {
+	strow--;
+	while (strow >= 0 && row_hidden[strow])
+	    strow--;
+	forwrow(x);
+	if (currow >= lastendrow)
+	    backrow(1);
+	backrow(x);
 }

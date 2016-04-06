@@ -1097,6 +1097,11 @@ Process mouse events.
 By default mouse support is disabled for compatibility reasons
 with traditional
 .BR sc .
+If mouse events are enabled, the shift key must be
+pressed to use the mouse \(oqcut and paste\(cq feature.
+Currently selecting cells with the left mouse button and
+vertical scrolling using the mouse wheel is implemented.
+(Requires ncurses version \(>= 6.)
 .RE
 .\" ==========
 .SS "Cursor Control Commands"

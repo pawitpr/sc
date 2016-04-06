@@ -29,8 +29,14 @@ Functional extensions:
   It is now possible to change this filename with the `.scrc`
   command `histfile` or save no history at all with an empty
   command argument.
-* Command `set mouse` (e.g. in `.scrc`) enables vertical scrolling
-  with the mouse wheel.
+* Command `set mouse` (e.g. in `.scrc`) enables
+  selecting cells with the left mouse button and
+  vertical scrolling with the mouse wheel.
+  (In this case the shift key needs to be pressed for
+  &lsquo;cut and paste&rsquo;.
+  All `sc` function work well with curses
+  but using the mouse requires ncurses.
+  Using the mouse wheel requires ncurses version &ge; 6.)
 
 #### Documentation
 

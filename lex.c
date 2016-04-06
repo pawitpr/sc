@@ -326,13 +326,13 @@ plugin_exists(char *name, size_t len, char *path)
 	strlcpy(path, homedir, len);
 	strlcat(path, "/.sc/plugins/", len);
 	strlcat(path, name, len);
-	if (!lstat(path, &sb))
+	if (!stat(path, &sb))
 	    return 1;
     }
     strlcpy(path, LIBDIR, len);
     strlcat(path, "/plugins/", len);
     strlcat(path, name, len);
-    if (!lstat(path, &sb))
+    if (!stat(path, &sb))
 	return 1;
 #endif
     return 0;
