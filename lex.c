@@ -157,10 +157,13 @@ yylex(void)
 	    if (!linelim || isfunc) {
 		if (isfunc) isfunc--;
 		for (tblp = linelim ? experres : statres; tblp->key; tblp++)
-		    if (((tblp->key[0]^tokenst[0])&0137)==0
-			    && tblp->key[tokenl]==0) {
+		    if (((tblp->key[0] ^ tokenst[0]) & 0x5F) == 0) {
+		    /* Commenting the following line makes the search slower */
+		    /* but avoids access outside valid memory. A BST would   */
+		    /* the better alternative. */
+		    /*  && tblp->key[tokenl] == 0) { */
 			unsigned int i = 1;
-			while (i<tokenl && ((tokenst[i]^tblp->key[i])&0137)==0)
+			while (i < tokenl && ((tokenst[i] ^ tblp->key[i]) & 0x5F) == 0)
 			    i++;
 			if (i >= tokenl) {
 			    ret = tblp->val;
