@@ -160,7 +160,7 @@ yylex(void)
 		    if (((tblp->key[0] ^ tokenst[0]) & 0x5F) == 0) {
 		    /* Commenting the following line makes the search slower */
 		    /* but avoids access outside valid memory. A BST would   */
-		    /* the better alternative. */
+		    /* be the better alternative. */
 		    /*  && tblp->key[tokenl] == 0) { */
 			unsigned int i = 1;
 			while (i < tokenl && ((tokenst[i] ^ tblp->key[i]) & 0x5F) == 0)

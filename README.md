@@ -1,4 +1,4 @@
-### Fork of the sc Spreadsheet Calculator version 7.16
+### sc Spreadsheet Calculator
 
 `sc` is a free curses-based spreadsheet program that uses key bindings similar to vi and less.
 For more information on `sc` please see the

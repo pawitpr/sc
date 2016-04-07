@@ -1052,27 +1052,34 @@ doabbrev(void) {
     int len, pos;
     struct abbrev *a;
     struct abbrev *prev;
-    
-    if (!(isalpha((int)line[linelim-1]) || isdigit((int)line[linelim-1]) ||
-	    line[linelim-1] == '_') || !(mode == INSERT_MODE ||
-	    mode == SEARCH_MODE) || istart >= linelim)
+
+    if (istart < 0 || linelim < 1)
+	return;
+
+    if (!(isalpha((int)line[linelim - 1]) || isdigit((int)line[linelim - 1]) ||
+      line[linelim - 1] == '_') || !(mode == INSERT_MODE ||
+      mode == SEARCH_MODE) || istart >= linelim)
 	return;
 
     pos = linelim - 2;
-    if (isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] == '_') {
+    if (isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] == '_')
+    {
 	for (; pos >= istart; pos--)
-	    if (!(isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] == '_'))
+	    if (!(isalpha((int)line[pos]) || isdigit((int)line[pos]) ||
+	      line[pos] == '_'))
 		break;
     } else if (line[pos] != ' ')
 	for (; pos >= istart; pos--)
-	    if (isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] == '_' ||
-		    line[pos] == ' ')
+	    if (isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos]
+	      == '_' || line[pos] == ' ')
 		break;
     pos++;
 
     if (istart && pos == istart) {
-	if (isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] == '_') {
-	    if (isalpha((int)line[--pos]) || isdigit((int)line[pos]) || line[pos] == '_')
+	if (isalpha((int)line[pos]) || isdigit((int)line[pos]) || line[pos] ==
+	  '_') {
+	    if (isalpha((int)line[--pos]) || isdigit((int)line[pos]) ||
+	      line[pos] == '_')
 		return;
 	} else {
 	    if (!(isalpha((int)line[--pos]) || isdigit((int)line[pos]) ||
