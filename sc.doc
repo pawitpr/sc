@@ -1179,7 +1179,7 @@ Go to cell
 Same as \TCTRL-E^E\T (see below).
 .\" ----------
 .TP
-.B "Arrow Keys"
+<Arrow Keys>
 The terminal's arrow keys provide another alternate
 set of cell cursor controls if they exist and are
 supported in the appropriate

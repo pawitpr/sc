@@ -36,10 +36,6 @@
 #include "compat.h"
 #include "sc.h"
 
-#ifdef NONOTIMEOUT
-#define	notimeout(a1, a2)
-#endif
-
 #ifdef VMS
 # include "gram_tab.h"
 typedef union {
@@ -642,21 +638,27 @@ void
 initkbd(void)
 {
     keypad(stdscr, TRUE);
+#ifndef NONOTIMEOUT
     notimeout(stdscr,TRUE);
+#endif
 }
 
 void
 kbd_again(void)
 {
     keypad(stdscr, TRUE);
+#ifndef NONOTIMEOUT
     notimeout(stdscr,TRUE);
+#endif
 }
 
 void
 resetkbd(void)
 {
     keypad(stdscr, FALSE);
+#ifndef NONOTIMEOUT
     notimeout(stdscr, FALSE);
+#endif
 }
 
 int

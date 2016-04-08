@@ -111,8 +111,8 @@ SAVE=-DSAVENAME=\"$(NAME).SAVE\"
 FMOD=
 
 # If your system doesn't have notimeout() in curses define NONOTIMEOUT
-#NO_NOTIMEOUT=-DNONOTIMEOUT
-NO_NOTIMEOUT=
+NO_NOTIMEOUT=-DNONOTIMEOUT
+#NO_NOTIMEOUT=
 
 # flags for lint
 LINTFLAGS=-abchxv
@@ -326,8 +326,7 @@ LN=ln
 # ASAN:  -fsanitize=address
 _CFLAGS= $(INCDIR_CURSES) $(DEFINES) -Wall -Wextra
 #	-O0 -g -fno-omit-frame-pointer -fno-optimize-sibling-calls \
-#	-fsanitize=undefined -fsanitize=integer
-#	-fsanitize=address
+#	-fsanitize=undefined -fsanitize=integer -fsanitize=address
 LIB=-lm $(LIBDIR_CURSES) $(LIB_CURSES)
 
 # All of the source files

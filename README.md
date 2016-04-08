@@ -36,7 +36,7 @@ Functional extensions:
   vertical scrolling with the mouse wheel.
   (In this case the shift key needs to be pressed for
   &lsquo;cut and paste&rsquo;.
-  All `sc` functions work well with curses
+  All `sc` functions work well with NetBSD curses
   but using the mouse requires ncurses.
   Using the mouse _wheel_ additionally requires
   ncurses version &ge; 6.)
