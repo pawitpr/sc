@@ -145,7 +145,7 @@ int VMS_read_raw = 0;
 #endif
 
 #ifdef NCURSES_MOUSE_VERSION
-void mouse_sel_cell(void);
+static int mouse_sel_cell(int);
 
 static MEVENT mevent;
 #endif
@@ -2057,8 +2057,13 @@ main (int argc, char  **argv)
 		    if (getmouse(&mevent) != OK)
 			break;
 		    if (mevent.bstate & BUTTON1_CLICKED) {
-			mouse_sel_cell();
+			mouse_sel_cell(0);
 			update(0);
+		    } else if (mevent.bstate & BUTTON1_PRESSED) {
+			mouse_sel_cell(1);
+		    } else if (mevent.bstate & BUTTON1_RELEASED) {
+			if (!mouse_sel_cell(2))
+			    update(0);
 		    }
 # if NCURSES_MOUSE_VERSION >= 2
 		    else if (mevent.bstate & BUTTON4_PRESSED) {
@@ -2321,24 +2326,36 @@ mouseoff(void) {
 }
 
 #ifdef NCURSES_MOUSE_VERSION
-void
-mouse_sel_cell(void) {
-	int i;
-	/* 3 rows above table, 4 characters before table */
-	if (mevent.y < 3 || mevent.x < 4)
-		return;
-	for (currow = strow, i = mevent.y - 3; ; currow++) {
-		if (row_hidden[currow])
+int
+mouse_sel_cell(int mode) { /* 0: set, 1: save, 2: cmp and set */
+	int i, y, x, tx, ty;
+	static int x1, y1;
+	if ((y = mevent.y - RESROW) < 0 || (x = mevent.x - rescol) < 0)
+		return 1;
+	for (ty = strow, i = y; ; ty++) {
+		if (row_hidden[ty])
 			continue;
 		if (--i < 0)
 			break;
 	}
-	for (curcol = stcol, i = mevent.x - 4; ; curcol++) {
-		if (col_hidden[curcol])
+	for (tx = stcol, i = x; ; tx++) {
+		if (col_hidden[tx])
 			continue;
-		if ((i -= fwidth[curcol]) < 0)
+		if ((i -= fwidth[tx]) < 0)
 			break;
 	}
+	switch (mode) {
+	case 1:
+		y1 = ty; x1 = tx;
+		break;
+	case 2:
+		if (y1 != ty || x1 != tx)
+			break;
+	default:
+		currow = ty; curcol = tx;
+		return 0;
+	}
+	return 1;
 }
 #endif
 
