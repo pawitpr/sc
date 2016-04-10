@@ -17,7 +17,8 @@
  *  Author: Robert Bond
  *  Adjustments: Jeff Buhrt, Eric Putz and Chuck Martin
  */
-char *rev = "$Revision: 7.16 $";
+
+#include "version.c"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -113,15 +114,16 @@ main(int argc, char **argv)
 	    plainnums = TRUE;
 	    break;
 	case 'v':
-	    (void) fprintf(stderr,"%s: %s\n", progname, rev);
+	    fprintf(stderr,"%s: %s\n", progname, rev);
+	    return 0;
 	default:
-	    (void) fprintf(stderr,"Usage: %s [-rkfLSPv] [-s v] [-R i] [-C i] [-n i] [-d c]\n", progname);
 	    exit(1);
         }
     }
 
     if (optind < argc) {
-	    (void) fprintf(stderr,"Usage: %s [-rL] [-s v] [-R i] [-C i] [-n i] [-d c]\n", progname);
+	    fprintf(stderr, "%s: %d more argument(s) than expected\n",
+		progname, argc - optind);
 	    exit(1);
     }
 

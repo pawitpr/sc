@@ -1912,7 +1912,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		    plinelim += strlen(pline+plinelim);
 		}
 		if ((s = (*pp)->label)) {
-		    size_t slen;
+		    ssize_t slen;
 		    char *start, *last;
 		    register char *fp;
 		    struct ent *nc;
@@ -1943,13 +1943,13 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 			error ("scxrealloc failed in printfile()");
 			return;
 		      }
-		    }		  
+		    }
 
 		    /* Now justify and print */
 		    start = (*pp)->flags & IS_LEFTFLUSH ? pline + c
 					: pline + c + fieldlen - slen;
 		    if( (*pp)->flags & IS_LABEL )
-			start = pline + (c + ((fwidth[col] > (ssize_t)slen) ?
+			start = pline + (c + ((fwidth[col] > slen) ?
 			  (fwidth[col] - slen) / 2 : 0));
 		    last = pline + c + fieldlen;
 		    fp = plinelim < (int)c ? pline + plinelim : pline + c;
@@ -1960,10 +1960,12 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 			strt = ++s;
 
 			while(slen--) {
-				*fp++ = *s++; if( *s == '\0' ) s = strt;
+				*fp++ = *s++;
+				if (*s == '\0')
+					s = strt;
 			}
 		    } else {
-			while (slen--) {
+			while (slen-- > 0) {
 			    if (*s == '\\') {
 				if (s[1] == '"') {
 				    ++s;
