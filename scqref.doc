@@ -1,0 +1,39 @@
+.\" Carsten Kunze, 2016
+.Dd April 11, 2016
+.Dt PNAME 1
+.Sh NAME
+.Nm pname
+.Nd output quick reference card in roff's
+.Fl ms
+format
+.Sh SYNOPSIS
+.Nm
+.Li | Ar "roff postprocessing ..."
+.Sh DESCRIPTION
+.Nm
+outputs a quick reference card for
+.Nm sc
+in roff's
+.Fl ms
+format.
+This output needs to be postprocessed by a roff tool
+to format it suited to be viewed or printed.
+.Sh EXAMPLES
+Generate PDF document with traditional troff:
+.Bd -filled -offset indent
+.Nm
+.Li | troff -ms | dpost | ps2pdf - Ar filename Ns Li .pdf
+.Ed
+.Pp
+.No The same using Nm groff :
+.Bd -filled -offset indent
+.Nm
+.Li | troff -Tpdf -ms | gropdf > Ar filename Ns Li .pdf
+.Ed
+.Pp
+View in a text terminal:
+.Bd -filled -offset indent
+.Nm
+.Li | nroff -ms | less
+.Ed
+.\" vim:set syntax=groff:

@@ -322,8 +322,6 @@ LN=ln
 #LIB=-lm -lpdcurses
 
 #########################################
-# UBSAN: -fsanitize=undefined -fsanitize=integer
-# ASAN:  -fsanitize=address
 _CFLAGS= $(INCDIR_CURSES) $(DEFINES) -Wall -Wextra
 #	-O0 -g -fno-omit-frame-pointer -fno-optimize-sibling-calls \
 #	-fsanitize=undefined -fsanitize=integer -fsanitize=address
@@ -342,7 +340,7 @@ OBJS=abbrev.o cmds.o color.o crypt.o format.o frame.o gram.o help.o interp.o \
 # The documents in the Archive
 DOCS=CHANGES README sc.doc psc.doc tutorial.sc VMS_NOTES torev build.com
 
-all:	$(name) p$(name) $(name)qref $(name).1 p$(name).1
+all:	$(name) p$(name) $(name)qref $(name).1 p$(name).1 $(name)qref.1
 
 $(name):$(PAR)  $(OBJS)
 	$(CC) $(_CFLAGS) ${LDFLAGS} ${OBJS} $(RPATH_CURSES) -o $(name) \
@@ -450,7 +448,7 @@ vi.o: vi.c sc.h
 
 clean:
 	rm -f *.o *res.h $(YTAB).h debug core gram.c $(name).1 p$(name).1 \
-	y.output pxmalloc.c pvmtbl.c qhelp.c tags
+	y.output pxmalloc.c pvmtbl.c qhelp.c tags $(name)qref.1
 
 distclean: clean
 	rm -f $(name) p$(name) $(name)qref Makefile config.log
@@ -477,18 +475,17 @@ lintpsc: psc.c vmtbl.c
 	lint ${LINTFLAGS} ${CFLAGS} $(_CFLAGS) ${SIMPLE} -DPSC \
 	    psc.c vmtbl.c
 
+.SUFFIXES: .doc .1
+
 .c.o:
 	$(CC) ${CFLAGS} $(_CFLAGS) -c $<
 
-$(name).1:	sc.doc torev
-	name=$(name) NAME=$(NAME) LIBDIR=$(LIBDIR) sh torev sc.doc > $(name).1
-
-p$(name).1:	psc.doc torev
-	name=$(name) NAME=$(NAME) LIBDIR=$(LIBDIR) sh torev psc.doc > p$(name).1
+.doc.1:
+	name=$(name) NAME=$(NAME) LIBDIR=$(LIBDIR) sh torev $< > $@
 
 install: $(EXDIR)/$(name) $(EXDIR)/$(name)qref $(EXDIR)/p$(name) \
 	 $(LIBDIR)/tutorial $(MANDIR)/$(name).$(MANEXT) \
-	 $(MANDIR)/p$(name).$(MANEXT)
+	 $(MANDIR)/p$(name).$(MANEXT) $(MANDIR)/$(name)qref.$(MANEXT)
 
 $(EXDIR)/$(name): $(name)
 	install $(name) $(EXDIR)
@@ -512,10 +509,13 @@ $(LIBDIR)/plugins:
 	mkdir -p $(LIBDIR)/plugins
 
 $(MANDIR)/$(name).$(MANEXT): $(name).1
-	install -m $(MANMODE) $(name).1 $(MANDIR)/$(name).$(MANEXT)
+	install -m $(MANMODE) $(name).1 $@
 
 $(MANDIR)/p$(name).$(MANEXT): p$(name).1
-	install -m $(MANMODE) p$(name).1 $(MANDIR)/p$(name).$(MANEXT)
+	install -m $(MANMODE) p$(name).1 $@
+
+$(MANDIR)/$(name)qref.$(MANEXT): $(name)qref.1
+	install -m $(MANMODE) $(name)qref.1 $@
 
 uninstall:
 	rm -f $(EXDIR)/$(name)
@@ -524,6 +524,7 @@ uninstall:
 	rm -rf $(LIBDIR)
 	rm -f $(MANDIR)/$(name).$(MANEXT)
 	rm -f $(MANDIR)/p$(name).$(MANEXT)
+	rm -f $(MANDIR)/$(name)qref.$(MANEXT)
 
 files:
 	@find $(DOCS) $(SRC) -print

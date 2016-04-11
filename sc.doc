@@ -106,9 +106,18 @@ For an online tutorial, type the command:
 .IP
 pname #LIBDIR#/tutorial.pname
 .LP
-To print a quick reference card, type the command:
+To generate a quick reference card in PDF format, type the command
+(for traditional
+.BR troff ):
 .IP
-pnameqref | [your_printer_commmand]
+pnameqref | troff \-ms | dpost | ps2pdf \-
+.IR filename .pdf
+.LP
+Or for using
+.BR groff :
+.IP
+pnameqref | troff \-Tpdf \-ms | gropdf >
+.IR filename .pdf
 .\" ----------
 .SH OPTIONS
 .\" ----------

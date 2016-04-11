@@ -2067,11 +2067,11 @@ main (int argc, char  **argv)
 		    }
 # if NCURSES_MOUSE_VERSION >= 2
 		    else if (mevent.bstate & BUTTON4_PRESSED) {
-			scroll_down();
+			scroll_up(1);
 			FullUpdate++;
 			update(0);
 		    } else if (mevent.bstate & BUTTON5_PRESSED) {
-			scroll_up(1);
+			scroll_down();
 			FullUpdate++;
 			update(0);
 		    }
