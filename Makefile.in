@@ -485,7 +485,8 @@ lintpsc: psc.c vmtbl.c
 
 install: $(EXDIR)/$(name) $(EXDIR)/$(name)qref $(EXDIR)/p$(name) \
 	 $(LIBDIR)/tutorial $(MANDIR)/$(name).$(MANEXT) \
-	 $(MANDIR)/p$(name).$(MANEXT) $(MANDIR)/$(name)qref.$(MANEXT)
+	 $(MANDIR)/p$(name).$(MANEXT) $(MANDIR)/$(name)qref.$(MANEXT) \
+	 $(EXDIR)/x$(name)
 
 $(EXDIR)/$(name): $(name)
 	install $(name) $(EXDIR)
@@ -498,6 +499,9 @@ $(EXDIR)/$(name)qref: $(name)qref
 $(EXDIR)/p$(name): p$(name)
 	install p$(name) $(EXDIR)
 	strip $(EXDIR)/p$(name)
+
+$(EXDIR)/x$(name): xsc
+	install xsc $(EXDIR)/x$(name)
 
 $(LIBDIR)/tutorial: tutorial.sc $(LIBDIR) $(LIBDIR)/plugins
 	install -m $(MANMODE) tutorial.sc $(LIBDIR)/tutorial.$(name)

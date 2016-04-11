@@ -1,8 +1,8 @@
 .\" Carsten Kunze, 2016
 .Dd April 11, 2016
-.Dt PNAME 1
+.Dt PNAMEQREF 1
 .Sh NAME
-.Nm pname
+.Nm pnameqref
 .Nd output quick reference card in roff's
 .Fl ms
 format
