@@ -1298,9 +1298,9 @@ setitem	:	K_AUTO			{ setauto(1); }
 	|	K_AUTOWRAP		{ autowrap = 1; }
 	|	'~' K_AUTOWRAP		{ autowrap = 0; }
 	|	'!' K_AUTOWRAP		{ autowrap = 0; }
-	|	K_CSLOP			{ cslop = 0; }
-	|	'~' K_CSLOP		{ cslop = 1; }
-	|	'!' K_CSLOP		{ cslop = 1; }
+	|	K_CSLOP			{ cslop = 1; FullUpdate++; }
+	|	'~' K_CSLOP		{ cslop = 0; FullUpdate++; }
+	|	'!' K_CSLOP		{ cslop = 0; FullUpdate++; }
 	|	K_COLOR			{ color = 1;
 					  if (usecurses && has_colors()) {
 					    color_set(1, NULL);

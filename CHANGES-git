@@ -4,6 +4,8 @@
        made to fix this.   
      * Bugfix: Automatic color range removal in fix_crange() led to a        
        invalid pointer access crash. 
+     * Bugfix: "set cslop/!cslop" had no visual effect an did set the        
+       internal cslope value to the wrong (inverted) logical level.
 2016-04-06       
      * Selecting cells with the left mouse button added. 
      * Bugfix: Scrolling upwards with ^Y did not check if top row is         
