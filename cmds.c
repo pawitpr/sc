@@ -31,6 +31,8 @@
 
 void	syncref(register struct enode *e);
 void	unspecial(FILE *f, char *str, int delim);
+static struct ent *deldata1(void);
+static void deldata2(struct ent *obuf);
 
 /* a linked list of free [struct ent]'s, uses .next as the pointer */
 extern	struct ent *freeents;
@@ -305,7 +307,6 @@ deleterow(register int arg)
     int i;
     int rs = maxrow - currow + 1;
     struct frange *fr;
-    struct ent *p;
     struct ent *obuf = NULL;
     char buf[50];
 
@@ -325,44 +326,11 @@ deleterow(register int arg)
 	} else {
 	    FullUpdate++;
 	    modflg++;
-	    if (dbidx < 0) dbidx++;
-	    delbuf[dbidx] = delbuf[DELBUFSIZE - 1];
-	    delbuffmt[dbidx] = delbuffmt[DELBUFSIZE - 1];
-	    delbuf[DELBUFSIZE - 1] = NULL;
-	    delbuffmt[DELBUFSIZE - 1] = NULL;
-	    for (i = dbidx + 1; i < DELBUFSIZE; i++) {
-		if (delbuf[i] == delbuf[dbidx]) {
-		    delbuf[dbidx] = NULL;
-		    delbuffmt[dbidx] = NULL;
-		    break;
-		}
-	    }
-	    flush_saved();
-	    if (qbuf) {
-		if (dbidx < 0) dbidx++;
-		delbuf[dbidx] = delbuf[qbuf];
-		delbuffmt[dbidx] = delbuffmt[qbuf];
-		flush_saved();
-		obuf = delbuf[qbuf];	/* orig. contents of the del. buffer */
-	    }
-	    sync_refs();
+	    obuf = deldata1();
 	    erase_area(currow, fr->or_left->col, currow + arg - 1,
 		    fr->or_right->col, 0);
 	    fix_ranges(currow, -1, currow + arg - 1, -1, -1, -1);
-	    for (i = 0; i < DELBUFSIZE; i++)
-		if ((obuf && delbuf[i] == obuf) || (qbuf && i == qbuf)) {
-		    delbuf[i] = delbuf[dbidx];
-		    delbuffmt[i] = delbuffmt[dbidx];
-		}
-	    qbuf = 0;
-	    for (i = DELBUFSIZE - 1; i > DELBUFSIZE - 9; i--) {
-		delbuf[i] = delbuf[i-1];
-		delbuffmt[i] = delbuffmt[i-1];
-	    }
-	    delbuf[DELBUFSIZE - 9] = delbuf[dbidx];
-	    delbuffmt[DELBUFSIZE - 9] = delbuffmt[dbidx];
-	    for (p = delbuf[dbidx]; p; p = p->next)
-		p->flags &= ~MAY_SYNC;
+	    deldata2(obuf);
 	    if (currow + arg > fr->ir_right->row &&
 		    fr->ir_right->row >= currow)
 		fr->ir_right = lookat(currow - 1, fr->ir_right->col);
@@ -420,46 +388,61 @@ deleterow(register int arg)
 	if (any_locked_cells(currow, 0, currow + arg - 1, maxcol)) {
 	    error("Locked cells encountered. Nothing changed");
 	} else {
-	    if (dbidx < 0) dbidx++;
-	    delbuf[dbidx] = delbuf[DELBUFSIZE - 1];
-	    delbuffmt[dbidx] = delbuffmt[DELBUFSIZE - 1];
-	    delbuf[DELBUFSIZE - 1] = NULL;
-	    delbuffmt[DELBUFSIZE - 1] = NULL;
-	    for (i = dbidx + 1; i < DELBUFSIZE; i++) {
-		if (delbuf[i] == delbuf[dbidx]) {
-		    delbuf[dbidx] = NULL;
-		    delbuffmt[dbidx] = NULL;
-		    break;
-		}
-	    }
-	    flush_saved();
-	    if (qbuf) {
-		if (dbidx < 0) dbidx++;
-		delbuf[dbidx] = delbuf[qbuf];
-		delbuffmt[dbidx] = delbuffmt[qbuf];
-		flush_saved();
-		obuf = delbuf[qbuf];	/* orig. contents of the del. buffer */
-	    }
-	    sync_refs();
+	    obuf = deldata1();
 	    erase_area(currow, 0, currow + arg - 1, maxcol, 0);
 	    fix_ranges(currow, -1, currow + arg - 1, -1, -1, -1);
 	    closerow(currow, arg);
-	    for (i = 0; i < DELBUFSIZE; i++)
-		if ((obuf && delbuf[i] == obuf) || (qbuf && i == qbuf)) {
-		    delbuf[i] = delbuf[dbidx];
-		    delbuffmt[i] = delbuffmt[dbidx];
-		}
-	    qbuf = 0;
-	    for (i = DELBUFSIZE - 1; i > DELBUFSIZE - 9; i--) {
-		delbuf[i] = delbuf[i-1];
-		delbuffmt[i] = delbuffmt[i-1];
-	    }
-	    delbuf[DELBUFSIZE - 9] = delbuf[dbidx];
-	    delbuffmt[DELBUFSIZE - 9] = delbuffmt[dbidx];
-	    for (p = delbuf[dbidx]; p; p = p->next)
-		p->flags &= ~MAY_SYNC;
+	    deldata2(obuf);
 	}
     }
+}
+
+static struct ent *
+deldata1(void) {
+    int i;
+    struct ent *obuf = NULL;
+    if (dbidx < 0) dbidx++;
+    delbuf[dbidx] = delbuf[DELBUFSIZE - 1];
+    delbuffmt[dbidx] = delbuffmt[DELBUFSIZE - 1];
+    delbuf[DELBUFSIZE - 1] = NULL;
+    delbuffmt[DELBUFSIZE - 1] = NULL;
+    for (i = dbidx + 1; i < DELBUFSIZE; i++) {
+	if (delbuf[i] == delbuf[dbidx]) {
+	    delbuf[dbidx] = NULL;
+	    delbuffmt[dbidx] = NULL;
+	    break;
+	}
+    }
+    flush_saved();
+    if (qbuf) {
+	if (dbidx < 0) dbidx++;
+	delbuf[dbidx] = delbuf[qbuf];
+	delbuffmt[dbidx] = delbuffmt[qbuf];
+	flush_saved();
+	obuf = delbuf[qbuf];	/* orig. contents of the del. buffer */
+    }
+    sync_refs();
+    return obuf;
+}
+
+static void
+deldata2(struct ent *obuf) {
+    int i;
+    struct ent *p;
+    for (i = 0; i < DELBUFSIZE; i++)
+	if ((obuf && delbuf[i] == obuf) || (qbuf && i == qbuf)) {
+	    delbuf[i] = delbuf[dbidx];
+	    delbuffmt[i] = delbuffmt[dbidx];
+	}
+    qbuf = 0;
+    for (i = DELBUFSIZE - 1; i > DELBUFSIZE - 9; i--) {
+	delbuf[i] = delbuf[i-1];
+	delbuffmt[i] = delbuffmt[i-1];
+    }
+    delbuf[DELBUFSIZE - 9] = delbuf[dbidx];
+    delbuffmt[DELBUFSIZE - 9] = delbuffmt[dbidx];
+    for (p = delbuf[dbidx]; p; p = p->next)
+	p->flags &= ~MAY_SYNC;
 }
 
 void

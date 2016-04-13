@@ -283,13 +283,14 @@ void
 fix_colors(int row1, int col1, int row2, int col2, int delta1, int delta2)
 {
     int r1, c1, r2, c2;
-    struct crange *cr;
+    struct crange *cr, *ncr;
     struct frange *fr;
 
     fr = find_frange(currow, curcol);
 
     if (color_base)
-	for (cr = color_base; cr; cr = cr->r_next) {
+	for (cr = color_base; cr; cr = ncr) {
+	    ncr = cr->r_next;
 	    r1 = cr->r_left->row;
 	    c1 = cr->r_left->col;
 	    r2 = cr->r_right->row;
@@ -305,9 +306,12 @@ fix_colors(int row1, int col1, int row2, int col2, int delta1, int delta2)
 		if (c1 != c2 && c2 >= col1 && c2 <= col2) c2 = col1 + delta2;
 	    }
 
-	    if (r1 > r2 || c1 > c2)	/* the 0 means delete color range */
+	    if (r1 > r2 || c1 > c2 ||
+	      (row1 >= 0 && row2 >= 0 && row1 <= r1 && row2 >= r2) ||
+	      (col1 >= 0 && col2 >= 0 && col1 <= c1 && col2 >= c2)) {
+		/* the 0 means delete color range */
 		add_crange(cr->r_left, cr->r_right, 0);
-	    else {
+	    } else {
 		cr->r_left = lookat(r1, c1);
 		cr->r_right = lookat(r2, c2);
 	    }

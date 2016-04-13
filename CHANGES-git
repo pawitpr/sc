@@ -1,3 +1,9 @@
+2016-04-13       
+     * When rows or columns are deleted (e.g. with "dr" or "dc"),            
+       enclosed color ranges had not been deleted.  An attempt had been      
+       made to fix this.   
+     * Bugfix: Automatic color range removal in fix_crange() led to a        
+       invalid pointer access crash. 
 2016-04-06       
      * Selecting cells with the left mouse button added. 
      * Bugfix: Scrolling upwards with ^Y did not check if top row is         
@@ -6,7 +12,7 @@
 2016-04-05       
      * On some terminals ^Y did suspend sc instead of scrolling the
        screen down.  This "delayed suspend" is now disabled (like in vi)     
-       to make ^Y's scroll down function work an any terminal.     
+       to make ^Y's scroll down function work on any terminal.     
      * Vertical scrolling using the mouse wheel possible after .scrc         
        command "set mouse"           
 2016-04-01       
