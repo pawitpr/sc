@@ -147,7 +147,7 @@ int VMS_read_raw = 0;
 #ifdef NCURSES_MOUSE_VERSION
 static int mouse_sel_cell(int);
 
-static MEVENT mevent;
+MEVENT mevent;
 #endif
 
 /* return a pointer to a cell's [struct ent *], creating if needed */

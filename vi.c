@@ -66,6 +66,9 @@ static void u_save(int c);
 static void yank_cmd(int delete, int change);
 static void yank_chars(register int first, register int last, int delete);
 int vigetch(void);
+#ifdef NCURSES_MOUSE_VERSION
+void mouse_set_pos(int);
+#endif
 
 extern int framerows;		/* Rows in current frame */
 extern char mode_ind;		/* Mode indicator */
@@ -228,7 +231,20 @@ write_line(int c)
 	case KEY_DC:
 	case 'x':	u_save(c); del_in_line(arg, 1);			break;
 	case 'y':	yank_cmd(0, 0);					break;
-	default:							break;
+#ifdef NCURSES_MOUSE_VERSION
+	case KEY_MOUSE:
+	    if (getmouse(&mevent) != OK || mevent.y)
+		break;
+	    if (mevent.bstate & BUTTON1_CLICKED)
+		mouse_set_pos(0);
+	    else if (mevent.bstate & BUTTON1_PRESSED)
+		mouse_set_pos(1);
+	    else if (mevent.bstate & BUTTON1_RELEASED)
+		mouse_set_pos(2);
+	    break;
+#endif
+	default:
+	    break;
 	}
     } else if (mode == INSERT_MODE) { 
 	if (c == (ctl('m')))
@@ -327,6 +343,18 @@ write_line(int c)
 	 * character in the line
 	 */
 	case '\035':		if (linelim > 0) doabbrev();		break;
+#ifdef NCURSES_MOUSE_VERSION
+	case KEY_MOUSE:
+	    if (getmouse(&mevent) != OK || mevent.y)
+		break;
+	    if (mevent.bstate & BUTTON1_CLICKED)
+		mouse_set_pos(0);
+	    else if (mevent.bstate & BUTTON1_PRESSED)
+		mouse_set_pos(1);
+	    else if (mevent.bstate & BUTTON1_RELEASED)
+		mouse_set_pos(2);
+	    break;
+#endif
 	default:		ins_in_line(c);				break;
 	}
     } else if (mode == SEARCH_MODE) {
@@ -2026,3 +2054,20 @@ query(const char *s, char *data)
 	}
     }
 }
+
+#ifdef NCURSES_MOUSE_VERSION
+void
+mouse_set_pos(int mode) {
+	static int x0;
+	switch (mode) {
+	case 1:
+		x0 = mevent.x;
+		break;
+	case 2:
+		if (x0 != mevent.x)
+			break;
+	default:
+		linelim = mevent.x - 3;
+	}
+}
+#endif

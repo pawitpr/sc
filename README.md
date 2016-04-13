@@ -32,8 +32,11 @@ Functional extensions:
   command `histfile` or save no history at all with an empty
   command argument.
 * Command `set mouse` (e.g. in `.scrc`) enables
-  selecting cells with the left mouse button and
-  vertical scrolling with the mouse wheel.
+
+  * Selecting cells with the left mouse button
+  * Vertical scrolling with the mouse wheel
+  * Selecting the edit line position with the left mouse button
+
   (In this case the shift key needs to be pressed for
   &lsquo;cut and paste&rsquo;.
   All `sc` functions work well with NetBSD curses

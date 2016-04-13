@@ -614,6 +614,9 @@ extern	int craction;
 extern	int  pagesize;	/* If nonzero, use instead of 1/2 screen height */
 extern	int rowlimit;
 extern	int collimit;
+#ifdef NCURSES_MOUSE_VERSION
+extern MEVENT mevent;
+#endif
 void gotonote(void);
 void center(int, int, int, int);
 void rjustify(int, int, int, int);
