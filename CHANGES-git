@@ -7,6 +7,7 @@
      * Bugfix: "set cslop/!cslop" had no visual effect an did set the        
        internal cslope value to the wrong (inverted) logical level.
      * Left mouse button support for edit/input line     
+     * Bugfix: vi commands f,t,F,T: Buffer out of bounds access fixed        
 2016-04-06       
      * Selecting cells with the left mouse button added. 
      * Bugfix: Scrolling upwards with ^Y did not check if top row is         

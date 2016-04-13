@@ -791,10 +791,9 @@ savedot(int c)
     }
 }
 
-static int dotcalled = 0;
-
 static void
 dotcmd(void) {
+    static int dotcalled = 0;
     int c;
 
     if (dotcalled)	/* stop recursive calling of dotcmd() */
@@ -1732,31 +1731,31 @@ last_col(void) {
 }
 
 static int
-find_char(int arg, int n)
-{
-    register int i;
+find_char(int arg, int n) {
+	register int i;
 
-    if (findchar)
-	finddir = n;
-    findchar = vigetch();
-    switch (dotb[doti - 1]) {
-	case 'f': case 'F': case 't': case 'T':
-	    savedot(findchar);
-	default:
-	    break;
-    }
-    i = linelim;
-    while (arg--) {
-	i += n;
-	while (i >= 0 && line[i] && line[i] != findchar)
-	    i += n;
-	if (i < 0 || !line[i]) {
-	    i = linelim;
-	    break;
+	if (findchar)
+		finddir = n;
+	findchar = vigetch();
+	if (doti > 0)
+		switch (dotb[doti - 1]) {
+		case 'f': case 'F': case 't': case 'T':
+			savedot(findchar);
+		default:
+			break;
+		}
+	i = linelim;
+	while (arg--) {
+		i += n;
+		while (i >= 0 && line[i] && line[i] != findchar)
+			i += n;
+		if (i < 0 || !line[i]) {
+			i = linelim;
+			break;
+		}
 	}
-    }
-    findfunc = 'f';
-    return (i);
+	findfunc = 'f';
+	return i;
 }
 
 static int
