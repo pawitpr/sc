@@ -20,6 +20,21 @@ usage () {
 	exit $1
 }
 
+SFLAG=
+MAKE=
+DEFS=
+LIB_CURSES=
+
+while [ $# -gt 0 ]; do
+	case $1 in
+	-s) SFLAG=1;;
+	*)
+		echo "$0: $1: Unknown option" >&2
+		usage 1;;
+	esac
+	shift
+done
+
 check_for () {
 	[ -e $LOG ] && echo >>$LOG
 	A="Checking for $1 ... "
@@ -63,7 +78,6 @@ gen_mk () {
 	[ -n "$LIB_CURSES" ] && echo "LIB_CURSES=$LIB_CURSES" >> $OUTMK
 	cat $INMK >> $OUTMK || exit 1
 }
-
 check_make () {
 	check_for "make(1)"
 
@@ -89,7 +103,6 @@ EOT
 	bmake -f $TMPMK >> $LOG 2>&1
 	test_result && MAKE=bmake
 }
-
 check_float_store () {
 	FLOAT_STORE=-ffloat-store
 	check_for "$FLOAT_STORE"
@@ -122,7 +135,6 @@ EOT
 	fi
 	test_result || FLOAT_STORE=
 }
-
 check_strlcpy () {
 	check_for "strlcpy(3)"
 
@@ -139,7 +151,6 @@ EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_STRLCPY"
 }
-
 check_strlcat () {
 	check_for "strlcat(3)"
 
@@ -157,25 +168,6 @@ EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_STRLCAT"
 }
-
-check_wcslcpy () {
-	check_for "wcslcpy(3)"
-
-	cat <<EOT >$TMPC
-#include <stdio.h>
-#include <wchar.h>
-int
-main() {
-	wchar_t a, b;
-	a = getwchar();
-	wcslcpy(&b, &a, 1);
-	return 0;
-}
-EOT
-	compile
-	test_result && DEFS="$DEFS -DHAVE_WCSLCPY"
-}
-
 compile_curses () {
 	cat <<EOT >$TMPC
 #include "compat.h"
@@ -258,7 +250,6 @@ check_lib_curses () {
 	# If mouse support is not required, NetBSD curses works perfectly.
 	check_curses && return
 }
-
 check_fixterm () {
 	check_for fixterm
 
@@ -278,7 +269,6 @@ EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_FIXTERM"
 }
-
 check_resetterm () {
 	check_for resetterm
 
@@ -298,19 +288,6 @@ EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_RESETTERM"
 }
-
-SFLAG=
-
-while [ $# -gt 0 ]; do
-	case $1 in
-	-s) SFLAG=1;;
-	*)
-		echo "$0: $1: Unknown option" >&2
-		usage 1;;
-	esac
-	shift
-done
-
 OUTMK=Makefile
 INMK=${OUTMK}.in
 CFG=config
@@ -319,9 +296,6 @@ TMPMK=${TMPNAM}.mk
 TMPC=${TMPNAM}.c
 LOG=${CFG}.log
 rm -f $OUTMK $LOG
-MAKE=
-DEFS=
-LIB_CURSES=
 gen_mk
 
 check_make

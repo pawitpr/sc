@@ -1908,7 +1908,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 		    slen = strlen(s);
 		    if (*s == '\\' && *(s+1) != '\0')
 			slen = fwidth[col];
-		    while (slen > fieldlen && (int)nextcol <= cn &&
+		    while (slen > (ssize_t)fieldlen && (int)nextcol <= cn &&
 			    !((nc = lookat(row,nextcol))->flags & IS_VALID) &&
 			    !(nc->label)) {
 			
@@ -1917,7 +1917,7 @@ printfile(char *fname, int r0, int c0, int rn, int cn)
 
 			nextcol++;
 		    }
-		    if (slen > fieldlen)
+		    if (slen > (ssize_t)fieldlen)
 			slen = fieldlen;
 		    
 		    while(c + fieldlen + 2 > (fbufs_allocated * FBUFLEN)) {

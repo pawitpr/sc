@@ -486,7 +486,7 @@ lintpsc: psc.c vmtbl.c
 	name=$(name) NAME=$(NAME) LIBDIR=$(LIBDIR) sh torev $< > $@
 
 install: $(EXDIR)/$(name) $(EXDIR)/$(name)qref $(EXDIR)/p$(name) \
-	 $(LIBDIR)/tutorial $(MANDIR)/$(name).$(MANEXT) \
+	 $(LIBDIR)/tutorial.$(name) $(MANDIR)/$(name).$(MANEXT) \
 	 $(MANDIR)/p$(name).$(MANEXT) $(MANDIR)/$(name)qref.$(MANEXT) \
 	 $(EXDIR)/x$(name) $(MANDIR)/x$(name).$(MANEXT)
 
@@ -502,13 +502,13 @@ $(EXDIR)/p$(name): p$(name)
 	install p$(name) $(EXDIR)/
 	strip $(EXDIR)/p$(name)
 
-$(EXDIR)/x$(name):
+$(EXDIR)/x$(name): p$(name)
 	install x$(name) $(EXDIR)/
 
 x$(name): xsc.sh
 	name=$(name) sh torev < xsc.sh > x$(name)
 
-$(LIBDIR)/tutorial: tutorial.sc $(LIBDIR) $(LIBDIR)/plugins
+$(LIBDIR)/tutorial.$(name): tutorial.sc $(LIBDIR) $(LIBDIR)/plugins
 	install -m $(MANMODE) tutorial.sc $(LIBDIR)/tutorial.$(name)
 
 $(LIBDIR):
