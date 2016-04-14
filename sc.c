@@ -252,6 +252,7 @@ main (int argc, char  **argv)
     int eopt = 0;
     int popt = 0;
     int qopt = 0;
+    int Mopt = 0;
 
     Vopt = 0;
 
@@ -268,7 +269,7 @@ main (int argc, char  **argv)
     else
 	progname = argv[0];
 
-    while ((c = getopt(argc, argv, "axmoncrCReP:W:vq")) != EOF) {
+    while ((c = getopt(argc, argv, "axmoncrCReP:W:vqM")) != EOF) {
     	switch (c) {
 	    case 'a':
 		    skipautorun = 1;
@@ -316,9 +317,10 @@ main (int argc, char  **argv)
 	    case 'q':
 		    qopt = 1;
 		    break;
+	    case 'M':
+		    Mopt = 1;
+		    break;
 	    default:
-		    (void) fprintf(stderr,
-			    "Usage: %s [-acemnoqrxCR] [file...]\n", progname);
 		    exit (1);
 	}
     }
@@ -411,6 +413,8 @@ main (int argc, char  **argv)
 	craction = CRROWS;
     if (eopt)
 	rndtoeven = 1;
+    if (Mopt)
+	mouseon();
     if (popt) {
 	char *redraw = NULL;
 	int o;

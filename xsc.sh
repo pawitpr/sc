@@ -2,9 +2,12 @@
 while [ $# -gt 0 ]; do
 	case "$1" in
 	-fg | -bg | -fn)
-		XArg="$XArg $1"
+		XFl="$XFl $1"
 		shift
-		XArg="$XArg \"$1\""
+		XFl="$XFl \"$1\""
+		;;
+	-*)
+		SFl="$SFl \\\"$1\\\""
 		;;
 	*)
 		SArg="$SArg \\\"$1\\\""
@@ -12,6 +15,6 @@ while [ $# -gt 0 ]; do
 	esac
 	shift
 done
-Cmd="xterm $XArg -T \"sc $SArg\" -e \"sc $SArg\""
+Cmd="xterm $XFl -T \"pname $SArg\" -e \"pname -M $SFl $SArg\""
 #echo $Cmd
 eval $Cmd

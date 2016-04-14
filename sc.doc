@@ -18,16 +18,16 @@
 .\" - Avoid passive voice and third person.
 .\" $Revision: 7.16 $
 .\"
-.TH PNAME 1 "March 26, 2016" "PNAME #REVISION#"
+.TH PNAME 1 "April 14, 2016" "PNAME #REVISION#"
 .SH NAME
 pname \- spreadsheet calculator
 .SH SYNOPSIS
 .SY pname
-.OP \-aCcemnoqRrvx
+.OP \-aCceMmnoqRrvx
 .RB [ \-P
-.IR range [ /address ]
+.IR range [/ address ]
 |
-.IR /address ]
+.RI / address ]
 .OP \-W range
 .RI [ file
 .IR .\|.\|. ]
@@ -60,18 +60,23 @@ The default filename for saving a file with the
 command will be the same as the first file specified,
 and the other files will be treated as macros.
 If you want to use advanced macros from the command
-line, the \(lq|\(rq must be quoted to prevent it from being
+line, the
+.RB \(oq | \(cq
+must be quoted to prevent it from being
 expanded by the shell.
 .LP
-Options begin with \-.
-However, an argument of a single \- will be
-interpreted to mean that spreadsheet data
+Options begin with
+.RB \(oq \- \(cq.
+However, an argument of a single
+.RB \(oq \- \(cq
+will be interpreted to mean that spreadsheet data
 will be taken from the standard input.
 This is useful for including
 .B pname
 in a pipeline if the system supports pipes.
-However, if standard input is not a terminal,
-the \- is only necessary if there are multiple
+However, if standard input is not a terminal, the
+.RB \(oq \- \(cq
+is only necessary if there are multiple
 files and standard input is not the last to be
 read, since standard input is automatically
 read in after all other files in such cases
@@ -79,21 +84,31 @@ if it is not specified explicitly, or if there
 are no other filenames on the command line.
 If
 .B pname
-is included in a pipeline, and a filename of \(oq\-\(cq
+is included in a pipeline, and a filename of
+.RB \(oq \- \(cq
 is not specified, the standard input will be merged
 in after all of the other named files have been
 processed.
 .LP
-The first argument not beginning with a \-,
-or a single \- by itself, and any subsequent
+The first argument not beginning with a
+.RB \(oq \- \(cq,
+or a single
+.RB \(oq \- \(cq
+by itself, and any subsequent
 arguments will all be interpreted as
-filenames (a filename of \- meaning
-standard input as noted above).
-In addition, an argument of \(em may
-be used to signify that all subsequent
+filenames (a filename of
+.RB \(oq \- \(cq
+meaning standard input as noted above).
+In addition, an argument of
+.RB \(lq \-\- \(rq
+may be used to signify that all subsequent
 arguments should be treated as filenames
-even if they begin with a \-, but unlike \-,
-\(em won't be treated as a filename itself.
+even if they begin with a
+.RB \(oq \- \(cq,
+but unlike
+.RB \(oq \- \(cq,
+.RB \(lq \-\- \(rq
+won't be treated as a filename itself.
 .LP
 Each cell may have associated with it
 a numeric value,
@@ -194,10 +209,20 @@ Start the program with automatic newline action set to increment the column
 (\TNewlineActionsee below\T).
 .\" ----------
 .TP
-.BI \-P " range[/address]"
+.B \-M
+Process mouse events (see options
+.BR \Tset_mousemouse / !mouse\T ).
+This option overrides a
+.RB \(lq "set !mouse" \(rq
+command in
+.BR .scrc .
+It is used by
+.BR xsc (1).
+.TP
+\fB\-P\fI range\fR[/\fIaddress\fR]
 .PD 0
 .TP
-.BI \-P " /address"
+\fB\-P\fR /\fIaddress\fR
 .PD
 Pipe a range to standard output.
 The output is similar to that of the
@@ -486,8 +511,8 @@ indicated by the terminal's hardware cursor.
 .\" ----------
 .PP
 If a cell's numeric value is wider than the column width (see the
-.B \TFCmdf
-command\T), the cell is filled with asterisks.
+.B \TFCmdf\T
+command), the cell is filled with asterisks.
 If a cell's label string is wider than the column width,
 it is truncated at the start of the next non-blank cell in the row, if any.
 .\" ----------
@@ -1101,7 +1126,7 @@ The default is
 .B not
 to do backups.
 .TP
-.BR mouse / !mouse
+.BR \Aset_mousemouse / !mouse
 Process mouse events.
 By default mouse support is disabled for compatibility reasons
 with traditional
@@ -1109,10 +1134,10 @@ with traditional
 If mouse events are enabled, the shift key must be
 pressed to use the mouse \(oqcut and paste\(cq feature.
 Currently selecting cells with the left mouse button,
-vertical scrolling using the mouse wheel, and
+vertical scrolling using the mouse wheel
+(requires ncurses version \(>= 6), and
 selecting the position in the edit line with the left mosue button
 is implemented.
-(Requires ncurses version \(>= 6.)
 .RE
 .\" ==========
 .SS "Cursor Control Commands"
@@ -1737,13 +1762,12 @@ Change the case of the character under the cursor.
 .TP
 .BR /
 Search backwards for a string in the history
-.RS
+.TS
+ll.
 <ESC>	edit the string you typed
-.br
 <RETURN>	search
-.br
 \fB^H\fP	backspace
-.RE
+.TE
 .TP
 .B ?
 Search forward for a string in the history (see \(lq/\(rq above)
@@ -1806,8 +1830,8 @@ the current cell.
 .TP
 .BR d
 Delete ...
-.RS
-.nf
+.TS
+ll.
 \fB0\fP	delete to beginning of line
 \fB$\fP	delete to end of line
 \fBb\fP	back word
@@ -1817,8 +1841,7 @@ Delete ...
 \fBl\fP	forward
 \fBt\fP	delete forward up to a given char (next char typed)
 \fBw\fP	delete next word forward
-.fi
-.RE
+.TE
 .TP
 .B e
 Forward to next end-of-word
@@ -4523,7 +4546,14 @@ Jeff Buhrt
 of Proslink, Inc.
 and Robert Bond of Sequent,
 prominent among them.
-The current maintainer is Chuck Martin (nrocinu@myrealbox.com).
+Maintainer until 2002 had been
+.MT nrocinu@myrealbox.com
+Chuck Martin
+.ME .
+Bugs and other issues can be reported at
+.UR https://github.com/n-t-roff/sc
+the current maintenance site
+.UE .
 .PP
 Other contributors include:
 Tom Anderson,

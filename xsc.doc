@@ -1,0 +1,22 @@
+.\" Carsten Kunze, 2016
+.Dd April 14, 2016
+.Dt XPNAME 1
+.Sh NAME
+.Nm xpname
+.Nd open pname with mouse support in a separate xterm
+.Sh SYNOPSIS
+.Nm
+.Op Ar "pname options"
+.Sh DESCRIPTION
+There are use cases for
+.Nm sc
+where it is desirable to start it in a separate X window.
+.Nm
+just starts
+.Do Nm xterm Fl e Dc
+with
+.Nm sc
+and the
+.Ar "sc options"
+as argument and enables mouse support.
+.\" vim:set syntax=groff:
