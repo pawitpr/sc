@@ -69,6 +69,7 @@ test_result () {
 
 gen_mk () {
 	rm -f $OUTMK
+	[ -n "$LEX" ] && echo "LEX=$LEX" >> $OUTMK
 	[ -n "$FLOAT_STORE" ] && echo "FLOAT_STORE=$FLOAT_STORE" >> $OUTMK
 	[ -n "$DEFS" ] && echo "DEFINES=$DEFS" >> $OUTMK
 	[ -n "$INCDIR_CURSES" ] && echo "INCDIR_CURSES=$INCDIR_CURSES" >> $OUTMK

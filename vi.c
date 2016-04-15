@@ -1417,9 +1417,9 @@ doshell(void)
     if (!(pid = fork())) {
 	(void) signal(SIGINT, SIG_DFL);  /* reset */
 	if (strlen(cmd))
-	    (void) execl(shl, shl, "-c", cmd, NULL);
+	    execl(shl, shl, "-c", cmd, (char *)NULL);
 	else
-	    (void) execl(shl, shl, NULL);
+	    execl(shl, shl, (char *)NULL);
 	exit (-127);
     }
 

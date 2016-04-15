@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <string.h>
 #include "sc.h"
 
 #define END	0

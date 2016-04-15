@@ -2566,7 +2566,7 @@ openfile(char *fname, size_t fnamesiz, int *rpid, int *rfd)
 	    (void) dup(pipefd[3]);	/* connect to second pipe */
 	}
 	(void) signal(SIGINT, SIG_DFL);	/* reset */
-	(void) execl("/bin/sh", "sh", "-c", efname, NULL);
+	execl("/bin/sh", "sh", "-c", efname, (char *)NULL);
 	exit (-127);
     } else {				/* else parent */
 	*rpid = pid;

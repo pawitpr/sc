@@ -490,19 +490,19 @@ install: $(EXDIR)/$(name) $(EXDIR)/$(name)qref $(EXDIR)/p$(name) \
 	 $(MANDIR)/p$(name).$(MANEXT) $(MANDIR)/$(name)qref.$(MANEXT) \
 	 $(EXDIR)/x$(name) $(MANDIR)/x$(name).$(MANEXT)
 
-$(EXDIR)/$(name): $(name)
+$(EXDIR)/$(name): $(name) $(EXDIR)
 	install $(name) $(EXDIR)/
 	strip $(EXDIR)/$(name)
 
-$(EXDIR)/$(name)qref: $(name)qref
+$(EXDIR)/$(name)qref: $(name)qref $(EXDIR)
 	install $(name)qref $(EXDIR)/
 	strip $(EXDIR)/$(name)qref
 
-$(EXDIR)/p$(name): p$(name)
+$(EXDIR)/p$(name): p$(name) $(EXDIR)
 	install p$(name) $(EXDIR)/
 	strip $(EXDIR)/p$(name)
 
-$(EXDIR)/x$(name): p$(name)
+$(EXDIR)/x$(name): p$(name) $(EXDIR)
 	install x$(name) $(EXDIR)/
 
 x$(name): xsc.sh
@@ -510,6 +510,9 @@ x$(name): xsc.sh
 
 $(LIBDIR)/tutorial.$(name): tutorial.sc $(LIBDIR) $(LIBDIR)/plugins
 	install -m $(MANMODE) tutorial.sc $(LIBDIR)/tutorial.$(name)
+
+$(EXDIR):
+	mkdir -p $(EXDIR)
 
 $(LIBDIR):
 	mkdir -p $(LIBDIR)

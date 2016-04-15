@@ -18,7 +18,8 @@ had been made:
 * Made `UBSAN` and `ASAN` clean.
 * All `sprintf`, `strcpy`, and `strcat` replaced
   with `snprintf`, `strlcpy`, and `strlcat`.
-* `./configure` script added and tested on NetBSD, OpenBSD, FreeBSD, and Linux.
+* `./configure` script added and tested on NetBSD, OpenBSD, FreeBSD,
+  Linux, and SmartOS.
 
 Functional extensions:
 
