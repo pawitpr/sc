@@ -23,6 +23,7 @@ usage () {
 SFLAG=
 MAKE=
 DEFS=
+LIB_LEX=
 LIB_CURSES=
 
 while [ $# -gt 0 ]; do
@@ -43,21 +44,25 @@ check_for () {
 }
 
 compile () {
-	rm -f ${TMPNAM}.o $TMPNAM
-	$MAKE -f $OUTMK $TMPNAM >> $LOG 2>&1
+	rm -f ${TMPNAM}.o $TMPNAM $OUT $ERR
+	$MAKE -f $OUTMK $TMPNAM > $OUT 2> $ERR
+	RESULT=$?
+	cat $OUT $ERR >> $LOG
+	if [ $RESULT -eq 0 ]; then true; else false; fi
 }
 
 test_result () {
 	RESULT=$?
-	NO_FAIL_TEXT=$1
+	RESULT_TEXT=${1:-0} # 1: omit "no", 2: say nothing
 	if [ $RESULT -eq 0 ]; then
 		echo success >>$LOG
-		[ -z "$SFLAG" ] && echo "yes$PASS_TEXT"
+		[ -z "$SFLAG" -a $RESULT_TEXT -lt 2 ] && \
+		    echo "yes$PASS_TEXT"
 		PASS_TEXT=
 		[ -e $TMPC ] && rm -f $TMPC
 		true
 	else
-		[ -z "$SFLAG" -a -z "$NO_FAIL_TEXT" ] && echo no
+		[ -z "$SFLAG" -a $RESULT_TEXT -lt 1 ] && echo no
 		if [ -e $TMPC ]; then
 			echo "Failed program:" >>$LOG
 			pr -n -t $TMPC >>$LOG
@@ -77,6 +82,7 @@ gen_mk () {
 	[ -n "$LIBDIR_CURSES" ] && echo "LIBDIR_CURSES=$LIBDIR_CURSES" \
 	    >> $OUTMK
 	[ -n "$LIB_CURSES" ] && echo "LIB_CURSES=$LIB_CURSES" >> $OUTMK
+	[ -n "$LIB_LEX" ] && echo "LIB_LEX=$LIB_LEX" >> $OUTMK
 	cat $INMK >> $OUTMK || exit 1
 }
 check_make () {
@@ -289,12 +295,65 @@ EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_RESETTERM"
 }
+check_isfinite () {
+	check_for "isfinite(3)"
+
+	cat <<EOT >$TMPC
+#include <math.h>
+int
+main(int argc, char **argv) {
+	(void)argv;
+	return isfinite(argc);
+}
+EOT
+	compile
+	test_result && {
+		DEFS="$DEFS -DHAVE_ISFINITE"
+		return
+	}
+
+	check_for "finite(3)"
+
+	cat <<EOT >$TMPC
+#include <math.h>
+int
+main(int argc, char **argv) {
+	(void)argv;
+	return finite(argc);
+}
+EOT
+	compile
+	test_result 2 && {
+		[ -s $ERR ] ||
+		    grep -iq implicite $ERR ||
+		    grep -iq warning   $ERR || {
+			echo yes
+			return
+		}
+	}
+
+	cat <<EOT >$TMPC
+#include <math.h>
+#include <ieeefp.h>
+int
+main(int argc, char **argv) {
+	(void)argv;
+	return finite(argc);
+}
+EOT
+	PASS_TEXT=" (#include <ieeefp.h>)"
+	compile
+	test_result && DEFS="$DEFS -DUSE_IEEEFP_H"
+	PASS_TEXT=
+}
 OUTMK=Makefile
 INMK=${OUTMK}.in
 CFG=config
 TMPNAM=.$CFG
 TMPMK=${TMPNAM}.mk
 TMPC=${TMPNAM}.c
+OUT=${TMPNAM}.out
+ERR=${TMPNAM}.err
 LOG=${CFG}.log
 rm -f $OUTMK $LOG
 gen_mk
@@ -303,10 +362,10 @@ check_make
 check_float_store
 check_strlcpy
 check_strlcat
-#check_wcslcpy
 check_lib_curses
 check_fixterm
 check_resetterm
+check_isfinite
 
 gen_mk
 rm -f $TMPNAM*

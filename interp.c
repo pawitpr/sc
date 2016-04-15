@@ -15,9 +15,9 @@
 #undef _C_func			/* Fixes for undefined symbols on AIX */
 #endif
 
-#ifdef IEEE_MATH
-#include <ieeefp.h>
-#endif /* IEEE_MATH */
+#ifdef USE_IEEEFP_H
+# include <ieeefp.h>
+#endif
 
 #include <math.h>
 #include <signal.h>
@@ -776,7 +776,13 @@ eval(register struct enode *e)
 	case '!':	return (eval(e->e.o.left) == 0.0);
 	case ';':	return (((int)eval(e->e.o.left) & 7) +
 				(((int)eval(e->e.o.right) & 7) << 3));
-	case O_CONST:	if (!isfinite(e->e.k)) {
+	case O_CONST:	if (!
+#ifdef HAVE_ISFINITE
+			  isfinite(
+#else
+			  finite(
+#endif
+			  e->e.k)) {
 			    e->op = ERR_;
 			    e->e.k = (double) 0;
 			    cellerror = CELLERROR;
@@ -1503,7 +1509,13 @@ RealEvalOne(register struct ent *p, int i, int j, int *chgct)
 	} else {
 	    cellerror = CELLOK;
 	    v = eval(p->expr);
-	    if (cellerror == CELLOK && !isfinite(v))
+	    if (cellerror == CELLOK && !
+#ifdef HAVE_ISFINITE
+	      isfinite(
+#else
+	      finite(
+#endif
+	      v))
 		cellerror = CELLERROR;
 	}
 	if ((cellerror != p->cellerror) || (v != p->v)) {

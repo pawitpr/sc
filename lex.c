@@ -21,9 +21,9 @@
 #include <sys/ioctl.h>
 #endif 
 
-#ifdef IEEE_MATH
-#include <ieeefp.h>
-#endif /* IEEE_MATH */
+#ifdef USE_IEEEFP_H
+# include <ieeefp.h>
+#endif
 
 #include <stdlib.h>
 #include <signal.h>
@@ -255,7 +255,13 @@ yylex(void)
 	    if ((!dateflag && *p=='.') || ret == FNUMBER) {
 		ret = FNUMBER;
 		yylval.fval = strtod(nstart, &p);
-		if (!isfinite(yylval.fval))
+		if (!
+#ifdef HAVE_ISFINITE
+		  isfinite(
+#else
+		  finite(
+#endif
+		  yylval.fval))
 		    ret = K_ERR;
 		else
 		    decimal = TRUE;
