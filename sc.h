@@ -64,14 +64,15 @@
 #define color_set(c, o)		attron(COLOR_PAIR(c))
 #endif
 
-/*
-#if !defined(attr_get) || defined(NCURSES_VERSION) && NCURSES_VERSION_MAJOR < 5
-#undef attr_get
+#if !defined(HAVE_ATTR_T) && defined(_COMPAT_H) /* Not defined for psc */
+typedef chtype attr_t;
+#endif
+
+#ifndef HAVE_ATTR_GET
 #define attr_get(a, p, o)	((void)((a) != 0 && (*(a) = stdscr->_attrs)), \
 				(void)((p) != 0 && \
 				(*(p) = PAIR_NUMBER(stdscr->_attrs))), OK)
 #endif
-*/
 
 #if (defined(BSD42) || defined(BSD43)) && !defined(strrchr)
 #define strrchr rindex

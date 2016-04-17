@@ -151,7 +151,9 @@ Start the program with round-to-even (banker's rounding) enabled.
 .TP
 .B \-m
 Start the program with automatic recalculation disabled.
-The spreadsheet will be recalculated only when the \(lq@\(rq command is used.
+The spreadsheet will be recalculated only when the
+.RB \(lq @ \(rq
+command is used.
 .\" ----------
 .TP
 .B \-n

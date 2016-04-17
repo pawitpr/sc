@@ -448,12 +448,12 @@ vi.o: vi.c sc.h
 # other stuff
 
 clean:
-	rm -f *.o *res.h $(YTAB).h debug core gram.c $(name).1 p$(name).1 \
-	y.output pxmalloc.c pvmtbl.c qhelp.c tags $(name)qref.1 x$(name) \
-	x$(name).1
+	rm -f *.o *res.h $(YTAB).h debug core gram.c y.output pxmalloc.c \
+	    pvmtbl.c qhelp.c tags
 
 distclean: clean
-	rm -f $(name) p$(name) $(name)qref Makefile config.log
+	rm -f $(name) p$(name) $(name)qref x$(name) Makefile config.log \
+	     $(name).1 p$(name).1 $(name)qref.1 x$(name).1
 
 shar: ${SRC} ${DOCS}
 	shar -c -m 64000 -f shar ${DOCS} ${SRC}
@@ -520,16 +520,19 @@ $(LIBDIR):
 $(LIBDIR)/plugins:
 	mkdir -p $(LIBDIR)/plugins
 
-$(MANDIR)/$(name).$(MANEXT): $(name).1
+$(MANDIR):
+	mkdir -p $(MANDIR)
+
+$(MANDIR)/$(name).$(MANEXT): $(MANDIR) $(name).1
 	install -m $(MANMODE) $(name).1 $@
 
-$(MANDIR)/p$(name).$(MANEXT): p$(name).1
+$(MANDIR)/p$(name).$(MANEXT): $(MANDIR) p$(name).1
 	install -m $(MANMODE) p$(name).1 $@
 
-$(MANDIR)/x$(name).$(MANEXT): x$(name).1
+$(MANDIR)/x$(name).$(MANEXT): $(MANDIR) x$(name).1
 	install -m $(MANMODE) x$(name).1 $@
 
-$(MANDIR)/$(name)qref.$(MANEXT): $(name)qref.1
+$(MANDIR)/$(name)qref.$(MANEXT): $(MANDIR) $(name)qref.1
 	install -m $(MANMODE) $(name)qref.1 $@
 
 uninstall:

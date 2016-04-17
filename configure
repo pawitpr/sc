@@ -203,7 +203,7 @@ check_ncursesw () {
 	LIB_CURSES="-lncursesw"
 	check_for $LIB_CURSES
 	ODEFS=$DEFS
-	DEFS="$DEFS -DHAVE_NCURSESW_CURSES_H"
+	DEFS="$DEFS -DHAVE_NCURSESW_CURSES_H -DHAVE_ATTR_T -DHAVE_ATTR_GET"
 	PASS_TEXT=" (#include <ncursesw/curses.h>)"
 	test_curses && return # Linux
 	INCDIR_CURSES="-I/usr/pkg/include"
@@ -212,12 +212,13 @@ check_ncursesw () {
 	PASS_TEXT=" (#include <ncursesw/curses.h>, -I/usr/pkg/include, \
 -L/usr/pkg/lib)"
 	test_curses && return # NetBSD
-	DEFS=$ODEFS
+	DEFS="$ODEFS -DHAVE_ATTR_T -DHAVE_ATTR_GET"
 	INCDIR_CURSES=
 	RPATH_CURSES=
 	LIBDIR_CURSES=
 	PASS_TEXT=
 	test_curses && return # OpenBSD, FreeBSD
+	DEFS=$ODEFS
 	[ -z "$SFLAG" ] && echo no
 	false
 }
@@ -226,19 +227,20 @@ check_ncurses () {
 	LIB_CURSES="-lncurses"
 	check_for $LIB_CURSES
 	ODEFS=$DEFS
-	DEFS="$DEFS -DHAVE_NCURSES_CURSES_H"
+	DEFS="$DEFS -DHAVE_NCURSES_CURSES_H -DHAVE_ATTR_T -DHAVE_ATTR_GET"
 	INCDIR_CURSES="-I/usr/pkg/include"
 	RPATH_CURSES="-Wl,-rpath,/usr/pkg/lib"
 	LIBDIR_CURSES="-L/usr/pkg/lib"
 	PASS_TEXT=" (#include <ncurses/curses.h>, -I/usr/pkg/include, \
 -L/usr/pkg/lib)"
 	test_curses && return # NetBSD
-	DEFS=$ODEFS
+	DEFS="$ODEFS -DHAVE_ATTR_T -DHAVE_ATTR_GET"
 	INCDIR_CURSES=
 	RPATH_CURSES=
 	LIBDIR_CURSES=
 	PASS_TEXT=
 	test_curses && return
+	DEFS=$ODEFS
 	[ -z "$SFLAG" ] && echo no
 	false
 }
@@ -246,9 +248,40 @@ check_ncurses () {
 check_curses () {
 	LIB_CURSES="-lcurses"
 	check_for $LIB_CURSES
-	test_curses && return
-	[ -z "$SFLAG" ] && echo no
-	false
+	test_curses || {
+		[ -z "$SFLAG" ] && echo no
+		false
+		return
+	}
+
+	check_for attr_t
+	cat <<EOT >$TMPC
+#include "compat.h"
+int
+main(int argc, char **argv) {
+	(void)argv;
+	attr_t c = argc + '0';
+	return (int)c;
+}
+EOT
+	compile
+	test_result && DEFS="$DEFS -DHAVE_ATTR_T"
+
+	check_for 'attr_get(3)'
+	cat <<EOT >$TMPC
+#include "compat.h"
+int
+main() {
+	return attr_get(NULL, NULL, NULL);
+}
+EOT
+	gen_mk
+	cat <<EOT >>$OUTMK
+$TMPNAM: ${TMPNAM}.o
+	\$(CC) \$(_CFLAGS) -o \$@ ${TMPNAM}.o \$(LIB)
+EOT
+	compile
+	test_result && DEFS="$DEFS -DHAVE_ATTR_GET"
 }
 
 check_lib_curses () {
@@ -258,7 +291,7 @@ check_lib_curses () {
 	check_curses && return
 }
 check_fixterm () {
-	check_for fixterm
+	check_for 'fixterm(3)'
 
 	cat <<EOT >$TMPC
 #include "compat.h"
@@ -277,7 +310,7 @@ EOT
 	test_result && DEFS="$DEFS -DHAVE_FIXTERM"
 }
 check_resetterm () {
-	check_for resetterm
+	check_for 'resetterm(3)'
 
 	cat <<EOT >$TMPC
 #include "compat.h"
@@ -303,7 +336,7 @@ check_isfinite () {
 int
 main(int argc, char **argv) {
 	(void)argv;
-	return isfinite(argc);
+	return isfinite((double)argc);
 }
 EOT
 	compile
@@ -319,7 +352,7 @@ EOT
 int
 main(int argc, char **argv) {
 	(void)argv;
-	return finite(argc);
+	return finite((double)argc);
 }
 EOT
 	compile

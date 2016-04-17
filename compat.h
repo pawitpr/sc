@@ -7,7 +7,14 @@
 # include <ncurses/curses.h>
 #else
 # include <curses.h>
+# ifndef false
+#  define false 0
+# endif
+# ifndef true
+#  define true (!false)
+# endif
 #endif
+#define _COMPAT_H
 
 #ifndef HAVE_STRLCPY
 size_t

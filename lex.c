@@ -29,7 +29,6 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>
-#include <stdbool.h>
 #include <unistd.h>
 #include <limits.h>
 //#include <term.h>

@@ -19,7 +19,7 @@ had been made:
 * All `sprintf`, `strcpy`, and `strcat` replaced
   with `snprintf`, `strlcpy`, and `strlcat`.
 * `./configure` script added and tested on NetBSD, OpenBSD, FreeBSD,
-  Linux, and SmartOS.
+  Linux, and Solaris.
 
 Functional extensions:
 
@@ -40,7 +40,7 @@ Functional extensions:
 
   (In this case the shift key needs to be pressed for
   &lsquo;cut and paste&rsquo;.
-  All `sc` functions work well with NetBSD curses
+  All `sc` functions work well with NetBSD and Solaris curses
   but using the mouse requires ncurses.
   Using the mouse _wheel_ additionally requires
   ncurses version &ge; 6.)

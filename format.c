@@ -93,7 +93,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <time.h>
-#include <stdbool.h>
 #include <limits.h>
 #include "compat.h"
 #include "sc.h"

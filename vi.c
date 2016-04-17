@@ -10,7 +10,6 @@
 #include <signal.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <unistd.h>
 #include <limits.h>
 #if defined(REGCOMP)

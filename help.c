@@ -11,7 +11,6 @@
 char	*header = " Quick Reference";
 char	*revision = "$Revision: 7.16 $";
 #else
-#include <stdbool.h>
 #include <limits.h>
 #include "compat.h"
 #include "sc.h"

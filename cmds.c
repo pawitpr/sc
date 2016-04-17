@@ -17,7 +17,6 @@
 #include <utime.h>
 #include <sys/file.h>
 #include <fcntl.h>
-#include <stdbool.h>
 #include <sys/stat.h>
 #include <signal.h>
 #include <errno.h>

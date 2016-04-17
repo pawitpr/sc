@@ -4,7 +4,6 @@
  */
 
 #include <stdlib.h>
-#include <stdbool.h>
 #include <limits.h>
 #include "compat.h"
 #include "sc.h"
