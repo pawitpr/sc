@@ -11,7 +11,7 @@
 #  define false 0
 # endif
 # ifndef true
-#  define true (!false)
+#  define true 1
 # endif
 #endif
 #define _COMPAT_H

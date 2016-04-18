@@ -175,6 +175,46 @@ EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_STRLCAT"
 }
+check_fixterm () {
+	check_for 'fixterm(3)'
+
+	cat <<EOT >$TMPC
+#include "compat.h"
+int
+main() {
+	fixterm();
+	return 0;
+}
+EOT
+	gen_mk
+	cat <<EOT >>$OUTMK
+$TMPNAM: ${TMPNAM}.o
+	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
+EOT
+	compile
+	test_result && DEFS="$DEFS -DHAVE_FIXTERM"
+}
+
+check_resetterm () {
+	check_for 'resetterm(3)'
+
+	cat <<EOT >$TMPC
+#include "compat.h"
+int
+main() {
+	resetterm();
+	return 0;
+}
+EOT
+	gen_mk
+	cat <<EOT >>$OUTMK
+$TMPNAM: ${TMPNAM}.o
+	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
+EOT
+	compile
+	test_result && DEFS="$DEFS -DHAVE_RESETTERM"
+}
+
 compile_curses () {
 	cat <<EOT >$TMPC
 #include "compat.h"
@@ -203,7 +243,7 @@ check_ncursesw () {
 	LIB_CURSES="-lncursesw"
 	check_for $LIB_CURSES
 	ODEFS=$DEFS
-	DEFS="$DEFS -DHAVE_NCURSESW_CURSES_H -DHAVE_ATTR_T -DHAVE_ATTR_GET"
+	DEFS="$DEFS -DHAVE_NCURSESW_CURSES_H"
 	PASS_TEXT=" (#include <ncursesw/curses.h>)"
 	test_curses && return # Linux
 	INCDIR_CURSES="-I/usr/pkg/include"
@@ -212,13 +252,12 @@ check_ncursesw () {
 	PASS_TEXT=" (#include <ncursesw/curses.h>, -I/usr/pkg/include, \
 -L/usr/pkg/lib)"
 	test_curses && return # NetBSD
-	DEFS="$ODEFS -DHAVE_ATTR_T -DHAVE_ATTR_GET"
+	DEFS=$ODEFS
 	INCDIR_CURSES=
 	RPATH_CURSES=
 	LIBDIR_CURSES=
 	PASS_TEXT=
 	test_curses && return # OpenBSD, FreeBSD
-	DEFS=$ODEFS
 	[ -z "$SFLAG" ] && echo no
 	false
 }
@@ -227,20 +266,19 @@ check_ncurses () {
 	LIB_CURSES="-lncurses"
 	check_for $LIB_CURSES
 	ODEFS=$DEFS
-	DEFS="$DEFS -DHAVE_NCURSES_CURSES_H -DHAVE_ATTR_T -DHAVE_ATTR_GET"
+	DEFS="$DEFS -DHAVE_NCURSES_CURSES_H"
 	INCDIR_CURSES="-I/usr/pkg/include"
 	RPATH_CURSES="-Wl,-rpath,/usr/pkg/lib"
 	LIBDIR_CURSES="-L/usr/pkg/lib"
 	PASS_TEXT=" (#include <ncurses/curses.h>, -I/usr/pkg/include, \
 -L/usr/pkg/lib)"
 	test_curses && return # NetBSD
-	DEFS="$ODEFS -DHAVE_ATTR_T -DHAVE_ATTR_GET"
+	DEFS=$ODEFS
 	INCDIR_CURSES=
 	RPATH_CURSES=
 	LIBDIR_CURSES=
 	PASS_TEXT=
 	test_curses && return
-	DEFS=$ODEFS
 	[ -z "$SFLAG" ] && echo no
 	false
 }
@@ -282,51 +320,20 @@ $TMPNAM: ${TMPNAM}.o
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_ATTR_GET"
+
+	check_fixterm
+	check_resetterm
 }
 
 check_lib_curses () {
+	DEFS0=$DEFS
+	DEFS="$DEFS  -DHAVE_ATTR_T -DHAVE_ATTR_GET -DHAVE_FIXTERM \
+-DHAVE_RESETTERM"
 	check_ncursesw && return
 	check_ncurses && return
+	DEFS=$DEFS0
 	# If mouse support is not required, NetBSD curses works perfectly.
 	check_curses && return
-}
-check_fixterm () {
-	check_for 'fixterm(3)'
-
-	cat <<EOT >$TMPC
-#include "compat.h"
-int
-main() {
-	fixterm();
-	return 0;
-}
-EOT
-	gen_mk
-	cat <<EOT >>$OUTMK
-$TMPNAM: ${TMPNAM}.o
-	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
-EOT
-	compile
-	test_result && DEFS="$DEFS -DHAVE_FIXTERM"
-}
-check_resetterm () {
-	check_for 'resetterm(3)'
-
-	cat <<EOT >$TMPC
-#include "compat.h"
-int
-main() {
-	resetterm();
-	return 0;
-}
-EOT
-	gen_mk
-	cat <<EOT >>$OUTMK
-$TMPNAM: ${TMPNAM}.o
-	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
-EOT
-	compile
-	test_result && DEFS="$DEFS -DHAVE_RESETTERM"
 }
 check_isfinite () {
 	check_for "isfinite(3)"
@@ -396,8 +403,6 @@ check_float_store
 check_strlcpy
 check_strlcat
 check_lib_curses
-check_fixterm
-check_resetterm
 check_isfinite
 
 gen_mk
