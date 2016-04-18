@@ -395,7 +395,7 @@ TMPC=${TMPNAM}.c
 OUT=${TMPNAM}.out
 ERR=${TMPNAM}.err
 LOG=${CFG}.log
-rm -f $OUTMK $LOG
+rm -f $LOG
 gen_mk
 
 check_make
