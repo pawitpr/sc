@@ -2,19 +2,13 @@
 while [ $# -gt 0 ]; do
 	case "$1" in
 	-fg | -bg | -fn)
-		XFl="$XFl $1"
-		shift
-		XFl="$XFl \"$1\""
-		;;
+		XFl="$XFl $1 $2"
+		shift ;;
 	-*)
-		SFl="$SFl \\\"$1\\\""
-		;;
+		Fl="$Fl $1" ;;
 	*)
-		SArg="$SArg \\\"$1\\\""
-		;;
+		break ;;
 	esac
 	shift
 done
-Cmd="xterm $XFl -T \"pname $SArg\" -e \"pname -M $SFl $SArg\""
-#echo $Cmd
-eval $Cmd
+xterm $XFl -T "pname $*" -e pname -M $Fl "$*" &

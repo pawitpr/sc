@@ -610,6 +610,9 @@ extern	int getrcqual;
 extern	int tbl_style;
 extern	int rndtoeven;
 extern	char *progname;
+#ifdef TRACE
+extern	FILE *ftrace;
+#endif
 extern	int numeric_field;
 extern	int craction;
 extern	int  pagesize;	/* If nonzero, use instead of 1/2 screen height */

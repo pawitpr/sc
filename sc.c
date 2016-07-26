@@ -222,6 +222,9 @@ flush_saved(void) {
 
 char	*progname;
 int	Vopt;
+#ifdef TRACE
+FILE	*ftrace;
+#endif
 
 int
 main (int argc, char  **argv)
@@ -267,6 +270,14 @@ main (int argc, char  **argv)
 	progname = revi+1;
     else
 	progname = argv[0];
+
+#ifdef TRACE
+    if (!(ftrace = fopen(TRACE, "w"))) {
+	fprintf(stderr, "%s: fopen(%s, 'w') failed: %s\n",
+	    progname, TRACE, strerror(errno));
+	exit(1);
+    }
+#endif
 
     while ((c = getopt(argc, argv, "axmoncrCReP:W:vqM")) != EOF) {
     	switch (c) {
@@ -518,7 +529,7 @@ main (int argc, char  **argv)
 		    break;
 	    }
 	}
-	if (redraw) printf(redraw);
+	if (redraw) fputs(redraw, stdout);
 	exit (0);
     }
 

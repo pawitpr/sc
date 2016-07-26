@@ -1,4 +1,4 @@
-/* 2016, Carsten Kunze */
+/* Carsten Kunze, 2016 */
 
 #include <string.h>
 
@@ -6,13 +6,18 @@
 size_t
 strlcpy(char *dst, const char *src, size_t dstsize) {
 	size_t srcsize;
-	srcsize = strlen(src);
+	/* Not conform to strlcpy, but avoids to access illegal memory in case
+	 * of unterminated strings */
+	for (srcsize = 0; srcsize < dstsize; srcsize++)
+		if (!src[srcsize])
+			break;
 	if (dstsize > srcsize)
 		dstsize = srcsize;
-	else
+	else if (dstsize)
 		dstsize--;
-	/* assumes non-overlapping buffers */
-	memcpy(dst, src, dstsize);
+	if (dstsize)
+		/* assumes non-overlapping buffers */
+		memcpy(dst, src, dstsize);
 	dst[dstsize] = 0;
 	return srcsize;
 }
@@ -22,15 +27,20 @@ strlcpy(char *dst, const char *src, size_t dstsize) {
 size_t
 strlcat(char *dst, const char *src, size_t dstsize) {
 	size_t ld, ls;
-	ld = strlen(dst);
+	for (ld = 0; ld < dstsize - 1; ld++)
+		if (!dst[ld])
+			break;
 	dst += ld;
 	dstsize -= ld;
-	ls = strlen(src);
+	for (ls = 0; ls < dstsize; ls++)
+		if (!src[ls])
+			break;
 	if (dstsize > ls)
 		dstsize = ls;
-	else
+	else if (dstsize)
 		dstsize--;
-	memcpy(dst, src, dstsize);
+	if (dstsize)
+		memcpy(dst, src, dstsize);
 	dst[dstsize] = 0;
 	return ld + ls;
 }

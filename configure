@@ -25,6 +25,7 @@ MAKE=
 DEFS=
 LIB_LEX=
 LIB_CURSES=
+cat /dev/null > compat.h
 
 while [ $# -gt 0 ]; do
 	case $1 in
@@ -73,7 +74,7 @@ test_result () {
 }
 
 gen_mk () {
-	rm -f $OUTMK
+	[ $# -eq 0 ] && rm -f $OUTMK
 	[ -n "$LEX" ] && echo "LEX=$LEX" >> $OUTMK
 	[ -n "$FLOAT_STORE" ] && echo "FLOAT_STORE=$FLOAT_STORE" >> $OUTMK
 	[ -n "$DEFS" ] && echo "DEFINES=$DEFS" >> $OUTMK
@@ -156,7 +157,17 @@ main(int argc, char **argv) {
 }
 EOT
 	compile
-	test_result && DEFS="$DEFS -DHAVE_STRLCPY"
+	if test_result; then
+		DEFS="$DEFS -DHAVE_STRLCPY"
+	else
+		H=compat.h
+		grep -q '<sys/types\.h>' $H 2>/dev/null || cat <<EOT >>$H
+#include <sys/types.h>
+EOT
+		cat <<EOT >>$H
+size_t strlcpy(char *, const char *, size_t);
+EOT
+	fi
 }
 check_strlcat () {
 	check_for "strlcat(3)"
@@ -173,7 +184,17 @@ main(int argc, char **argv) {
 }
 EOT
 	compile
-	test_result && DEFS="$DEFS -DHAVE_STRLCAT"
+	if test_result; then
+		DEFS="$DEFS -DHAVE_STRLCAT"
+	else
+		H=compat.h
+		grep -q '<sys/types\.h>' $H 2>/dev/null || cat <<EOT >>$H
+#include <sys/types.h>
+EOT
+		cat <<EOT >>$H
+size_t strlcat(char *, const char *, size_t);
+EOT
+	fi
 }
 check_fixterm () {
 	check_for 'fixterm(3)'
@@ -326,6 +347,21 @@ EOT
 }
 
 check_lib_curses () {
+	cat <<EOT >>compat.h
+#if defined HAVE_NCURSESW_CURSES_H
+# include <ncursesw/curses.h>
+#elif defined HAVE_NCURSES_CURSES_H
+# include <ncurses/curses.h>
+#else
+# include <curses.h>
+# ifndef false
+#  define false 0
+# endif
+# ifndef true
+#  define true 1
+# endif
+#endif
+EOT
 	DEFS0=$DEFS
 	DEFS="$DEFS  -DHAVE_ATTR_T -DHAVE_ATTR_GET -DHAVE_FIXTERM \
 -DHAVE_RESETTERM"
@@ -386,6 +422,7 @@ EOT
 	test_result && DEFS="$DEFS -DUSE_IEEEFP_H"
 	PASS_TEXT=
 }
+	[ ! -s compat.h ] && rm compat.h
 OUTMK=Makefile
 INMK=${OUTMK}.in
 CFG=config
@@ -407,3 +444,5 @@ check_isfinite
 
 gen_mk
 rm -f $TMPNAM*
+
+echo "#define _COMPAT_H" >>compat.h
