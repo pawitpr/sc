@@ -6,4 +6,4 @@
  * A second underscore marks a development version.
  */
 
-char *rev = "$Revision: 7.16_1.1.0 160726 14:11$";
+char *rev = "$Revision: 7.16_1.1.0 160726 1411 $";
