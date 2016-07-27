@@ -264,21 +264,28 @@ check_ncursesw () {
 	LIB_CURSES="-lncursesw"
 	check_for $LIB_CURSES
 	ODEFS=$DEFS
+
+	# At first test for specific ncursesw.h to not used -lncursesw with
+	# traditional curses.h if both curses systems are installed.
+
 	DEFS="$DEFS -DHAVE_NCURSESW_CURSES_H"
 	PASS_TEXT=" (#include <ncursesw/curses.h>)"
 	test_curses && return # Linux
+
 	INCDIR_CURSES="-I/usr/pkg/include"
 	RPATH_CURSES="-Wl,-rpath,/usr/pkg/lib"
 	LIBDIR_CURSES="-L/usr/pkg/lib"
 	PASS_TEXT=" (#include <ncursesw/curses.h>, -I/usr/pkg/include, \
 -L/usr/pkg/lib)"
 	test_curses && return # NetBSD
+
 	DEFS=$ODEFS
 	INCDIR_CURSES=
 	RPATH_CURSES=
 	LIBDIR_CURSES=
 	PASS_TEXT=
 	test_curses && return # OpenBSD, FreeBSD
+
 	[ -z "$SFLAG" ] && echo no
 	false
 }
@@ -287,6 +294,11 @@ check_ncurses () {
 	LIB_CURSES="-lncurses"
 	check_for $LIB_CURSES
 	ODEFS=$DEFS
+
+	DEFS="$DEFS -DHAVE_NCURSES_CURSES_H"
+	PASS_TEXT=" (#include <ncurses/curses.h>)"
+	test_curses && return # OpenIndiana
+
 	DEFS="$DEFS -DHAVE_NCURSES_CURSES_H"
 	INCDIR_CURSES="-I/usr/pkg/include"
 	RPATH_CURSES="-Wl,-rpath,/usr/pkg/lib"
@@ -294,12 +306,14 @@ check_ncurses () {
 	PASS_TEXT=" (#include <ncurses/curses.h>, -I/usr/pkg/include, \
 -L/usr/pkg/lib)"
 	test_curses && return # NetBSD
+
 	DEFS=$ODEFS
 	INCDIR_CURSES=
 	RPATH_CURSES=
 	LIBDIR_CURSES=
 	PASS_TEXT=
 	test_curses && return
+
 	[ -z "$SFLAG" ] && echo no
 	false
 }

@@ -31,7 +31,6 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <limits.h>
-//#include <term.h>
 #include "compat.h"
 #include "sc.h"
 
