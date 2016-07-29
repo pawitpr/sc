@@ -336,8 +336,9 @@ update(int anychanged)		/* did any cell really change in value? */
 		else
 		    col += flcols;
 	    }
-	    for (; (col + fwidth[i] < cols-1 || col_hidden[i] || i < curcol) &&
-		    i < maxcols; i++) {
+	    for (; i < maxcols &&
+		    (col + fwidth[i] < cols-1 || col_hidden[i] || i < curcol);
+		    i++) {
 		lcols++;
 		if (fr && i == fr->ir_right->col + 1) {
 		    col -= frcols;
