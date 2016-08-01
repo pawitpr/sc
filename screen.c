@@ -456,10 +456,11 @@ update(int anychanged)		/* did any cell really change in value? */
 			continue;
 		    row--;
 		}
-		if (fr && strow < fr->or_left->row + ftoprows)
+		if (fr && strow < fr->or_left->row + ftoprows) {
 		    strow = fr->or_left->row + ftoprows;
 		    if (currow < strow)
 			strow = currow;
+		}
 	    }
 	    /* Now pick up the counts again */
 	    i = strow;

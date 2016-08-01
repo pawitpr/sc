@@ -680,7 +680,7 @@ dolmax(struct enode *ep)
     for (p = ep; p; p = p->e.o.left) {
 	v = eval(p->e.o.right);
 	if (!count || v > maxval)
-	    maxval = v; count++;
+	    maxval = v, count++;
     }
     if (count) return maxval;
     else return (double)0;
@@ -698,7 +698,7 @@ dolmin(struct enode *ep)
     for (p = ep; p; p = p->e.o.left) {
 	v = eval(p->e.o.right);
 	if (!count || v < minval)
-	    minval = v; count++;
+	    minval = v, count++;
     }
     if (count) return minval;
     else return (double)0;
@@ -2647,11 +2647,13 @@ decompile(register struct enode *e, int	priority)
 	}
 	if (mypriority<priority) line[linelim++] = '(';
 	switch (e->op) {
-	case 'f':	for (s="@fixed "; (line[linelim++] = *s++); );
+	case 'f':	for (s="@fixed "; (line[linelim++] = *s++); )
+				;
 			linelim--;
 			decompile(e->e.o.left, 30);
 			break;
-	case 'F':	for (s="(@fixed)"; (line[linelim++] = *s++); );
+	case 'F':	for (s="(@fixed)"; (line[linelim++] = *s++); )
+				;
 			linelim--;
 			decompile(e->e.o.left, 30);
 			break;
@@ -2709,7 +2711,8 @@ decompile(register struct enode *e, int	priority)
 	case MONTH:	one_arg("@month(", e); break;
 	case DAY:	one_arg("@day(", e); break;
 	case YEAR:	one_arg("@year(", e); break;
-	case NOW:	for (s = "@now"; (line[linelim++] = *s++); );
+	case NOW:	for (s = "@now"; (line[linelim++] = *s++); )
+				;
 			linelim--;
 			break;
 	case DATE:	if (e->e.o.right)
@@ -2740,51 +2743,66 @@ decompile(register struct enode *e, int	priority)
 	case HLOOKUP:	two_arg_index("@hlookup", e); break;
 	case VLOOKUP:	two_arg_index("@vlookup", e); break;
 	case IF:	three_arg("@if(", e); break;
-	case MYROW:	for (s = "@myrow"; (line[linelim++] = *s++); );
+	case MYROW:	for (s = "@myrow"; (line[linelim++] = *s++); )
+				;
 			linelim--;
 			break;
-	case MYCOL:	for (s = "@mycol"; (line[linelim++] = *s++); );
+	case MYCOL:	for (s = "@mycol"; (line[linelim++] = *s++); )
+				;
 			linelim--;
 			break;
-	case LASTROW:	for (s = "@lastrow"; (line[linelim++] = *s++); );
+	case LASTROW:	for (s = "@lastrow"; (line[linelim++] = *s++); )
+				;
 			linelim--;
 			break;
-	case LASTCOL:	for (s = "@lastcol"; (line[linelim++] = *s++); );
+	case LASTCOL:	for (s = "@lastcol"; (line[linelim++] = *s++); )
+				;
 			linelim--;
 			break;
 	case COLTOA:	one_arg( "@coltoa(", e); break;
 	case FILENAME:	one_arg( "@filename(", e); break;
-	case NUMITER:	for (s = "@numiter"; (line[linelim++] = *s++); );
+	case NUMITER:	for (s = "@numiter"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case ERR_:	for (s = "@err"; (line[linelim++] = *s++); );
+	case ERR_:	for (s = "@err"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case PI_:	for (s = "@pi"; (line[linelim++] = *s++); );
+	case PI_:	for (s = "@pi"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case BLACK:	for (s = "@black"; (line[linelim++] = *s++); );
+	case BLACK:	for (s = "@black"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case RED:	for (s = "@red"; (line[linelim++] = *s++); );
+	case RED:	for (s = "@red"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case GREEN:	for (s = "@green"; (line[linelim++] = *s++); );
+	case GREEN:	for (s = "@green"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case YELLOW:	for (s = "@yellow"; (line[linelim++] = *s++); );
+	case YELLOW:	for (s = "@yellow"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case BLUE:	for (s = "@blue"; (line[linelim++] = *s++); );
+	case BLUE:	for (s = "@blue"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case MAGENTA:	for (s = "@magenta"; (line[linelim++] = *s++); );
+	case MAGENTA:	for (s = "@magenta"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case CYAN:	for (s = "@cyan"; (line[linelim++] = *s++); );
+	case CYAN:	for (s = "@cyan"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
-	case WHITE:	for (s = "@white"; (line[linelim++] = *s++); );
+	case WHITE:	for (s = "@white"; (line[linelim++] = *s++); )
+				;
                         linelim--;
                         break;
 	default:	decompile(e->e.o.left, mypriority);

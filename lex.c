@@ -326,15 +326,17 @@ plugin_exists(char *name, size_t len, char *path)
     static char *homedir;
 
     if ((homedir = getenv("HOME"))) {
-	strlcpy(path, homedir, len);
-	strlcat(path, "/.sc/plugins/", len);
-	strlcat(path, name, len);
-	if (!stat(path, &sb))
+	if (strlcpy(path, homedir, len) >= len
+          || strlcat(path, "/.sc/plugins/", len) >= len
+          || strlcat(path, name, len) >= len)
+	    return 0;
+        if (!stat(path, &sb))
 	    return 1;
     }
-    strlcpy(path, LIBDIR, len);
-    strlcat(path, "/plugins/", len);
-    strlcat(path, name, len);
+    if (strlcpy(path, LIBDIR, len) >= len
+      || strlcat(path, "/plugins/", len) >= len
+      || strlcat(path, name, len) >= len)
+	return 0;
     if (!stat(path, &sb))
 	return 1;
 #endif

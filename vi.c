@@ -139,7 +139,8 @@ write_line(int c)
 	case (ctl('m')):	if (search_ind != ' ')
 				    search_hist();
 				else
-				    cr_line();				break;
+				    cr_line();
+			        break;
 	case 'v':
 	case (ctl('v')):	toggle_navigate_mode();			break;
 	case ESC:	stop_edit();					break;
@@ -1079,7 +1080,7 @@ doabbrev(void) {
     struct abbrev *a;
     struct abbrev *prev;
 
-    if (istart < 0 || linelim < 1)
+    if (istart < 0 || linelim < 2)
 	return;
 
     if (!(isalpha((int)line[linelim - 1]) || isdigit((int)line[linelim - 1]) ||
@@ -1611,9 +1612,10 @@ search_again(bool reverse)
 	if (histp <= 0) {
 	    if (search_dir ^ reverse)
 		back_hist();
-	    else
+	    else {
 		histp = ((lasthist + 1) % endhist);
 		strlcpy(line, history[histp].histline, sizeof line);
+	    }
 	}
 	found_it = 0;
 #if defined REGCOMP
