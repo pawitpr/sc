@@ -507,6 +507,28 @@ EOT
 
 	DEFS="$DEFS -DHAVE_CURSES_WCH"
 }
+check_curses_keyname () {
+	check_for "keyname(3)"
+
+	cat <<EOT >$TMPC
+#include "compat.h"
+int
+main(int argc, char **argv) {
+	(void)argv;
+	puts(keyname(argc));
+	return 0;
+}
+EOT
+	gen_mk
+	cat <<EOT >>$OUTMK
+$TMPNAM: ${TMPNAM}.o
+	\$(CC) \$(_CFLAGS) \$(_LDFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LDADD)
+EOT
+	compile
+	test_result || return;
+
+	DEFS="$DEFS -DHAVE_CURSES_KEYNAME"
+}
 check_isfinite () {
 	check_for "isfinite(3)"
 
@@ -578,6 +600,7 @@ check_strlcpy
 check_strlcat
 check_lib_curses
 check_curses_wch
+check_curses_keyname
 check_isfinite
 
 gen_mk

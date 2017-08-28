@@ -317,6 +317,7 @@ dogetkey(void) {
     if (c < 256) {
 	snprintf(line, sizeof line, "%c", c);
 	len = 1;
+#ifdef HAVE_CURSES_KEYNAME
     } else if (c >= KEY_MIN && c <= KEY_MAX) {
 	int i, j;
 	line[0] = '\0';
@@ -328,6 +329,7 @@ dogetkey(void) {
 		line[i++] = line[j++];
 	}
 	len = strlen(line + 1) + 1;
+#endif
     } else {
 	line[0] = '0';
 	snprintf(line + 1, sizeof(line) - 1, "UNKNOWN KEY");
