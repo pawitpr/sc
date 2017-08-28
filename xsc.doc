@@ -1,5 +1,5 @@
 .\" Carsten Kunze, 2016
-.Dd April 14, 2016
+.Dd August 5, 2016
 .Dt XPNAME 1
 .Sh NAME
 .Nm xpname
@@ -19,4 +19,11 @@ with
 and the
 .Ar "pname options"
 as argument and enables mouse support.
-.\" vim:set syntax=groff:
+File names with spaces need to be enclosed in single or double quotes
+.Po Sq Li \(aq
+or
+.Sq Li \(dq
+.Pc
+.Em and
+the spaces needs to be protected with a backslash
+.Pq Sq \(rs .

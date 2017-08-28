@@ -38,9 +38,13 @@ while [ $# -gt 0 ]; do
 done
 
 check_for () {
-	[ -e $LOG ] && echo >>$LOG
+	[ -e $LOG ] && cat <<EOT >>$LOG
+
+================================================================================
+
+EOT
 	A="Checking for $1 ... "
-	echo "$A" >>$LOG
+	printf "$A\n\n" >>$LOG
 	[ -z "$SFLAG" ] && printf "$A"
 }
 
@@ -83,7 +87,10 @@ gen_mk () {
 	[ -n "$LIBDIR_CURSES" ] && echo "LIBDIR_CURSES=$LIBDIR_CURSES" \
 	    >> $OUTMK
 	[ -n "$LIB_CURSES" ] && echo "LIB_CURSES=$LIB_CURSES" >> $OUTMK
+	[ -n "$LIB_AVLBST" ] && echo "LIB_AVLBST=$LIB_AVLBST" >> $OUTMK
 	[ -n "$LIB_LEX" ] && echo "LIB_LEX=$LIB_LEX" >> $OUTMK
+	[ -n "$__CDBG" ] && echo "__CDBG=$__CDBG" >> $OUTMK
+	[ -n "$__CLDBG" ] && echo "__CLDBG=$__CLDBG" >> $OUTMK
 	cat $INMK >> $OUTMK || exit 1
 }
 check_make () {
@@ -110,6 +117,53 @@ all:
 EOT
 	bmake -f $TMPMK >> $LOG 2>&1
 	test_result && MAKE=bmake
+}
+check_Sanitizer () {
+	check_for "CC Sanitizer"
+
+	__CDBG="-g -O0 -fno-omit-frame-pointer -fno-optimize-sibling-calls"
+	__CDBG="$__CDBG -Wall"
+	__CDBG="$__CDBG -Wextra"
+	__CDBG="$__CDBG -Wsign-compare"
+	__CDBG="$__CDBG -Wcast-align"
+	__CDBG="$__CDBG -Wcast-qual"
+	__CDBG="$__CDBG -Wmissing-prototypes"
+	__CDBG="$__CDBG -Wunused-parameter"
+	__CDBG="$__CDBG -Wunused-function"
+	__CDBG="$__CDBG -Wshadow"
+	__CLDBG="-fno-common -fsanitize=address -fsanitize=undefined"
+	#__CLDBG="$__CLDBG -fsanitize-address-use-after-scope"
+
+	[ -n "$CC" ] || CC=cc
+	VER=`$CC --version`
+	if echo $VER | grep -iq gcc || echo $VER | grep -iq 'Free Software Foundation'; then
+		printf "(gcc) "
+		#__CLDBG="$__CDBG -fprofile-arcs -ftest-coverage"
+		__CLDBG="$__CLDBG -fsanitize=float-divide-by-zero"
+		__CLDBG="$__CLDBG -fsanitize=float-cast-overflow"
+	elif echo $VER | grep -q clang; then
+		printf "(clang) "
+		__CDBG="$__CDBG -Wincompatible-pointer-types-discards-qualifiers"
+		__CDBG="$__CDBG -Wmissing-variable-declarations"
+		__CLDBG="$__CLDBG -fsanitize=unsigned-integer-overflow"
+	else
+		echo "Unknown compiler"
+		return
+	fi
+
+	cat <<EOT >$TMPC
+int
+main() {
+	return 0;
+}
+EOT
+	gen_mk
+	cat <<EOT >>$OUTMK
+$TMPNAM: ${TMPNAM}.o
+	\$(CC) \$(__CDBG) \$(__CLDBG) -o \$@ ${TMPNAM}.o
+EOT
+	compile
+	test_result || __CLDBG=
 }
 check_float_store () {
 	FLOAT_STORE=-ffloat-store
@@ -210,7 +264,7 @@ EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
+	\$(CC) \$(_CFLAGS) \$(_LDFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LDADD)
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_FIXTERM"
@@ -230,7 +284,7 @@ EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
+	\$(CC) \$(_CFLAGS) \$(_LDFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LDADD)
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_RESETTERM"
@@ -247,7 +301,7 @@ EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) \$(_CFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LIB)
+	\$(CC) \$(_CFLAGS) \$(_LDFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LDADD)
 EOT
 	compile
 	test_result 1
@@ -269,6 +323,16 @@ check_ncursesw () {
 	# traditional curses.h if both curses systems are installed.
 
 	DEFS="$DEFS -DHAVE_NCURSESW_CURSES_H"
+	INCDIR_CURSES="-I/usr/include/ncurses6"
+	RPATH_CURSES="-Wl,-rpath,/usr/lib64/ncurses6"
+	LIBDIR_CURSES="-L/usr/lib64/ncurses6"
+	PASS_TEXT=" (#include <ncursesw/curses.h>, -I/usr/include/ncurses6, \
+-L/usr/lib64/ncurses6)"
+	test_curses && return # Linux NC6
+
+	INCDIR_CURSES=
+	RPATH_CURSES=
+	LIBDIR_CURSES=
 	PASS_TEXT=" (#include <ncursesw/curses.h>)"
 	test_curses && return # Linux
 
@@ -351,17 +415,19 @@ EOT
 	gen_mk
 	cat <<EOT >>$OUTMK
 $TMPNAM: ${TMPNAM}.o
-	\$(CC) \$(_CFLAGS) -o \$@ ${TMPNAM}.o \$(LIB)
+	\$(CC) \$(_CFLAGS) -o \$@ ${TMPNAM}.o \$(LDADD)
 EOT
 	compile
 	test_result && DEFS="$DEFS -DHAVE_ATTR_GET"
 
 	check_fixterm
 	check_resetterm
+	true
 }
 
-check_lib_curses () {
+curses_mk_compat_h () {
 	cat <<EOT >>compat.h
+#define _XOPEN_SOURCE_EXTENDED
 #if defined HAVE_NCURSESW_CURSES_H
 # include <ncursesw/curses.h>
 #elif defined HAVE_NCURSES_CURSES_H
@@ -376,14 +442,51 @@ check_lib_curses () {
 # endif
 #endif
 EOT
+}
+
+check_lib_curses () {
+	curses_mk_compat_h
 	DEFS0=$DEFS
 	DEFS="$DEFS  -DHAVE_ATTR_T -DHAVE_ATTR_GET -DHAVE_FIXTERM \
 -DHAVE_RESETTERM"
 	check_ncursesw && return
 	check_ncurses && return
 	DEFS=$DEFS0
-	# If mouse support is not required, NetBSD curses works perfectly.
 	check_curses && return
+}
+
+check_netbsd_curses () {
+	curses_mk_compat_h
+	[ `uname` = "NetBSD" ] && check_curses && return
+	DEFS0=$DEFS
+	DEFS="$DEFS  -DHAVE_ATTR_T -DHAVE_ATTR_GET -DHAVE_FIXTERM \
+-DHAVE_RESETTERM"
+	check_ncursesw && return
+	check_ncurses && return
+	DEFS=$DEFS0
+	check_curses && return
+}
+check_curses_wch () {
+	check_for "wins_wch(3)"
+
+	cat <<EOT >$TMPC
+#include "compat.h"
+int
+main() {
+	cchar_t c;
+	wins_wch(stdscr, &c);
+	return 0;
+}
+EOT
+	gen_mk
+	cat <<EOT >>$OUTMK
+$TMPNAM: ${TMPNAM}.o
+	\$(CC) \$(_CFLAGS) \$(_LDFLAGS) \$(RPATH_CURSES) -o \$@ ${TMPNAM}.o \$(LDADD)
+EOT
+	compile
+	test_result || return;
+
+	DEFS="$DEFS -DHAVE_CURSES_WCH"
 }
 check_isfinite () {
 	check_for "isfinite(3)"
@@ -450,10 +553,12 @@ rm -f $LOG
 gen_mk
 
 check_make
+#check_Sanitizer
 check_float_store
 check_strlcpy
 check_strlcat
 check_lib_curses
+check_curses_wch
 check_isfinite
 
 gen_mk

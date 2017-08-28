@@ -11,4 +11,4 @@ while [ $# -gt 0 ]; do
 	esac
 	shift
 done
-xterm $XFl -T "pname $*" -e pname -M $Fl "$*" &
+xterm $XFl -T "pname $*" -e "pname -M $Fl $*" &

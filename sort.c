@@ -19,11 +19,11 @@
 
 int compare(const void *row1, const void *row2);
 
-struct sortcrit {
+static struct sortcrit {
     int direction, type, column;
 } *sort;
 
-int howmany;
+static int howmany;
 
 void
 sortrange(struct ent *left, struct ent *right, char *criteria)
@@ -132,8 +132,8 @@ compare(const void *row1, const void *row2)
     int i;
 
     for (i = 0; !result && i < howmany; i++) {
-	p1 = *ATBL(tbl, *((int *) row1), sort[i].column);
-	p2 = *ATBL(tbl, *((int *) row2), sort[i].column);
+	p1 = *ATBL(tbl, *((const int *) row1), sort[i].column);
+	p2 = *ATBL(tbl, *((const int *) row2), sort[i].column);
 
 	if (sort[i].type) {
 	    if (p1 && p1->label)
@@ -157,7 +157,7 @@ compare(const void *row1, const void *row2)
     }
 
     if (!result)
-	result = (*((int *) row1) - *((int *) row2));
+	result = (*((const int *) row1) - *((const int *) row2));
 
     return (result);
 }

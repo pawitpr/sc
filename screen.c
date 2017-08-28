@@ -645,13 +645,13 @@ update(int anychanged)		/* did any cell really change in value? */
 	    maxsc = showsc > curcol ? showsc : curcol;
 
 	    if (showtop && !message) {
-		char r[6];
+		char r_[6];
 
-		strlcpy(r, coltoa(minsc), sizeof r);
-		strlcat(r, ":", sizeof r);
-		strlcat(r, coltoa(maxsc), sizeof r);
+		strlcpy(r_, coltoa(minsc), sizeof r_);
+		strlcat(r_, ":", sizeof r_);
+		strlcat(r_, coltoa(maxsc), sizeof r_);
 		(void) clrtoeol();
-		(void) printw("Default range:  %s", r);
+		(void) printw("Default range:  %s", r_);
 	    }
 	} else {
 	    minsr = showsr < currow ? showsr : currow;

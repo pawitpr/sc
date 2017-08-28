@@ -126,18 +126,8 @@ int  collimit = -1;
 int  rowsinrange = 1;
 int  colsinrange = DEFWIDTH;
 
-extern	int lastmx, lastmy;	/* Screen address of the cursor */
-extern	int lastcol, lcols;	/* Spreadsheet Column the cursor was in last */
-extern	int lastendrow;		/* Last bottom row of screen */
-extern	int framerows;		/* Rows in current frame */
-extern	int framecols;		/* Columns in current frame */
-extern	char mode_ind;		/* Mode indicator */
-
 /* a linked list of free [struct ent]'s, uses .next as the pointer */
 struct ent *freeents = NULL;
-
-extern	int	seenerr;
-extern	char	*rev;
 
 #ifdef VMS
 int VMS_read_raw = 0;
@@ -462,14 +452,14 @@ main (int argc, char  **argv)
 			error("Select range:");
 			update(1);
 			while (!linelim) {
-			    int c;
+			    int c_;
 
-			    switch (c = nmgetch()) {
+			    switch (c_ = nmgetch()) {
 				case '.':
 				case ':':
 				case ctl('i'):
 				    if (!showrange) {
-					write_line(c);
+					write_line(c_);
 					break;
 				    }
 		    		    /* else drop through */
@@ -491,7 +481,7 @@ main (int argc, char  **argv)
 				    clearok(stdscr, 1);
 				    break;
 				default:
-				    write_line(c);
+				    write_line(c_);
 				    break;
 			    }
 			    /* goto switches to insert mode when done, so we

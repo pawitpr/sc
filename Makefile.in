@@ -177,13 +177,13 @@ LN=ln
 # Use this for system AIX V3.1
 #CFLAGS= -O -DSYSV2 -DCHTYPE=int -DNLS
 #LDFLAGS=
-#LIB=-lm -lPW -lcurses
+#LDADD=-lm -lPW -lcurses
 
 #########################################
 # Use this for system V.2 (includes: HP-UX 7.05, UNIXPC)
 #CFLAGS= -O -DSYSV2 
 #LDFLAGS=
-#LIB=-lm -lPW -lcurses
+#LDADD=-lm -lPW -lcurses
 # with gcc on a Sequent also use:
 #CC=att gcc
 #CFLAGS=  -DSYSV2 -g -pipe -traditional
@@ -194,7 +194,7 @@ LN=ln
 #LDFLAGS= -s
 #CFLAGS=  -DSYSV3 -g
 #LDFLAGS= -g
-#LIB=-lm -lncurses -lfl
+#LDADD=-lm -lncurses -lfl
 # with gcc also use:
 #CC=gcc
 #CFLAGS=  -DSYSV3 -O -pipe
@@ -206,7 +206,7 @@ LN=ln
 # Use this for system V.4
 #CFLAGS=  -DSYSV4 -DSYSV3 -O
 #LDFLAGS= -s
-#LIB=-lm -lcurses -lgen
+#LDADD=-lm -lcurses -lgen
 # with gcc also use:
 #CC=gcc
 #CFLAGS=  -DSYSV3 -O -pipe
@@ -215,13 +215,13 @@ LN=ln
 # Microport
 #CFLAGS= -DSYSV2 -O -DUPORT -Ml
 #LDFLAGS=-Ml
-#LIB=-lm -lcurses -lPW
+#LDADD=-lm -lcurses -lPW
 
 #########################################
 # Use this for BSD 4.2
 #CFLAGS= -O -DBSD42
 #LDFLAGS=
-#LIB=-lm -lcurses -ltermcap
+#LDADD=-lm -lcurses -ltermcap
 # with gcc also use:
 #CC=gcc
 
@@ -230,7 +230,7 @@ LN=ln
 #CC=atscc
 #CFLAGS=-O -DBSD42
 #LDFLAGS= 
-#LIB=-lm -lcurses  -ltermcap
+#LDADD=-lm -lcurses  -ltermcap
 #PSCLIB=-lseq
 # with gcc also use:
 #CC=gcc
@@ -240,7 +240,7 @@ LN=ln
 # Use this for BSD 4.3
 #CFLAGS= -O -DBSD43	#-O or -g
 #LDFLAGS=	# -lg might help if -g used in CFLAGS
-#LIB=-lm -lcurses -ltermcap
+#LDADD=-lm -lcurses -ltermcap
 
 #########################################
 # Use this for SunOS 4.X if you have the System V package installed.
@@ -253,25 +253,25 @@ LN=ln
 #CC=/usr/5bin/cc
 #CFLAGS= -O -DSYSV3 
 #LDFLAGS=
-#LIB=-lm -lcurses 
+#LDADD=-lm -lcurses 
 
 #########################################
 # Use this for system III (XENIX)
 #CFLAGS= -O -DSYSIII
 #LDFLAGS= -i
-#LIB=-lm -lcurses -ltermcap
+#LDADD=-lm -lcurses -ltermcap
 
 #########################################
 # Use this for XENIX Version 2.3
 #CFLAGS= -O -DSYSIII -DXENIX2_3
 #LDFLAGS= -i
-#LIB=-lm -lcurses -ltermcap
+#LDADD=-lm -lcurses -ltermcap
 
 #########################################
 # Use this for VENIX
 #CFLAGS= -DVENIX -DBSD42 -DV7
 #LDFLAGS= -z -i 
-#LIB=-lm -lcurses -ltermcap
+#LDADD=-lm -lcurses -ltermcap
 
 #########################################
 # For SCO Unix V rel. 3.2.0
@@ -285,7 +285,7 @@ LN=ln
 #SIGVOID=-DSIGVOID
 #CFLAGS= -O -DSYSV3
 #LDFLAGS=
-#LIB=-lm -lcurses -ltinfo -lPW
+#LDADD=-lm -lcurses -ltinfo -lPW
 #YACC=yacc -Sm10000
 
 #########################################
@@ -293,7 +293,7 @@ LN=ln
 #CC=cc
 #CFLAGS= -O -DSYSV3
 #LDFLAGS=
-#LIB=-lm -lcurses -lPW -lmalloc -lc_s
+#LDADD=-lm -lcurses -lPW -lmalloc -lc_s
 #YACC=yacc -Sm10000
 
 #########################################
@@ -301,7 +301,7 @@ LN=ln
 #CC=cl
 #CFLAGS= -AL -O -Fo$*.o
 #LDFLAGS=/noi /st:0x4000
-#LIB=lcurses
+#LDADD=lcurses
 #YACC=bison -y
 #
 #.SUFFIXES : .o .c
@@ -319,15 +319,13 @@ LN=ln
 # people who don't understand them.
 #CFLAGS=-DSYSV3 -O2 -Wall -UMSDOS
 #CFLAGS=-DSYSV3 -O2 -UMSDOS
-#LIB=-lm -lpdcurses
+#LDADD=-lm -lpdcurses
 
 #########################################
-_CFLAGS= $(CFLAGS) $(INCDIR_CURSES) $(DEFINES) -Wall -Wextra \
-	#-O0 -g -fno-omit-frame-pointer -fno-optimize-sibling-calls \
-	-fsanitize=undefined -fsanitize=integer -fsanitize=address \
+_CFLAGS= $(CFLAGS) $(INCDIR_CURSES) $(DEFINES) $(__CDBG) $(__CLDBG) \
 	#-DTRACE='"/tmp/trace.txt"'
-_LDFLAGS=$(LDFLAGS) -s
-LIB=-lm $(LIBDIR_CURSES) $(LIB_CURSES)
+_LDFLAGS=$(LDFLAGS) $(__CLDBG) -s
+LDADD=-lm $(LIBDIR_CURSES) $(LIB_CURSES)
 
 # All of the source files
 SRC=Makefile abbrev.c cmds.c color.c crypt.c eres.sed frame.c format.c gram.y \
@@ -347,11 +345,11 @@ all:	$(name) p$(name) $(name)qref $(name).1 p$(name).1 $(name)qref.1 \
 
 $(name):$(PAR)  $(OBJS)
 	$(CC) $(_CFLAGS) ${_LDFLAGS} ${OBJS} $(RPATH_CURSES) -o $(name) \
-	    ${LIB}
+	    ${LDADD}
 
 # Alternative link for MS-DOS
 #$(name):	$(OBJS)
-#	link ${_LDFLAGS} ${OBJS},$(name),,${LIB};
+#	link ${_LDFLAGS} ${OBJS},$(name),,${LDADD};
 
 gram.c:	gram.y
 	$(YACC) -d gram.y
@@ -468,7 +466,7 @@ lint: sc.h sc.c lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
 	lint ${LINTFLAGS} $(_CFLAGS) ${SIMPLE} sc.c \
 	    lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
 	    range.c help.c vi.c version.c xmalloc.c format.c vmtbl.c \
-	    $(LIB)
+	    $(LDADD)
 	make lintqref
 
 lintqref: help.c

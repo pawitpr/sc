@@ -479,54 +479,54 @@ command:	S_LET var_or_range '=' e
 	|       S_SHOW COL ':' COL	{ showcol($2, $4); }
 	|       S_SHOW NUMBER ':' NUMBER
 					{ showrow($2, $4); }
- 	|	S_HIDE			{ int arg;
+ 	|	S_HIDE			{ int a;
 	    				  if (showrange == SHOWROWS) {
 					    if (showsr < currow) {
 						int r = currow;
 						currow = showsr;
 						showsr = r;
 					    }
-					    arg = showsr - currow + 1;
-					    hiderow(arg);
+					    a = showsr - currow + 1;
+					    hiderow(a);
 					  } else if (showrange == SHOWCOLS) {
 					    if (showsc < curcol) {
 						int c = curcol;
 						curcol = showsc;
 						showsc = c;
 					    }
-					    arg = showsc - curcol + 1;
-					    hidecol(arg);
+					    a = showsc - curcol + 1;
+					    hidecol(a);
 					  } else
-					    arg = 1;
+					    a = 1;
 					}
  	|	S_HIDE COL		{ hide_col($2); }
-	|	S_HIDE COL ':' COL	{ int c = curcol, arg;
+	|	S_HIDE COL ':' COL	{ int c = curcol, a;
 					  if ($2 < $4) {
 					    curcol = $2;
-					    arg = $4 - $2 + 1;
+					    a = $4 - $2 + 1;
 					  } else {
 					      curcol = $4;
-					      arg = $2 - $4 + 1;
+					      a = $2 - $4 + 1;
 					  }
-					  hidecol(arg);
+					  hidecol(a);
 					  curcol = c < curcol ? c :
-					      c < curcol + arg ? curcol :
-					      c - arg;
+					      c < curcol + a ? curcol :
+					      c - a;
 					}
  	|	S_HIDE NUMBER		{ hide_row($2); }
 	|	S_HIDE NUMBER ':' NUMBER
-					{ int r = currow, arg;
+					{ int r = currow, a;
 					  if ($2 < $4) {
 					    currow = $2;
-					    arg = $4 - $2 + 1;
+					    a = $4 - $2 + 1;
 					  } else {
 					      currow = $4;
-					      arg = $2 - $4 + 1;
+					      a = $2 - $4 + 1;
 					  }
-					  hiderow(arg);
+					  hiderow(a);
 					  currow = r < currow ? r :
-					      r < currow + arg ? currow :
-					      r - arg;
+					      r < currow + a ? currow :
+					      r - a;
 					}
 	|	S_COPY			{ if (showrange) {
 					    showrange = 0;
@@ -749,17 +749,17 @@ command:	S_LET var_or_range '=' e
 	|	S_INSERTCOL '*' NUMBER	{ insertcol($3, 0); }
 	|	S_OPENCOL		{ insertcol( 1, 1); }
 	|	S_OPENCOL '*' NUMBER	{ insertcol($3, 1); }
-	|	S_DELETEROW		{ int arg;
+	|	S_DELETEROW		{ int a;
 	    				  if (showrange == SHOWROWS) {
 					    if (showsr < currow) {
 						int r = currow;
 						currow = showsr;
 						showsr = r;
 					    }
-					    arg = showsr - currow + 1;
+					    a = showsr - currow + 1;
 					  } else
-					    arg = 1;
-					  deleterow(arg);
+					    a = 1;
+					  deleterow(a);
 					}
 	|	S_DELETEROW '*' NUMBER	{ deleterow($3); }
 	|	S_DELETEROW NUMBER	{ int r = currow;
@@ -768,30 +768,30 @@ command:	S_LET var_or_range '=' e
 					  currow = r <= currow ? r : r - 1;
 					}
 	|	S_DELETEROW NUMBER ':' NUMBER
-					{ int r = currow, arg;
+					{ int r = currow, a;
 					  if ($2 < $4) {
 					    currow = $2;
-					    arg = $4 - $2 + 1;
+					    a = $4 - $2 + 1;
 					  } else {
 					      currow = $4;
-					      arg = $2 - $4 + 1;
+					      a = $2 - $4 + 1;
 					  }
-					  deleterow(arg);
+					  deleterow(a);
 					  currow = r < currow ? r :
-					      r < currow + arg ? currow :
-					      r - arg;
+					      r < currow + a ? currow :
+					      r - a;
 					}
-	|	S_DELETECOL		{ int arg;
+	|	S_DELETECOL		{ int a;
 	    				  if (showrange == SHOWCOLS) {
 					    if (showsc < curcol) {
 						int c = curcol;
 						curcol = showsc;
 						showsc = c;
 					    }
-					    arg = showsc - curcol + 1;
+					    a = showsc - curcol + 1;
 					  } else
-					    arg = 1;
-					  closecol(arg);
+					    a = 1;
+					  closecol(a);
 					}
 	|	S_DELETECOL COL		{ int r = curcol;
 					  curcol = $2;
@@ -799,29 +799,29 @@ command:	S_LET var_or_range '=' e
 					  curcol = r <= curcol ? r : r - 1;
 					}
 	|	S_DELETECOL '*' NUMBER	{ closecol($3); }
-	|	S_DELETECOL COL ':' COL	{ int c = curcol, arg;
+	|	S_DELETECOL COL ':' COL	{ int c = curcol, a;
 					  if ($2 < $4) {
 					    curcol = $2;
-					    arg = $4 - $2 + 1;
+					    a = $4 - $2 + 1;
 					  } else {
 					      curcol = $4;
-					      arg = $2 - $4 + 1;
+					      a = $2 - $4 + 1;
 					  }
-					  closecol(arg);
+					  closecol(a);
 					  curcol = c < curcol ? c :
-					      c < curcol + arg ? curcol :
-					      c - arg;
+					      c < curcol + a ? curcol :
+					      c - a;
 					}
-	|	S_YANKROW		{ int r = currow, arg;
+	|	S_YANKROW		{ int r = currow, a;
 	    				  if (showrange == SHOWROWS) {
 					    if (showsr < currow) {
 						currow = showsr;
 						showsr = r;
 					    }
-					    arg = showsr - currow + 1;
+					    a = showsr - currow + 1;
 					  } else
-					    arg = 1;
-					  yankrow(arg);
+					    a = 1;
+					  yankrow(a);
 					  currow = r;
 					}
 	|	S_YANKROW '*' NUMBER	{ yankrow($3); }
@@ -831,27 +831,27 @@ command:	S_LET var_or_range '=' e
 					  currow = r;
 					}
 	|	S_YANKROW NUMBER ':' NUMBER
-					{ int r = currow, arg;
+					{ int r = currow, a;
 					  if ($2 < $4) {
 					    currow = $2;
-					    arg = $4 - $2 + 1;
+					    a = $4 - $2 + 1;
 					  } else {
 					      currow = $4;
-					      arg = $2 - $4 + 1;
+					      a = $2 - $4 + 1;
 					  }
-					  yankrow(arg);
+					  yankrow(a);
 					  currow = r;
 					}
-	|	S_YANKCOL		{ int c = curcol, arg;
+	|	S_YANKCOL		{ int c = curcol, a;
 	    				  if (showrange == SHOWCOLS) {
 					    if (showsc < curcol) {
 						curcol = showsc;
 						showsc = c;
 					    }
-					    arg = showsc - curcol + 1;
+					    a = showsc - curcol + 1;
 					  } else
-					    arg = 1;
-					  yankcol(arg);
+					    a = 1;
+					  yankcol(a);
 					  curcol = c;
 					}
 	|	S_YANKCOL NUMBER	{ int c = curcol;
@@ -860,15 +860,15 @@ command:	S_LET var_or_range '=' e
 					  curcol = c;
 					}
 	|	S_YANKCOL '*' NUMBER	{ yankcol($3); }
-	|	S_YANKCOL COL ':' COL	{ int c = curcol, arg;
+	|	S_YANKCOL COL ':' COL	{ int c = curcol, a;
 					  if ($2 < $4) {
 					    curcol = $2;
-					    arg = $4 - $2 + 1;
+					    a = $4 - $2 + 1;
 					  } else {
 					      curcol = $4;
-					      arg = $2 - $4 + 1;
+					      a = $2 - $4 + 1;
 					  }
-					  yankcol(arg);
+					  yankcol(a);
 					  curcol = c;
 					}
 	|	S_PULL			{ pullcells('p'); }

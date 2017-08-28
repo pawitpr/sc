@@ -34,6 +34,8 @@
 #include "compat.h"
 #include "sc.h"
 
+static void fpe_trap(int);
+
 #ifdef VMS
 # include "gram_tab.h"
 typedef union {
@@ -63,9 +65,7 @@ jmp_buf fpe_buf;
 
 bool decimal = FALSE;
 
-#ifdef SIGVOID
-void
-#endif
+static void
 fpe_trap(int signo)
 {
     (void)signo;

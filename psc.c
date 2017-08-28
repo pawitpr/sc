@@ -46,28 +46,30 @@ int *precision;
 int maxcols;
 int *realfmt;
 
-int curlen;
-int curcol, coff;
-int currow, roff;
-int first;
-int effr, effc;
+static int curlen;
+int curcol;
+static int coff;
+int currow;
+static int roff;
+static int first;
+static int effr, effc;
 
 /* option flags reset */
-int colfirst = FALSE;
-int leftadj = FALSE;
-int r0 = 0;
-int c0 = 0;
-int rinc = 1;
-int cinc = 1;
-int len = 20000;
-char delim1 = ' ';
-char delim2 = '\t';
-int strip_delim = TRUE;
-int drop_format = FALSE;
-int strnums	= FALSE;
-int plainnums	= FALSE;
+static int colfirst = FALSE;
+static int leftadj = FALSE;
+static int r0 = 0;
+static int c0 = 0;
+static int rinc = 1;
+static int cinc = 1;
+static int len = 20000;
+static char delim1 = ' ';
+static char delim2 = '\t';
+static int strip_delim = TRUE;
+static int drop_format = FALSE;
+static int strnums	= FALSE;
+static int plainnums	= FALSE;
 
-char token[1000];
+static char token[1000];
 
 int
 main(int argc, char **argv)

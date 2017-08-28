@@ -89,6 +89,34 @@ void	range_arg(char *s, struct enode *e);
 void	three_arg(char *s, struct enode *e);
 void	two_arg(char *s, struct enode *e);
 void	two_arg_index(char *s, struct enode *e);
+static double finfunc(int, double, double, double);
+static char *dostindex(int, int, int, int, struct enode *);
+static double doindex(int, int, int, int, struct enode *);
+static double docount(int, int, int, int, struct enode *);
+static double dosum(int, int, int, int, struct enode *);
+static double doprod(int, int, int, int, struct enode *);
+static double doavg(int, int, int, int, struct enode *);
+static double dostddev(int, int, int, int, struct enode *);
+static double domax(int, int, int, int, struct enode *);
+static double domin(int, int, int, int, struct enode *);
+static double dodts(int, int, int);
+static double dotts(int, int, int);
+static double dotime(int, double);
+static double doston(char *);
+static double doeqs(char *, char *);
+static struct ent *getent(char *, double);
+static double donval(char *, double);
+static double dolmax(struct enode *);
+static double dolmin(struct enode *);
+static char *docat(register char *, register char *);
+static char *dodate(time_t, char *);
+static char *dofmt(char *, double);
+static char *doext(struct enode *);
+static char *dosval(char *, double);
+static void decodev(struct ent_ptr);
+static char *docapital(char *);
+static char *docase(int, char *);
+static char *dosubstr(char *, register int, register int);
 
 double	rint(double d);
 int	cellerror = CELLOK;	/* is there an error in this cell */
@@ -107,7 +135,7 @@ eval_fpe(int);
 #define dtr(x) ((x)*(M_PI/(double)180.0))
 #define rtd(x) ((x)*(180.0/(double)M_PI))
 
-double
+static double
 finfunc(int fun, double v1, double v2, double v3)
 {
  	double answer,p;
@@ -149,7 +177,7 @@ finfunc(int fun, double v1, double v2, double v3)
 	return (answer);
 }
 
-char *
+static char *
 dostindex(int minr, int minc, int maxr, int maxc, struct enode *val)
 {
     int r, c;
@@ -181,7 +209,7 @@ dostindex(int minr, int minc, int maxr, int maxc, struct enode *val)
 	return ((char *)0);
 }
 
-double
+static double
 doindex(int minr, int minc, int maxr, int maxc, struct enode *val)
 {
     int r, c;
@@ -269,7 +297,7 @@ dolookup(struct enode * val, int minr, int minc, int maxr, int maxc, int offset,
     return ret;
 }
 
-double
+static double
 docount(int minr, int minc, int maxr, int maxc, struct enode *e)
 {
     int v;
@@ -296,7 +324,7 @@ docount(int minr, int minc, int maxr, int maxc, struct enode *e)
     return v;
 }
 
-double
+static double
 dosum(int minr, int minc, int maxr, int maxc, struct enode *e)
 {
     double v;
@@ -323,7 +351,7 @@ dosum(int minr, int minc, int maxr, int maxc, struct enode *e)
     return v;
 }
 
-double
+static double
 doprod(int minr, int minc, int maxr, int maxc, struct enode *e)
 {
     double v;
@@ -350,7 +378,7 @@ doprod(int minr, int minc, int maxr, int maxc, struct enode *e)
     return v;
 }
 
-double
+static double
 doavg(int minr, int minc, int maxr, int maxc, struct enode *e)
 {
     double v;
@@ -385,7 +413,7 @@ doavg(int minr, int minc, int maxr, int maxc, struct enode *e)
     return (v / (double)count);
 }
 
-double
+static double
 dostddev(int minr, int minc, int maxr, int maxc, struct enode *e)
 {
     double lp, rp, v, nd;
@@ -423,7 +451,7 @@ dostddev(int minr, int minc, int maxr, int maxc, struct enode *e)
     return (sqrt((nd*lp-rp*rp)/(nd*(nd-1))));
 }
 
-double
+static double
 domax(int minr, int minc, int maxr, int maxc, struct enode *e)
 {
     double v = (double)0;
@@ -460,7 +488,7 @@ domax(int minr, int minc, int maxr, int maxc, struct enode *e)
     return (v);
 }
 
-double
+static double
 domin(int minr, int minc, int maxr, int maxc, struct enode *e)
 {
     double v = (double)0;
@@ -499,7 +527,7 @@ domin(int minr, int minc, int maxr, int maxc, struct enode *e)
 
 int mdays[12]={ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
-double
+static double
 dodts(int e1, int e2, int e3)
 {
     int		yr, mo, day;
@@ -533,7 +561,7 @@ dodts(int e1, int e2, int e3)
     return ((double)secs);
 }
 
-double
+static double
 dotts(int hr, int min, int sec)
 {
     if (hr < 0 || hr > 23 || min < 0 || min > 59 || sec < 0 || sec > 59) {
@@ -544,7 +572,7 @@ dotts(int hr, int min, int sec)
     return ((double)(sec+min*60+hr*3600));
 }
 
-double
+static double
 dotime(int which, double when)
 {
 	static time_t t_cache;
@@ -578,7 +606,7 @@ dotime(int which, double when)
 	return ((double)0);
 }
 
-double
+static double
 doston(char *s)
 {
     double v;
@@ -591,7 +619,7 @@ doston(char *s)
     return(v);
 }
 
-double
+static double
 doeqs(char *s1, char *s2)
 {
     double v;
@@ -622,7 +650,7 @@ doeqs(char *s1, char *s2)
  * Use only the integer part of the column number.  Always free the string.
  */
 
-struct ent *
+static struct ent *
 getent(char *colstr, double rowdoub)
 {
     int collen;		/* length of string */
@@ -653,7 +681,7 @@ getent(char *colstr, double rowdoub)
  * number, return the selected cell's numeric value, if any.
  */
 
-double
+static double
 donval(char *colstr, double rowdoub)
 {
     struct ent *ep;
@@ -668,7 +696,7 @@ donval(char *colstr, double rowdoub)
  *	The left pointer is a chain of ELIST nodes, the right pointer
  *	is a value.
  */
-double
+static double
 dolmax(struct enode *ep)
 {
     register int count = 0;
@@ -686,7 +714,7 @@ dolmax(struct enode *ep)
     else return (double)0;
 }
 
-double
+static double
 dolmin(struct enode *ep)
 {
     register int count = 0;
@@ -897,12 +925,12 @@ eval(register struct enode *e)
 		return (temp - floor(temp) < 0.5 ? floor(temp) : ceil(temp));
 	    }
  	case ROUND:
-	    {	int precision = (int) eval(e->e.o.right);
+	    {	int prec = (int) eval(e->e.o.right);
 		double scale = 1;
-		if (0 < precision)
-		    do scale *= 10; while (0 < --precision);
-		else if (precision < 0)
-		    do scale /= 10; while (++precision < 0);
+		if (0 < prec)
+		    do scale *= 10; while (0 < --prec);
+		else if (prec < 0)
+		    do scale /= 10; while (++prec < 0);
 
 		if (rndtoeven)
 		    return (rint(eval(e->e.o.left) * scale) / scale);
@@ -990,11 +1018,11 @@ eval_fpe(int i) /* Trap for FPE errors in eval */
 }
 
 double
-fn1_eval(double (*fn)(), double arg)
+fn1_eval(double (*fn)(), double a)
 {
     double res;
     errno = 0;
-    res = (*fn)(arg);
+    res = (*fn)(a);
     if (errno)
 	cellerror = CELLERROR;
 
@@ -1019,7 +1047,7 @@ fn2_eval(double (*fn)(), double arg1, double arg2)
  * All returned strings are assumed to be xalloced.
  */
 
-char *
+static char *
 docat(register char *s1, register char *s2)
 {
     register char *p;
@@ -1041,7 +1069,7 @@ docat(register char *s1, register char *s2)
     return (p);
 }
 
-char *
+static char *
 dodate(time_t tloc, char *fmtstr)
 {
     char buff[FBUFLEN];
@@ -1058,7 +1086,7 @@ dodate(time_t tloc, char *fmtstr)
 }
 
 
-char *
+static char *
 dofmt(char *fmtstr, double v)
 {
     char buff[FBUFLEN];
@@ -1105,7 +1133,7 @@ doext(struct enode *se)
 
 #else /* if defined(VMS) || defined(MSDOS) */
 
-char *
+static char *
 doext(struct enode *se)
 {
     char buff[FBUFLEN];		/* command line/return, not permanently alloc */
@@ -1182,7 +1210,7 @@ doext(struct enode *se)
  * the expression is saved in a file, etc.
  */
 
-char *
+static char *
 dosval(char *colstr, double rowdoub)
 {
     struct ent *ep;
@@ -1203,7 +1231,7 @@ dosval(char *colstr, double rowdoub)
  * when calling this routine.
  */
 
-char *
+static char *
 dosubstr(char *s, register int v1, register int v2)
 {
     register char *s1, *s2;
@@ -1234,7 +1262,7 @@ dosubstr(char *s, register int v1, register int v2)
  * character casing: make upper case, make lower case
  */
 
-char *
+static char *
 docase(int acase, char *s)
 {
     char *p = s;
@@ -1266,7 +1294,7 @@ docase(int acase, char *s)
  * if the string is all upper we will lower rest of words.
  */
 
-char *
+static char *
 docapital(char *s)
 {
     char *p;
@@ -2451,37 +2479,37 @@ format_cell(struct ent *v1, struct ent *v2, char *s)
 }
 
 void
-hide_row(int arg)
+hide_row(int a)
 {
-    if (arg < 0) {
+    if (a < 0) {
 	error("Invalid Range");
 	return;
     }
-    if (arg >= maxrows-1) {
-	if (!growtbl(GROWROW, arg+1, 0)) {
+    if (a >= maxrows-1) {
+	if (!growtbl(GROWROW, a+1, 0)) {
 	    error("You can't hide the last row");
 	    return;
 	}
     }
     FullUpdate++;
-    row_hidden[arg] = TRUE;
+    row_hidden[a] = TRUE;
 }
 
 void
-hide_col(int arg)
+hide_col(int a)
 {
-    if (arg < 0) {
+    if (a < 0) {
 	error("Invalid Range");
 	return;
     }
-    if (arg >= maxcols-1) {
-    	if ((arg >= ABSMAXCOLS-1) || !growtbl(GROWCOL, 0, arg+1)) {
+    if (a >= maxcols-1) {
+    	if ((a >= ABSMAXCOLS-1) || !growtbl(GROWCOL, 0, a+1)) {
 	    error("You can't hide the last col");
 	    return;
 	}
     }
     FullUpdate++;
-    col_hidden[arg] = TRUE;
+    col_hidden[a] = TRUE;
 }
 
 void
@@ -2579,7 +2607,7 @@ label(register struct ent *v, register char *s, int flushdir)
     }
 }
 
-void
+static void
 decodev(struct ent_ptr v)
 {
 	struct range *r;

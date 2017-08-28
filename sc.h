@@ -383,6 +383,14 @@ extern	int brokenpipe;		/* Set to true if SIGPIPE is received */
 extern  char dpoint;	/* country-dependent decimal point from locale */
 extern  char thsep;	/* country-dependent thousands separator from locale */
 extern	char histfile[PATHLEN];
+extern	int lastmx, lastmy;	/* Screen address of the cursor */
+extern	int lastcol, lcols;	/* Spreadsheet Column the cursor was in last */
+extern	int lastendrow;		/* Last bottom row of screen */
+extern	int framerows;		/* Rows in current frame */
+extern	int framecols;		/* Columns in current frame */
+extern	char mode_ind;		/* Mode indicator */
+extern	int	seenerr;
+extern	char	*rev;
 
 extern	FILE *openfile(char *, size_t, int *, int *);
 extern	char *coltoa(int col);

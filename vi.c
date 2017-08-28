@@ -64,6 +64,7 @@ static int  to_char(int arg, int n);
 static void u_save(int c);
 static void yank_cmd(int delete, int change);
 static void yank_chars(register int first, register int last, int delete);
+static int get_motion(int);
 int vigetch(void);
 #ifdef NCURSES_MOUSE_VERSION
 void mouse_set_pos(int);
@@ -73,8 +74,8 @@ extern int framerows;		/* Rows in current frame */
 extern char mode_ind;		/* Mode indicator */
 extern char search_ind;		/* Search indicator */
 extern int lcols;		/* Spreadsheet Column the cursor was in last */
-char	*completethis = NULL;
-int	search_dir;		/* Search direction:  forward = 0; back = 1 */
+static char	*completethis = NULL;
+static int	search_dir;		/* Search direction:  forward = 0; back = 1 */
 char histfile[PATHLEN] = "~/.sc_history";
 
 /* values for mode below */
@@ -89,7 +90,7 @@ char histfile[PATHLEN] = "~/.sc_history";
 #define	DOTLEN		200
 
 static int mode = INSERT_MODE;
-struct	hist {
+static struct	hist {
 	unsigned int	len;
 	char		*histline;
 } history[HISTLEN + 1];
@@ -528,12 +529,12 @@ write_line(int c)
 	case '#':		gotobottom();				break;
 	case 'o':		if (showrange) {
 				    int r = currow;
-				    int c = curcol;
+				    int cc = curcol;
 
 				    currow = showsr;
 				    showsr = r;
 				    curcol = showsc;
-				    showsc = c;
+				    showsc = cc;
 				    rowsinrange = 1;
 				    colsinrange = fwidth[curcol];
 				} 					break;
@@ -900,14 +901,14 @@ stop_edit(void) {
  * the last character of the line.
  */
 static int
-for_line(int arg, int stop_null)
+for_line(int a, int stop_null)
 {
     ssize_t cpos = linelim;
 
     if (linelim < 0)
 	return (linelim);
-    else if (arg >= 0 && (size_t)(linelim + arg) <= strlen(line))
-	cpos += arg;
+    else if (a >= 0 && (size_t)(linelim + a) <= strlen(line))
+	cpos += a;
     else
 	cpos = strlen(line);
 
@@ -922,14 +923,14 @@ for_line(int arg, int stop_null)
  */
 
 static int
-for_word(int arg, int end_word, int big_word, int stop_null)
+for_word(int a, int end_word, int big_word, int stop_null)
 {
     register int c;
     ssize_t cpos;
 
     cpos = linelim;
 
-    while (cpos >= 0 && (size_t)cpos < strlen(line) && arg--) {
+    while (cpos >= 0 && (size_t)cpos < strlen(line) && a--) {
 	if (end_word)
 	    cpos++;
 
@@ -966,23 +967,23 @@ for_word(int arg, int end_word, int big_word, int stop_null)
 }
 
 static int
-back_line(int arg)
+back_line(int a)
 {
-    if (linelim > arg)
-        return (linelim - arg);
+    if (linelim > a)
+        return (linelim - a);
     else
 	return (0);
 }
 
 static int
-back_word(int arg, int big_word)
+back_word(int a, int big_word)
 {
     register int c;
     register int cpos;
 
     cpos = linelim;
 
-    while (cpos > 0 && arg--) {
+    while (cpos > 0 && a--) {
 	if (line[cpos] == ' ') {
 	    /* Skip white space */
 	    while (cpos > 0 && line[cpos] == ' ')
@@ -1022,20 +1023,20 @@ back_word(int arg, int big_word)
  * line terminator.  Otherwise, don't.
  */
 static void
-del_in_line(int arg, int back_null)
+del_in_line(int a, int back_null)
 {
     register int len, i;
 
     if (linelim >= 0) {
 	len = strlen(line);
-	if (arg > len - linelim)
-	    arg = len - linelim;
+	if (a > len - linelim)
+	    a = len - linelim;
 	if (linelim == len && linelim > 0)
 	    linelim--;
-	strlcpy(putbuf, line + linelim, arg);
-	putbuf[arg] = '\0';
+	strlcpy(putbuf, line + linelim, a);
+	putbuf[a] = '\0';
 	for (i = linelim; i < len; i++)
-	    line[i] = line[i+arg];
+	    line[i] = line[i+a];
     }
     if (back_null && linelim > 0 && line[linelim] == '\0')
 	--linelim;
@@ -1137,12 +1138,12 @@ append_line(void) {
 }
 
 static void
-change_case(int arg) {
+change_case(int a) {
     if (linelim < 0) {
     	linelim = 0;
 	*line = '\0';
     }
-    while (arg--) {
+    while (a--) {
 	if (islower((int)line[linelim]))
 	    line[linelim] = toupper((int)line[linelim]);
 	else if (isupper((int)line[linelim]))
@@ -1206,7 +1207,7 @@ back_space(void) {
  * `ce', just as in vi.  Setting change to 0 causes `w' to act as usual.
  */
 
-int
+static int
 get_motion(int change)
 {
     int c;
@@ -1732,7 +1733,7 @@ last_col(void) {
 }
 
 static int
-find_char(int arg, int n) {
+find_char(int a, int n) {
 	register int i;
 
 	if (findchar)
@@ -1746,7 +1747,7 @@ find_char(int arg, int n) {
 			break;
 		}
 	i = linelim;
-	while (arg--) {
+	while (a--) {
 		i += n;
 		while (i >= 0 && line[i] && line[i] != findchar)
 			i += n;
@@ -1760,14 +1761,14 @@ find_char(int arg, int n) {
 }
 
 static int
-to_char(int arg, int n)
+to_char(int a, int n)
 {
     register int i;
     int tmp = linelim;
 
     if (linelim + n >= 0 && (size_t)(linelim + n) < strlen(line))
 	linelim += n;
-    i = find_char(arg, n);
+    i = find_char(a, n);
     if (i != linelim)
 	i -= n;
     linelim = tmp;
@@ -2057,9 +2058,9 @@ query(const char *s, char *data)
 
 #ifdef NCURSES_MOUSE_VERSION
 void
-mouse_set_pos(int mode) {
+mouse_set_pos(int m) {
 	static int x0;
-	switch (mode) {
+	switch (m) {
 	case 1:
 		x0 = mevent.x;
 		break;

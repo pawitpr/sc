@@ -8,15 +8,15 @@
 #include <stdlib.h>
 #ifdef QREF
 #include <stdio.h>
-char	*header = " Quick Reference";
-char	*revision = "$Revision: 7.16 $";
+static char	*header = " Quick Reference";
+static char	*revision = "$Revision: 7.16 $";
 #else
 #include <limits.h>
 #include "compat.h"
 #include "sc.h"
 #endif /* QREF */
 
-char *intro[] = {
+static char *intro[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -47,7 +47,7 @@ char *intro[] = {
 (char *)0
 };
 
-char *toggleoptions[] = {
+static char *toggleoptions[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -79,7 +79,7 @@ char *toggleoptions[] = {
 (char *)0
 };
 
-char *setoptions[] = {
+static char *setoptions[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -105,7 +105,7 @@ char *setoptions[] = {
 (char *)0
 };
 
-char *cursor[] = {
+static char *cursor[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -138,7 +138,7 @@ char *cursor[] = {
 };
 
 
-char *cell[] = {
+static char *cell[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -173,7 +173,7 @@ char *cell[] = {
 };
 
 
-char *vi[] = {
+static char *vi[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -209,7 +209,7 @@ char *vi[] = {
 (char *)0
 };
 
-char *file[] = {
+static char *file[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -242,7 +242,7 @@ char *file[] = {
 };
 
 
-char *row[] = {
+static char *row[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -276,7 +276,7 @@ char *row[] = {
 };
 
 
-char *range[] = {
+static char *range[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -310,7 +310,7 @@ char *range[] = {
 };
 
 
-char *misc[] = {
+static char *misc[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -337,7 +337,7 @@ char *misc[] = {
 (char *)0
 };
 
-char *var[] = {
+static char *var[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -369,7 +369,7 @@ char *var[] = {
 (char *)0
 };
 
-char *rangef[] = {
+static char *rangef[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -401,7 +401,7 @@ char *rangef[] = {
 (char *)0
 };
 
-char *numericf[] = {
+static char *numericf[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -434,7 +434,7 @@ char *numericf[] = {
 (char *)0
 };
 
-char *stringf[] = {
+static char *stringf[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -468,7 +468,7 @@ char *stringf[] = {
 };
 
 
-char *finf[] = {
+static char *finf[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -501,7 +501,7 @@ char *finf[] = {
 };
 
 
-char *timef[] = {
+static char *timef[] = {
 " ",
 #if defined(QREF) && defined(TROFF)
 ".SH",
@@ -590,7 +590,7 @@ pscreen(char *screen[])
     return(nmgetch());
 }
 #else
-char	** pages[] = { intro, toggleoptions, setoptions, cursor, cell, vi,
+static char	** pages[] = { intro, toggleoptions, setoptions, cursor, cell, vi,
 			file, row, range, misc, var, rangef, numericf, stringf,
 			finf, timef, NULL};
 
