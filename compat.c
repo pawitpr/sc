@@ -1,7 +1,6 @@
 /* Carsten Kunze, 2016 */
 
 #include <string.h>
-#include "compat.h"
 
 #ifndef HAVE_STRLCPY
 size_t
