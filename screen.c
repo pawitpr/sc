@@ -818,6 +818,7 @@ update(int anychanged)		/* did any cell really change in value? */
 			if ((ssize_t)strlen(field) > fwidth[col]) {
 			    for (i = 0; i < fwidth[col]; i++) {
 				if (note) {
+#ifndef NO_ATTR_GET
 				    attr_t attr;
 				    short curcolor = 0;
 				    if (!i && color && has_colors()) {
@@ -827,10 +828,13 @@ update(int anychanged)		/* did any cell really change in value? */
 					attr_get(attrp, curcolorp, NULL);
 					color_set(4, NULL);
 				    }
+#endif
 				    (void)addch('*');
 				    i++;
+#ifndef NO_ATTR_GET
 				    if (!i && color && has_colors())
 					color_set(curcolor, NULL);
+#endif
 				}
 				(void)addch('*');
 			    }
@@ -842,6 +846,7 @@ update(int anychanged)		/* did any cell really change in value? */
 					i++)
 				    (void)addch(' ');
 			    if (note) {
+#ifndef NO_ATTR_GET
 				attr_t attr;
 				short curcolor = 0;
 				if (color && has_colors()) {
@@ -851,9 +856,12 @@ update(int anychanged)		/* did any cell really change in value? */
 				    attr_get(attrp, curcolorp, NULL);
 				    color_set(4, NULL);
 				}
+#endif
 				(void)addch('*');
+#ifndef NO_ATTR_GET
 				if (color && has_colors())
 				    color_set(curcolor, NULL);
+#endif
 			    }
 			    (void)addstr(field);
 			    if (cfmt && *cfmt == ctl('d'))

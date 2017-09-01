@@ -580,6 +580,26 @@ EOT
 	test_result && DEFS="$DEFS -DUSE_IEEEFP_H"
 	PASS_TEXT=
 }
+check_sc_attr_get () {
+	check_for "sc(1) attr_get(3)"
+	cat <<EOT >$TMPC
+#include <limits.h>
+#include "compat.h"
+#include "sc.h"
+int
+main() {
+	attr_get(NULL, NULL, NULL);
+	return 0;
+}
+EOT
+	gen_mk
+	cat <<EOT >>$OUTMK
+$TMPNAM: ${TMPNAM}.o
+	\$(CC) \$(_CFLAGS) -o \$@ ${TMPNAM}.o \$(LDADD)
+EOT
+	compile
+	test_result || DEFS="$DEFS -DNO_ATTR_GET"
+}
 	[ ! -s compat.h ] && rm compat.h
 OUTMK=Makefile
 INMK=${OUTMK}.in
@@ -602,6 +622,7 @@ check_lib_curses
 check_curses_wch
 check_curses_keyname
 check_isfinite
+check_sc_attr_get
 
 gen_mk
 rm -f $TMPNAM*

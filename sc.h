@@ -68,7 +68,7 @@
 typedef chtype attr_t;
 #endif
 
-#ifndef HAVE_ATTR_GET
+#if !defined(HAVE_ATTR_GET) && !defined(NO_ATTR_GET)
 #define attr_get(a, p, o)	((void)((a) != 0 && (*(a) = stdscr->_attrs)), \
 				(void)((p) != 0 && \
 				(*(p) = PAIR_NUMBER(stdscr->_attrs))), OK)
