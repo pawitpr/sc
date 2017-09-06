@@ -24,7 +24,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdbool.h>
+#ifdef HAVE_STDBOOL_H
+# include <stdbool.h>
+#else
+# define bool _Bool
+#endif
 #include <limits.h>
 #include <string.h>
 #include "sc.h"
