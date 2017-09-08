@@ -27,7 +27,12 @@
 #ifdef HAVE_STDBOOL_H
 # include <stdbool.h>
 #else
+# if !HAVE__BOOL
+#  define _Bool int
+# endif
 # define bool _Bool
+# define true 1
+# define false 0
 #endif
 #include <limits.h>
 #include <string.h>

@@ -324,7 +324,7 @@ LN=ln
 #########################################
 _CFLAGS= $(CFLAGS) $(INCDIR_CURSES) $(DEFINES) $(__CDBG) $(__CLDBG) \
 	#-DTRACE='"/tmp/trace.txt"'
-_LDFLAGS=$(LDFLAGS) $(__CLDBG) #-s
+_LDFLAGS=$(LDFLAGS) $(__CLDBG) -s
 LDADD=-lm $(LIBDIR_CURSES) $(LIB_CURSES)
 
 # All of the source files
