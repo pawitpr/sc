@@ -1,3 +1,8 @@
+2017-09-08
+     * Changes to make sc build on NetBSD 1.5
+       (Issue #3 reported by DNied@GitHub)
+2016-04-14
+     * Option -M (process mouse events)
 2016-04-13       
      * When rows or columns are deleted (e.g. with "dr" or "dc"),            
        enclosed color ranges had not been deleted.  An attempt had been      

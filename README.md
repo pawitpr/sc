@@ -85,6 +85,18 @@ make
 ```
 (the `curses` or `ncurses` header files need to be installed,
 else `make` failes).
+
+If `make` failes it may be possible that `./configure` did not work
+correctly with the installed `/bin/sh`.
+If `ksh` is installed in such cases using
+```sh
+make distclean
+ksh configure
+make
+```
+can solve the problem.
+(Alternatively `sh` in `configure`s first line can be changed to `ksh`.)
+
 The result is installed with
 ```sh
 make install
