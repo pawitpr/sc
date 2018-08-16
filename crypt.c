@@ -11,6 +11,8 @@
 #include <sys/file.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
+#include <errno.h>
 #include "compat.h"
 #include "sc.h"
 
@@ -72,7 +74,9 @@ creadfile(char *save, int  eraseflg)
 	if (line[0] != '#') (void) yyparse();
     }
     --loading;
-    (void) fclose(f);
+	if (fclose(f) == EOF) {
+		error("fclose(pipefd): %s", strerror(errno));
+	}
     (void) close(pipefd[0]);
     while (pid != wait(&fildes)) /**/;
     linelim = -1;
@@ -152,7 +156,9 @@ cwritefile(char *fname, int r0, int c0, int rn, int cn)
 
     write_fd(f, r0, c0, rn, cn);
 
-    (void) fclose(f);
+	if (fclose(f) == EOF) {
+		error("fclose(pipefd): %s", strerror(errno));
+	}
     (void) close(pipefd[1]);
     while (pid != wait(&fildes)) /**/;
     strlcpy(curfile, save, sizeof curfile);

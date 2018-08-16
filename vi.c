@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>
+#include <errno.h>
 #if defined(REGCOMP)
 #include <regex.h>
 #endif
@@ -1658,67 +1659,81 @@ search_again(bool reverse)
 void
 write_hist(void)
 {
-    int i;
-    FILE *fp, *tmpfp = NULL;
+	int i;
+	FILE *fp, *tmpfp = NULL;
 
-    if (!*histfile)
-	return;
-    if (histsessionnew < HISTLEN) {
-	/* write the new history for this session to a tmp file */
-	tmpfp = tmpfile();
-	for (i = 1; i <= histsessionnew; i++) {
-	    histsessionstart = histsessionstart % endhist + 1;
-	    if (history[histsessionstart].len > 40)
-		fprintf(tmpfp, "%s\n", history[histsessionstart].histline);
+	if (!*histfile)
+		return;
+	if (histsessionnew < HISTLEN) {
+		/* write the new history for this session to a tmp file */
+		tmpfp = tmpfile();
+		for (i = 1; i <= histsessionnew; i++) {
+			histsessionstart = histsessionstart % endhist + 1;
+			if (history[histsessionstart].len > 40)
+			fprintf(tmpfp, "%s\n", history[histsessionstart].histline);
+		}
+		fseek(tmpfp, 0, SEEK_SET);
+
+		/* re-read the main history, then read back in the saved session hist*/
+		histp = 0;
+		lasthist = 0;
+		endhist = -1;
+		read_hist();
+		readhistfile(tmpfp);
+
+		if (fclose(fp) == EOF) {
+			error("fclose(tmpfile()): %s", strerror(errno));
+		}
 	}
-	fseek(tmpfp, 0, SEEK_SET);
 
-	/* re-read the main history, then read back in the saved session hist*/
-	histp = 0;
-	lasthist = 0;
-	endhist = -1;
-	read_hist();
-	readhistfile(tmpfp);
-    }
+	/* now write to whole lot out to the proper save file */
+	if (findhome(histfile, sizeof histfile) && (fp = fopen(histfile, "w"))
+			!= NULL) {
+		for (i = 1; i <= endhist; i++) {
+			lasthist = lasthist % endhist + 1;
+			if (history[lasthist].len > 40)
+				fprintf(fp, "%s\n", history[lasthist].histline);
+		}
 
-    /* now write to whole lot out to the proper save file */
-    if (findhome(histfile, sizeof histfile) && (fp = fopen(histfile, "w"))
-      != NULL) {
-	for (i = 1; i <= endhist; i++) {
-	    lasthist = lasthist % endhist + 1;
-	    if (history[lasthist].len > 40)
-		fprintf(fp, "%s\n", history[lasthist].histline);
+		if (fclose(fp) == EOF) {
+			error("fclose(%s): %s", histfile, strerror(errno));
+		}
 	}
-	fclose(fp);
-    }
 }
 
 static void
 readhistfile(FILE *fp)
 {
-    if (!*histfile)
-	return;
-    while (fgets(line, FBUFLEN, fp)) {
-	line[strlen(line)-1] = '\0'; /* chop the \n */
-	save_hist();
-    }
-    fclose(fp);
+	if (!*histfile)
+		return;
+	while (fgets(line, FBUFLEN, fp)) {
+		line[strlen(line)-1] = '\0'; /* chop the \n */
+		save_hist();
+	}
 }
 
 void
 read_hist(void)
 {
-    FILE *fp;
+	FILE *fp;
 
-    if (!*histfile)
-	return;
-    if (findhome(histfile, sizeof histfile) && (fp = fopen(histfile, "r"))
-      != NULL)
-	readhistfile(fp);
-    histsessionstart = lasthist;
-    histsessionnew = 0;
+	if (!*histfile)
+		return;
+
+	if (findhome(histfile, sizeof histfile) && (fp = fopen(histfile, "r"))
+			!= NULL)
+	{
+		readhistfile(fp);
+
+		if (fclose(fp) == EOF) {
+			error("fclose(%s): %s", histfile, strerror(errno));
+		}
+	}
+
+	histsessionstart = lasthist;
+	histsessionnew = 0;
 }
-#endif
+#endif /* !defined(MSDOS) */
 
 static void
 col_0(void) {

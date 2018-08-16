@@ -2595,7 +2595,9 @@ closefile(FILE *f, int pid, int rfd)
 {
     int temp;
 
-    (void) fclose(f);
+	if (fclose(f) == EOF) {
+		error("fclose(): %s", strerror(errno));
+	}
 #ifndef MSDOS
     if (pid) {
 	while (pid != wait(&temp)) /**/;
