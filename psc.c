@@ -44,6 +44,8 @@
 #define SPACE	3
 #define EOL	4
 
+#define PRINTF_CMD_ERR(x) ": Writing command \"" x "\" failed\n"
+
 char	*coltoa(int col);
 char	*progname;
 int	getrow(char *p);
@@ -155,16 +157,27 @@ main(int argc, char **argv)
 
 	switch (scan()) {
 	case END:
-	    if (drop_format) exit(0);
-	    for (i = 0; i<maxcols; i++) {
-		if (fwidth[i])
-		    (void) printf("format %s %d %d %d\n", coltoa(i), 
-			fwidth[i]+1, precision[i], REFMTFIX);
-	    }
-	    exit(0);
+		if (drop_format) exit(0);
+
+		for (i = 0; i<maxcols; i++) {
+			if (fwidth[i]) {
+				if (printf("format %s %d %d %d\n", coltoa(i), 
+						fwidth[i]+1, precision[i], REFMTFIX) < 0)
+				{
+					fprintf(stderr,
+						"%s: Column %d" PRINTF_CMD_ERR("format"),
+						progname, i);
+				}
+			}
+		}
+
+		exit(0);
 	case NUM:
 	    first = FALSE;
-	    (void) printf("let %s%d = %s\n", coltoa(effc), effr, token);
+	    if (printf("let %s%d = %s\n", coltoa(effc), effr, token) < 0) {
+			fprintf(stderr, "%s" PRINTF_CMD_ERR("let"),
+				progname);
+		}
 	    if (effc >= maxcols - 1)
 	    {	if (!growtbl(GROWCOL, 0, effc))
 		{	(void) fprintf(stderr, "Invalid column used: %s\n", coltoa(effc));
@@ -203,21 +216,34 @@ main(int argc, char **argv)
 	    }
 	    break;
 	case ALPHA:
-	    first = FALSE;
-	    if (leftadj)
-		(void) printf("leftstring %s%d = \"%s\"\n", coltoa(effc),effr,token); 
-	    else
-		(void) printf("rightstring %s%d = \"%s\"\n",coltoa(effc),effr,token); 
-	    if (effc >= maxcols - 1)
-	    {	if (!growtbl(GROWCOL, 0, effc))
-		{	(void) fprintf(stderr, "Invalid column used: %s\n", coltoa(effc));
-			continue;
+		first = FALSE;
+
+		if (leftadj) {
+			if (printf("leftstring %s%d = \"%s\"\n", coltoa(effc),effr,token) < 0) {
+				fprintf(stderr, "%s" PRINTF_CMD_ERR("leftstring"),
+					progname);
+			}
+		} else {
+			if (printf("rightstring %s%d = \"%s\"\n",coltoa(effc),effr,token) < 0) {
+				fprintf(stderr, "%s" PRINTF_CMD_ERR("rightstring"),
+					progname);
+			}
 		}
-	    }
-	    i = strlen(token);
-	    if (i > fwidth[effc])
-		fwidth[effc] = i;
-	    break;
+
+		if (effc >= maxcols - 1) {
+			if (!growtbl(GROWCOL, 0, effc)) {
+				(void) fprintf(stderr, "Invalid column used: %s\n", coltoa(effc));
+				continue;
+			}
+		}
+
+		i = strlen(token);
+
+		if (i > fwidth[effc]) {
+			fwidth[effc] = i;
+		}
+
+		break;
 	case SPACE:
 	    if (first && strip_delim)
 		break;
