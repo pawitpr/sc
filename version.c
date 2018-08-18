@@ -6,5 +6,6 @@
  * A second underscore marks a development version.
  */
 
-extern char *rev;
-char *rev = "$Revision: 7.16_1.1.3-pre-alpha 180817 1431 $";
+#include "version.h"
+
+const char rev[] = "$Revision: 7.16_1.1.3-pre-alpha 180818 2318 $";

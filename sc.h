@@ -390,7 +390,6 @@ extern	int framerows;		/* Rows in current frame */
 extern	int framecols;		/* Columns in current frame */
 extern	char mode_ind;		/* Mode indicator */
 extern	int	seenerr;
-extern	char	*rev;
 
 extern	FILE *openfile(char *, size_t, int *, int *);
 extern	char *coltoa(int col);
@@ -655,12 +654,12 @@ void nopipe(int);
 void winchg(int);
 # endif
 #else
-int doquit();
-int time_out();
-int dump_me();
-int nopipe();
+int doquit(int);
+int time_out(int);
+int dump_me(int);
+int nopipe(int);
 # ifdef	SIGWINCH
-int winchg();
+int winchg(int);
 # endif
 #endif
 void gohome(void);

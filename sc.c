@@ -27,6 +27,7 @@
 #include <limits.h>
 #include "compat.h"
 #include "sc.h"
+#include "version.h"
 
 #ifndef SAVENAME
 #define	SAVENAME "SC.SAVE" /* file name to use for emergency saves */
