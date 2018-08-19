@@ -168,7 +168,7 @@ main(int argc, char **argv)
 				{
 					fprintf(stderr, "%s: Column %d" PRINTF_CMD_ERR("format"),
 						progname, i, strerror(errno));
-					exit_status = EXIT_FAILURE;
+					exit(EXIT_FAILURE);
 				}
 			}
 		}
