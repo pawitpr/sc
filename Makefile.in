@@ -357,9 +357,9 @@ gram.c:	gram.y
 
 $(YTAB).h:	gram.y
 
-p$(name):	psc.c pvmtbl.o pxmalloc.o
+p$(name):	psc.c pvmtbl.o pxmalloc.o version.o
 	$(CC) $(_CFLAGS) ${_LDFLAGS} -o p$(name) psc.c \
-	    pvmtbl.o pxmalloc.o ${PSCLIB}
+	    pvmtbl.o pxmalloc.o version.o ${PSCLIB}
 
 # Alternative link for MS-DOS (NB: MSC 5.1 has no getopt.c)
 #p$(name):	psc.o pvmtbl.o pxmalloc.o getopt.o
