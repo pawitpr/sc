@@ -395,8 +395,7 @@ main (int argc, char  **argv)
 	exit (0);
     }
 
-    if (usecurses)
-	clearok(stdscr, TRUE);
+    clearok(stdscr, TRUE);
     EvalAll();
 
     if (mopt)
