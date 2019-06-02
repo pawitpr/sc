@@ -3053,7 +3053,7 @@ readfile(char *fname, int eraseflg)
 		error("Reading file \"%s\"", save);
 		refresh();
 	    } else
-		fprintf(stderr, "Reading file \"%s\"\n", save);
+		fprintf(stderr, "\nReading file \"%s\"", save);
 	}
 #ifndef MSDOS
     }
