@@ -1681,7 +1681,7 @@ write_hist(void)
 		read_hist();
 		readhistfile(tmpfp);
 
-		if (fclose(fp) == EOF) {
+		if (fclose(tmpfp) == EOF) {
 			error("fclose(tmpfile()): %s", strerror(errno));
 		}
 	}
