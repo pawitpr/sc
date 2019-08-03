@@ -14,6 +14,10 @@
 #include <stdio.h>
 #endif
 
+#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
+#include <unistd.h>
+#endif
+
 #define CLEAR_LINE error("%s", "") /* suppress warning on NetBSD curses */
 #define	ATBL(tbl, row, col)	(*(tbl + row) + (col))
 
