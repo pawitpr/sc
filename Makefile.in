@@ -9,6 +9,9 @@
 # 4) If you have the command 'file' that uses /etc/magic add the line:
 #	38	string		Spreadsheet	sc file
 
+RM ?= rm -f
+SRCDIR=
+VPATH=$(SRCDIR):
 
 # Specify the name of the program.
 # All documentation and installation keys on this value.
@@ -167,9 +170,9 @@ RIGHTBUG=
 YTAB=y.tab
 
 # Command to use to make temporary copies of some source files.
-#LN=ln -s
+LN=ln -s
 #LN=cp
-LN=ln
+#LN=ln
 
 #### SYSTEM DEFINES ####
 
@@ -322,7 +325,8 @@ LN=ln
 #LDADD=-lm -lpdcurses
 
 #########################################
-_CFLAGS= $(CFLAGS) $(INCDIR_CURSES) $(DEFINES) $(__CDBG) $(__CLDBG) \
+CPPFLAGS += -I$(SRCDIR) -I.
+_CFLAGS= $(CPPFLAGS) $(CFLAGS) $(INCDIR_CURSES) $(DEFINES) $(__CDBG) $(__CLDBG) \
 	#-DTRACE='"/tmp/trace.txt"'
 _LDFLAGS=$(LDFLAGS) $(__CLDBG) -s
 LDADD=-lm $(LIBDIR_CURSES) $(LIB_CURSES)
@@ -352,13 +356,13 @@ $(name):$(PAR)  $(OBJS)
 #	link ${_LDFLAGS} ${OBJS},$(name),,${LDADD};
 
 gram.c:	gram.y
-	$(YACC) -d gram.y
+	$(YACC) -d $<
 	mv $(YTAB).c gram.c
 
 $(YTAB).h:	gram.y
 
 p$(name):	psc.c pvmtbl.o pxmalloc.o version.o
-	$(CC) $(_CFLAGS) ${_LDFLAGS} -o p$(name) psc.c \
+	$(CC) $(_CFLAGS) ${_LDFLAGS} -o p$(name) $< \
 	    pvmtbl.o pxmalloc.o version.o ${PSCLIB}
 
 # Alternative link for MS-DOS (NB: MSC 5.1 has no getopt.c)
@@ -366,12 +370,12 @@ p$(name):	psc.c pvmtbl.o pxmalloc.o version.o
 #	link ${_LDFLAGS} psc.o pvmtbl.o pxmalloc.o getopt.o,p$(name);
 
 qhelp.c: help.c
-	-rm -f qhelp.c
-	${LN} help.c qhelp.c
+	-$(RM) qhelp.c
+	${LN} $< qhelp.c
 
 $(name)qref:	qhelp.c sc.h
 	$(CC) $(_CFLAGS) $(_LDFLAGS) -DQREF $(QREF_FMT) \
-	    -DSCNAME=\"$(NAME)\" -o $(name)qref qhelp.c
+	    -DSCNAME=\"$(NAME)\" -o $(name)qref $<
 
 # Alternative link for MS-DOS
 #$(name)qref:	qhelp.c sc.h
@@ -379,80 +383,84 @@ $(name)qref:	qhelp.c sc.h
 #	link ${_LDFLAGS} qhelp.o,$(name)qref;
 
 pvmtbl.c: vmtbl.c
-	-rm -f pvmtbl.c
-	${LN} vmtbl.c pvmtbl.c
+	-$(RM) pvmtbl.c
+	${LN} $< pvmtbl.c
 
-pvmtbl.o: sc.h pvmtbl.c
-	$(CC) $(_CFLAGS) -c -DPSC pvmtbl.c
+pvmtbl.o: pvmtbl.c sc.h
+	$(CC) $(_CFLAGS) -c -DPSC $<
 
 pxmalloc.c: xmalloc.c
-	-rm -f pxmalloc.c
-	${LN} xmalloc.c pxmalloc.c
+	-$(RM) pxmalloc.c
+	${LN} $< pxmalloc.c
 
 # Objects
 
 abbrev.o: abbrev.c sc.h
-	$(CC) $(_CFLAGS) ${DFLT_PAGER} -c abbrev.c
+	$(CC) $(_CFLAGS) ${DFLT_PAGER} -c $<
 
 cmds.o: cmds.c sc.h
-	$(CC) $(_CFLAGS) ${CRYPT} -c cmds.c
+	$(CC) $(_CFLAGS) ${CRYPT} -c $<
 
 color.o: color.c sc.h
 
 crypt.o: crypt.c sc.h
-	$(CC) $(_CFLAGS) ${CRYPT} -c crypt.c
+	$(CC) $(_CFLAGS) ${CRYPT} -c $<
 
 format.o: format.c
 
 frame.o: frame.c sc.h
 
-gram.o:	sc.h $(YTAB).h gram.c
-	$(CC) $(_CFLAGS) ${USELOCALE} -c gram.c
-	sed < gram.y > experres.h -f eres.sed
-	sed < gram.y > statres.h -f sres.sed
+gram.o: gram.y sc.h $(YTAB).h gram.c sres.sed eres.sed
+	sed < $< > experres.h -f $(filter %eres.sed, $^)
+	sed < $< > statres.h -f $(filter %sres.sed, $^)
+	$(CC) $(_CFLAGS) ${USELOCALE} -c $(filter %.c,$^)
 
 help.o: help.c sc.h
-	$(CC) $(_CFLAGS) ${CRYPT} -c help.c
+	$(CC) $(_CFLAGS) ${CRYPT} -c $<
 
 interp.o:	interp.c sc.h
 	$(CC) $(_CFLAGS) ${FLOAT_STORE} ${IEEE_MATH} \
-	    ${SIGVOID} ${RINT} ${REGEX} ${FMOD} -c interp.c
+	    ${SIGVOID} ${RINT} ${REGEX} ${FMOD} -c $<
 
 lex.o:	sc.h $(YTAB).h gram.o lex.c
 	$(CC) $(_CFLAGS) ${SIMPLE} ${IEEE_MATH} \
-	    ${LIBRARY} ${SIGVOID} ${NO_NOTIMEOUT} -c lex.c
+	    ${LIBRARY} ${SIGVOID} ${NO_NOTIMEOUT} -c $(filter %.c,$^)
 
 pipe.o: pipe.c sc.h
 
-pxmalloc.o: sc.h pxmalloc.c
-	$(CC) $(_CFLAGS) -c -DPSC pxmalloc.c
+pxmalloc.o: pxmalloc.c sc.h
+	$(CC) $(_CFLAGS) -c -DPSC $<
 
 qhelp.o: qhelp.c sc.h
-	$(CC) $(_CFLAGS) ${CRYPT} -c qhelp.c
+	$(CC) $(_CFLAGS) ${CRYPT} -c $<
 
 range.o: range.c sc.h
 
-sc.o:	sc.h sc.c
+sc.o:	sc.c sc.h
 	$(CC) $(_CFLAGS) ${DFLT_PAGER} ${SIGVOID} \
-	    ${SAVE} -c sc.c
+	    ${SAVE} -c $<
 
-screen.o:	sc.h screen.c
+screen.o: screen.c sc.h
 	$(CC) $(_CFLAGS) ${BROKENCURSES} ${IDLOKISBAD} \
-	    ${RIGHTBUG} ${SIGVOID} ${NO_IDLOK} -c screen.c
+	    ${RIGHTBUG} ${SIGVOID} ${NO_IDLOK} -c $<
 
 sort.o: sort.c sc.h
 
 vi.o: vi.c sc.h
-	$(CC) $(_CFLAGS) ${REGEX} ${HISTORY_FILE} -c vi.c
+	$(CC) $(_CFLAGS) ${REGEX} ${HISTORY_FILE} -c $<
 
 # other stuff
 
 clean:
-	rm -f *.o *res.h $(YTAB).h debug core gram.c y.output pxmalloc.c \
+	$(RM) *.o *res.h $(YTAB).h debug core gram.c y.output pxmalloc.c \
 	    pvmtbl.c qhelp.c tags
 
+clobber: clean
+	$(RM) $(name) p$(name) $(name)qref $(name).1 p$(name).1 $(name)qref.1 \
+	x$(name) x$(name).1
+
 distclean: clean
-	rm -f $(name) p$(name) $(name)qref x$(name) Makefile config.log \
+	$(RM) $(name) p$(name) $(name)qref x$(name) Makefile config.log \
 	     $(name).1 p$(name).1 $(name)qref.1 x$(name).1 compat.h
 
 shar: ${SRC} ${DOCS}
@@ -463,9 +471,8 @@ sshar: ${SRC}
 
 lint: sc.h sc.c lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
 	range.c help.c vi.c version.c xmalloc.c format.c vmtbl.c
-	lint ${LINTFLAGS} $(_CFLAGS) ${SIMPLE} sc.c \
-	    lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
-	    range.c help.c vi.c version.c xmalloc.c format.c vmtbl.c \
+	lint ${LINTFLAGS} $(_CFLAGS) ${SIMPLE} \
+	    $(filter %.c,$^) \
 	    $(LDADD)
 	make lintqref
 
@@ -483,7 +490,7 @@ lintpsc: psc.c vmtbl.c
 	$(CC) $(_CFLAGS) -c $<
 
 .doc.1:
-	name=$(name) NAME=$(NAME) LIBDIR=$(LIBDIR) sh torev $< > $@
+	name=$(name) NAME=$(NAME) LIBDIR=$(LIBDIR) SRCDIR=$(SRCDIR) sh $(SRCDIR)/torev $< > $@
 
 install: $(EXDIR)/$(name) $(EXDIR)/$(name)qref $(EXDIR)/p$(name) \
 	 $(LIBDIR)/tutorial.$(name) $(MANDIR)/$(name).$(MANEXT) \
@@ -503,7 +510,7 @@ $(EXDIR)/x$(name): p$(name) $(EXDIR)
 	install x$(name) $(EXDIR)/
 
 x$(name): xsc.sh
-	name=$(name) sh torev < xsc.sh > x$(name)
+	name=$(name) SRCDIR=$(SRCDIR) sh $(SRCDIR)/torev < $< > x$(name)
 
 $(LIBDIR)/tutorial.$(name): tutorial.sc $(LIBDIR) $(LIBDIR)/plugins
 	install -m $(MANMODE) tutorial.sc $(LIBDIR)/tutorial.$(name)
@@ -533,14 +540,14 @@ $(MANDIR)/$(name)qref.$(MANEXT): $(MANDIR) $(name)qref.1
 	install -m $(MANMODE) $(name)qref.1 $@
 
 uninstall:
-	rm -f $(EXDIR)/$(name)
-	rm -f $(EXDIR)/$(name)qref
-	rm -f $(EXDIR)/p$(name)
-	rm -f $(EXDIR)/x$(name)
-	rm -rf $(LIBDIR)
-	rm -f $(MANDIR)/$(name).$(MANEXT)
-	rm -f $(MANDIR)/p$(name).$(MANEXT)
-	rm -f $(MANDIR)/$(name)qref.$(MANEXT)
+	$(RM) $(EXDIR)/$(name)
+	$(RM) $(EXDIR)/$(name)qref
+	$(RM) $(EXDIR)/p$(name)
+	$(RM) $(EXDIR)/x$(name)
+	$(RM) -r $(LIBDIR)
+	$(RM) $(MANDIR)/$(name).$(MANEXT)
+	$(RM) $(MANDIR)/p$(name).$(MANEXT)
+	$(RM) $(MANDIR)/$(name)qref.$(MANEXT)
 
 files:
 	@find $(DOCS) $(SRC) -print

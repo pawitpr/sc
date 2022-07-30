@@ -20,6 +20,7 @@ usage () {
 	exit $1
 }
 
+SRCDIR=$(dirname $0)
 SFLAG=
 MAKE=
 DEFS=
@@ -93,7 +94,7 @@ gen_mk () {
 	[ -n "$__CXXDBG"  ] && echo "__CXXDBG=$__CXXDBG" >> $OUTMK
 	[ -n "$__CLDBG"   ] && echo "__CLDBG=$__CLDBG" >> $OUTMK
 	[ -n "$__CLXXDBG" ] && echo "__CLXXDBG=$__CLXXDBG" >> $OUTMK
-	cat $INMK >> $OUTMK || exit 1
+	sed -e /SRCDIR=\$/s:\$:$SRCDIR: $INMK >> $OUTMK || exit 1
 }
 check_make () {
 	check_for "make(1)"
@@ -622,7 +623,7 @@ EOT
 }
 	[ ! -s compat.h ] && rm compat.h
 OUTMK=Makefile
-INMK=${OUTMK}.in
+INMK=${SRCDIR}/${OUTMK}.in
 CFG=config
 TMPNAM=.$CFG
 TMPMK=${TMPNAM}.mk
