@@ -121,6 +121,19 @@ EOT
 	bmake -f $TMPMK >> $LOG 2>&1
 	test_result && MAKE=bmake
 }
+check_make_vpath () {
+	check_for "make supports VPATH"
+	mkdir subdir
+	> subdir/subfile.c
+	cat <<EOT > $TMPMK
+VPATH=subdir
+all: subfile.c
+	@echo $<;test "$<" = subdir/subfile.c
+EOT
+	$MAKE -f $TMPMK >> $LOG 2>&1
+	test_result && SUPPORTS_VPATH=1
+	rm -rf subdir
+}
 check_Sanitizer () {
 	check_for "CC Sanitizer"
 
@@ -631,10 +644,13 @@ TMPC=${TMPNAM}.c
 OUT=${TMPNAM}.out
 ERR=${TMPNAM}.err
 LOG=${CFG}.log
+SUPPORTS_VPATH=0
 rm -f $LOG
 gen_mk
 
 check_make
+check_make_vpath
+test $SUPPORTS_VPATH = 1 && INMK=${SRCDIR}/${OUTMK}.in.vpath
 #check_Sanitizer
 check_float_store
 check_strlcpy

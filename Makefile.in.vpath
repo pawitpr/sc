@@ -11,6 +11,7 @@
 
 RM ?= rm -f
 SRCDIR=
+VPATH=$(SRCDIR):
 
 # Specify the name of the program.
 # All documentation and installation keys on this value.
@@ -324,7 +325,7 @@ LN=ln -s
 #LDADD=-lm -lpdcurses
 
 #########################################
-CPPFLAGS += -I$(SRCDIR)
+CPPFLAGS += -I$(SRCDIR) -I.
 _CFLAGS= $(CPPFLAGS) $(CFLAGS) $(INCDIR_CURSES) $(DEFINES) $(__CDBG) $(__CLDBG) \
 	#-DTRACE='"/tmp/trace.txt"'
 _LDFLAGS=$(LDFLAGS) $(__CLDBG) -s
@@ -355,13 +356,13 @@ $(name):$(PAR)  $(OBJS)
 #	link ${_LDFLAGS} ${OBJS},$(name),,${LDADD};
 
 gram.c:	gram.y
-	$(YACC) -d gram.y
+	$(YACC) -d $<
 	mv $(YTAB).c gram.c
 
 $(YTAB).h:	gram.y
 
 p$(name):	psc.c pvmtbl.o pxmalloc.o version.o
-	$(CC) $(_CFLAGS) ${_LDFLAGS} -o p$(name) psc.c \
+	$(CC) $(_CFLAGS) ${_LDFLAGS} -o p$(name) $< \
 	    pvmtbl.o pxmalloc.o version.o ${PSCLIB}
 
 # Alternative link for MS-DOS (NB: MSC 5.1 has no getopt.c)
@@ -370,11 +371,11 @@ p$(name):	psc.c pvmtbl.o pxmalloc.o version.o
 
 qhelp.c: help.c
 	-$(RM) qhelp.c
-	${LN} help.c qhelp.c
+	${LN} $< qhelp.c
 
 $(name)qref:	qhelp.c sc.h
 	$(CC) $(_CFLAGS) $(_LDFLAGS) -DQREF $(QREF_FMT) \
-	    -DSCNAME=\"$(NAME)\" -o $(name)qref qhelp.c
+	    -DSCNAME=\"$(NAME)\" -o $(name)qref $<
 
 # Alternative link for MS-DOS
 #$(name)qref:	qhelp.c sc.h
@@ -383,70 +384,70 @@ $(name)qref:	qhelp.c sc.h
 
 pvmtbl.c: vmtbl.c
 	-$(RM) pvmtbl.c
-	${LN} vmtbl.c pvmtbl.c
+	${LN} $< pvmtbl.c
 
-pvmtbl.o: sc.h pvmtbl.c
-	$(CC) $(_CFLAGS) -c -DPSC pvmtbl.c
+pvmtbl.o: pvmtbl.c sc.h
+	$(CC) $(_CFLAGS) -c -DPSC $<
 
 pxmalloc.c: xmalloc.c
 	-$(RM) pxmalloc.c
-	${LN} xmalloc.c pxmalloc.c
+	${LN} $< pxmalloc.c
 
 # Objects
 
 abbrev.o: abbrev.c sc.h
-	$(CC) $(_CFLAGS) ${DFLT_PAGER} -c abbrev.c
+	$(CC) $(_CFLAGS) ${DFLT_PAGER} -c $<
 
 cmds.o: cmds.c sc.h
-	$(CC) $(_CFLAGS) ${CRYPT} -c cmds.c
+	$(CC) $(_CFLAGS) ${CRYPT} -c $<
 
 color.o: color.c sc.h
 
 crypt.o: crypt.c sc.h
-	$(CC) $(_CFLAGS) ${CRYPT} -c crypt.c
+	$(CC) $(_CFLAGS) ${CRYPT} -c $<
 
 format.o: format.c
 
 frame.o: frame.c sc.h
 
 gram.o: gram.y sc.h $(YTAB).h gram.c sres.sed eres.sed
-	sed < gram.y > experres.h -f eres.sed
-	sed < gram.y > statres.h -f sres.sed
-	$(CC) $(_CFLAGS) ${USELOCALE} -c gram.c
+	sed < $< > experres.h -f $(filter %eres.sed, $^)
+	sed < $< > statres.h -f $(filter %sres.sed, $^)
+	$(CC) $(_CFLAGS) ${USELOCALE} -c $(filter %.c,$^)
 
 help.o: help.c sc.h
-	$(CC) $(_CFLAGS) ${CRYPT} -c help.c
+	$(CC) $(_CFLAGS) ${CRYPT} -c $<
 
 interp.o:	interp.c sc.h
 	$(CC) $(_CFLAGS) ${FLOAT_STORE} ${IEEE_MATH} \
-	    ${SIGVOID} ${RINT} ${REGEX} ${FMOD} -c interp.c
+	    ${SIGVOID} ${RINT} ${REGEX} ${FMOD} -c $<
 
 lex.o:	sc.h $(YTAB).h gram.o lex.c
 	$(CC) $(_CFLAGS) ${SIMPLE} ${IEEE_MATH} \
-	    ${LIBRARY} ${SIGVOID} ${NO_NOTIMEOUT} -c lex.c
+	    ${LIBRARY} ${SIGVOID} ${NO_NOTIMEOUT} -c $(filter %.c,$^)
 
 pipe.o: pipe.c sc.h
 
 pxmalloc.o: pxmalloc.c sc.h
-	$(CC) $(_CFLAGS) -c -DPSC pxmalloc.c
+	$(CC) $(_CFLAGS) -c -DPSC $<
 
 qhelp.o: qhelp.c sc.h
-	$(CC) $(_CFLAGS) ${CRYPT} -c qhelp.c
+	$(CC) $(_CFLAGS) ${CRYPT} -c $<
 
 range.o: range.c sc.h
 
 sc.o:	sc.c sc.h
 	$(CC) $(_CFLAGS) ${DFLT_PAGER} ${SIGVOID} \
-	    ${SAVE} -c sc.c
+	    ${SAVE} -c $<
 
 screen.o: screen.c sc.h
 	$(CC) $(_CFLAGS) ${BROKENCURSES} ${IDLOKISBAD} \
-	    ${RIGHTBUG} ${SIGVOID} ${NO_IDLOK} -c screen.c
+	    ${RIGHTBUG} ${SIGVOID} ${NO_IDLOK} -c $<
 
 sort.o: sort.c sc.h
 
 vi.o: vi.c sc.h
-	$(CC) $(_CFLAGS) ${REGEX} ${HISTORY_FILE} -c vi.c
+	$(CC) $(_CFLAGS) ${REGEX} ${HISTORY_FILE} -c $<
 
 # other stuff
 
@@ -470,9 +471,8 @@ sshar: ${SRC}
 
 lint: sc.h sc.c lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
 	range.c help.c vi.c version.c xmalloc.c format.c vmtbl.c
-	lint ${LINTFLAGS} $(_CFLAGS) ${SIMPLE} sc.c \
-	    lex.c gram.c interp.c cmds.c color.c crypt.c frame.c pipe.c \
-	    range.c help.c vi.c version.c xmalloc.c format.c vmtbl.c \
+	lint ${LINTFLAGS} $(_CFLAGS) ${SIMPLE} \
+	    $(filter %.c,$^) \
 	    $(LDADD)
 	make lintqref
 
