@@ -79,6 +79,12 @@ A system dependent makefile is generated with
 ```sh
 ./configure
 ```
+If you'd like to do an out-of-source build, and your version of make supports VPATH (eg GNU make)
+then you can do the following:
+```sh
+cd /path/to/obj
+/path/to/source/configure # (full or relative path)
+```
 The source is compiled with
 ```sh
 make
@@ -107,6 +113,10 @@ This path can be changed in the
 All generated files are removed with
 ```sh
 make distclean
+```
+A new target, `clobber`, has been added, which removes all `make` generated targets (not the Makefile nor other `configure` output)
+```sh
+make clobber
 ```
 The package can be uninstalled with
 ```sh
