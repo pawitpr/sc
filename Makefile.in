@@ -10,6 +10,8 @@
 #	38	string		Spreadsheet	sc file
 
 RM ?= rm -f
+
+# SRCDIR will be filled in by the configure script, either a full or relative path or .
 SRCDIR=
 
 # Specify the name of the program.
