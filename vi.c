@@ -1540,13 +1540,13 @@ search_hist(void) {
     if ((errcode = regcomp(last_search, line, REG_EXTENDED))) {
 	char *tmp = scxmalloc(160);
 	regerror(errcode, last_search, tmp, sizeof(tmp));
-	error(tmp);
+	error("%s", tmp);
 	scxfree(tmp);
 	return;
     }
 #elif defined RE_COMP
     if ((tmp = re_comp(line)) != NULL) {
-	error(tmp);
+	error("%s", tmp);
 	return;
     }
 #elif defined REGCMP
@@ -2045,7 +2045,7 @@ query(const char *s, char *data)
 	linelim = 0;
     }
     if (s != NULL) {
-    	error(s);
+	error("%s", s);
     }
 
     while (linelim >= 0) {

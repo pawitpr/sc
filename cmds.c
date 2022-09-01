@@ -307,15 +307,13 @@ deleterow(register int arg)
     int rs = maxrow - currow + 1;
     struct frange *fr;
     struct ent *obuf = NULL;
-    char buf[50];
 
     if ((fr = find_frange(currow, curcol)))
 	rs = fr->or_right->row - currow + 1;
     if (rs - arg < 0) {
 	rs = rs > 0 ? rs : 0;
-	snprintf(buf, sizeof buf, "Can't delete %d row%s %d row%s left", arg,
+	error("Can't delete %d row%s %d row%s left", arg,
 		(arg != 1 ? "s," : ","), rs, (rs != 1 ? "s" : ""));
-	error(buf);
 	return;
     }
     if (fr) {
@@ -448,7 +446,6 @@ void
 yankrow(int arg) {
     int rs = maxrow - currow + 1;
     int i, qtmp;
-    char buf[50];
     struct frange *fr;
     struct ent *obuf = NULL;
 
@@ -456,9 +453,8 @@ yankrow(int arg) {
 	rs = fr->or_right->row - currow + 1;
     if (rs - arg < 0) {
 	rs = rs > 0 ? rs : 0;
-	snprintf(buf, sizeof buf, "Can't yank %d row%s %d row%s left", arg,
+	error("Can't yank %d row%s %d row%s left", arg,
 		(arg != 1 ? "s," : ","), rs, (rs != 1 ? "s" : ""));
-	error(buf);
 	return;
     }
     sync_refs();
@@ -505,14 +501,12 @@ void
 yankcol(int arg) {
     int cs = maxcol - curcol + 1;
     int i, qtmp;
-    char buf[50];
     struct ent *obuf = NULL;
 
     if (cs - arg < 0) {
     	cs = cs > 0 ? cs : 0;
-	snprintf(buf, sizeof buf, "Can't yank %d column%s %d column%s left",
+	error("Can't yank %d column%s %d column%s left",
 	    arg, (arg != 1 ? "s," : ","), cs, (cs != 1 ? "s" : ""));
-	error(buf);
 	return;
     }
     sync_refs();
@@ -1177,13 +1171,11 @@ closecol(int arg)
     struct ent **pp;
     struct ent *p;
     struct ent *obuf = NULL;
-    char buf[50];
 
     if (cs - arg < 0) {
     	cs = cs > 0 ? cs : 0;
-	snprintf(buf, sizeof buf, "Can't delete %d column%s %d column%s left",
+	error("Can't delete %d column%s %d column%s left",
 	    arg, (arg != 1 ? "s," : ","), cs, (cs != 1 ? "s" : ""));
-	error(buf);
 	return;
     }
     if (any_locked_cells(0, curcol, maxrow, curcol + arg - 1)) {
