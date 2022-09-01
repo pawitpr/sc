@@ -990,7 +990,7 @@ command:	S_LET var_or_range '=' e
 	|	S_QUERY			{ doquery(NULL, NULL, macrofd); }
 	|	S_QUERY '|' NUMBER	{ doquery(NULL, NULL, $3); }
 	|	S_GETKEY		{ dogetkey(); }
-	|	S_ERROR STRING		{ error($2); }
+	|	S_ERROR STRING		{ error("%s", $2); }
 	|	S_STATUS			{ dostat(macrofd); }
 	|	S_STATUS '|' NUMBER	{ dostat($3); }
 	|	S_RECALC		{ EvalAll();
@@ -1022,7 +1022,7 @@ command:	S_LET var_or_range '=' e
 					{ addplugin($2, $4, 'w'); } 
 	|       PLUGIN			{ *line = '|';
 					  snprintf(line + 1, sizeof(line) - 1,
-					      $1);
+					      "%s", $1);
 					  readfile(line, 0);
 					  scxfree($1); }
 	|	/* nothing */

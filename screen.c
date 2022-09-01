@@ -1053,7 +1053,7 @@ update(int anychanged)		/* did any cell really change in value? */
     if (revmsg[0]) {
 	(void) move(0, 0);
 	(void) clrtoeol();	/* get rid of topline display */
-	(void) printw(revmsg);
+	(void) addstr(revmsg);
 	*revmsg = '\0';		/* don't show it again */
 	if (braille)
 	    if (message)
@@ -1074,7 +1074,7 @@ update(int anychanged)		/* did any cell really change in value? */
     if (revmsg[0]) {
 	(void) move(0, 0);
 	(void) clrtoeol();	/* get rid of topline display */
-	(void) printw(revmsg);
+	(void) addstr(revmsg);
 	*revmsg = '\0';		/* don't show it again */
 	if (braille)
 	    if (message)

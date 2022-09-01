@@ -2046,7 +2046,7 @@ str_search(char *s, int firstrow, int firstcol, int lastrow, int lastcol,
 	scxfree(s);
 	tmp = scxmalloc(160);
 	regerror(errcode, &preg, tmp, sizeof(tmp));
-	error(tmp);
+	error("%s", tmp);
 	scxfree(tmp);
 	return;
     }
@@ -2054,7 +2054,7 @@ str_search(char *s, int firstrow, int firstcol, int lastrow, int lastcol,
 #if defined(RE_COMP)
     if ((tmp = re_comp(s)) != NULL) {
 	scxfree(s);
-	error(tmp);
+	error("%s", tmp);
 	return;
     }
 #endif
