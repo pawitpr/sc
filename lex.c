@@ -253,7 +253,9 @@ yylex(void)
 	    if ((!dateflag && *p=='.') || ret == FNUMBER) {
 		ret = FNUMBER;
 		yylval.fval = strtod(nstart, &p);
-		if (!
+		if (p == nstart)
+		    p++;
+		else if (!
 #ifdef HAVE_ISFINITE
 		  isfinite(
 #else
