@@ -50,7 +50,9 @@
 #else
 # define error if (isatty(fileno(stdout)) && !move(1,0) && !clrtoeol()) printw
 #endif
-#define	FBUFLEN	1024	/* buffer size for a single field */
+#ifndef FBUFLEN
+#  define       FBUFLEN 1024    /* buffer size for a single field */
+#endif
 #define PATHLEN (PATH_MAX < 8192 ? 8192 : PATH_MAX) /* maximum path length */
 
 #ifndef DFLT_PAGER

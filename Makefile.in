@@ -114,6 +114,11 @@ SAVE=-DSAVENAME=\"$(NAME).SAVE\"
 #FMOD=-DNO_FMOD
 FMOD=
 
+# buffer size of a single field. It defines the max string length that sc can process.
+# The default size is 1024.
+FBUF=-DFBUFLEN=10240
+#FBUF=
+
 # If your system doesn't have notimeout() in curses define NONOTIMEOUT
 NO_NOTIMEOUT=-DNONOTIMEOUT
 #NO_NOTIMEOUT=
@@ -327,7 +332,7 @@ LN=ln -s
 
 #########################################
 CPPFLAGS += -I$(SRCDIR)
-_CFLAGS= $(CPPFLAGS) $(CFLAGS) $(INCDIR_CURSES) $(DEFINES) $(__CDBG) $(__CLDBG) \
+_CFLAGS= $(CPPFLAGS) $(CFLAGS) $(INCDIR_CURSES) $(DEFINES) $(FBUF) $(__CDBG) $(__CLDBG) \
 	#-DTRACE='"/tmp/trace.txt"'
 _LDFLAGS=$(LDFLAGS) $(__CLDBG) -s
 LDADD=-lm $(LIBDIR_CURSES) $(LIB_CURSES)
